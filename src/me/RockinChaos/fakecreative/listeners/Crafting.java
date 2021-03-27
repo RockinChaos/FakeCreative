@@ -1,0 +1,221 @@
+/*
+ * FakeCreative
+ * Copyright (C) CraftationGaming <https://www.craftationgaming.com/>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package me.RockinChaos.fakecreative.listeners;
+
+import java.util.function.Consumer;
+
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
+
+import me.RockinChaos.fakecreative.handlers.ItemHandler;
+import me.RockinChaos.fakecreative.handlers.PlayerHandler;
+import me.RockinChaos.fakecreative.handlers.events.PlayerAutoCraftEvent;
+import me.RockinChaos.fakecreative.handlers.modes.Creative;
+import me.RockinChaos.fakecreative.utils.SchedulerUtils;
+import me.RockinChaos.fakecreative.utils.ServerUtils;
+
+public class Crafting implements Listener {
+	
+   /**
+    * Prevents players from autocrafting with custom crafting items in their crafting slots.
+    * 
+    * @param event - PlayerAutoCraftEvent
+    */
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
+	private void onAutoCraft(PlayerAutoCraftEvent event) {
+		for (int i = 0; i <= 4; i++) {
+  			final ItemStack[] craftingContents = event.getContents().clone();
+  			if (!event.isCancelled() && Creative.isItem(craftingContents[i])) {
+  				event.setCancelled(true);
+  			} else if (event.isCancelled()) { return; }
+  		}
+	}
+	
+   /**
+	* Removes custom crafting items from the players inventory when opening a GUI menu or storable inventory.
+	* 
+	* @param event - InventoryOpenEvent
+	*/
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
+    private void onCraftingOpen(InventoryOpenEvent event) {
+    	final Player player = (Player) event.getPlayer();
+    	if (PlayerHandler.isFakeCreativeMode(player)) {
+    		Inventory craftInventory = player.getOpenInventory().getTopInventory();
+	    	for (ItemStack item: craftInventory) {
+	    		if (Creative.isItem(item)) {
+	    			craftInventory.remove(item);
+	    		}
+	    	}
+    	}
+    }
+	
+   /**
+	* Gives the custom crafting items back when the player closes their inventory if they had items existing previously.
+	* 
+	* @param event - InventoryCloseEvent
+	*/
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
+	private void onCraftingClose(org.bukkit.event.inventory.InventoryCloseEvent event) {
+		if (!ServerUtils.hasSpecificUpdate("1_8") || !PlayerHandler.isCraftingInv(event.getView())) {
+			ItemStack[] topContents = ItemHandler.cloneContents(event.getView().getTopInventory().getContents());
+	    	this.handleClose(slot -> { 
+	    		event.getView().getTopInventory().setItem(slot, new ItemStack(Material.AIR));
+	    	}, (Player)event.getPlayer(), event.getView(), topContents, true);
+    	}
+    }
+    
+   /**
+	* Gives the custom crafting items back when the player closes their inventory if they had items existing previously.
+	* 
+	* @param event - InventoryCloseEvent
+	*/
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
+    private void onCraftingClose(me.RockinChaos.fakecreative.handlers.events.InventoryCloseEvent event) {
+		if (ServerUtils.hasSpecificUpdate("1_8") && PlayerHandler.isCraftingInv(event.getView())) {
+	    	this.handleClose(slot -> { 
+	    		if (!event.isCancelled()) { event.setCancelled(true); }
+	    	}, event.getPlayer(), event.getView(), event.getPreviousContents(true), false);
+		}
+    }
+	
+   /**
+	* Returns the custom crafting item to the player if it is dropped automagically when switching worlds,
+	* typically via the nether portal causing duplication glitches.
+	* 
+	* @param event - PlayerDropItemEvent
+	*/
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
+    private void onCraftingDrop(PlayerDropItemEvent event) {
+    	final Player player = (Player) event.getPlayer();
+    	final ItemStack item = event.getItemDrop().getItemStack().clone();
+    	if (PlayerHandler.isFakeCreativeMode(player) && Creative.isItem(item)) {
+    		event.setCancelled(true);
+    	}
+    }
+    
+   /**
+	* Returns the custom crafting item to the player if it is dropped automagically when switching worlds,
+	* typically via the nether portal causing duplication glitches.
+	* 
+	* @param event - PlayerDropItemEvent
+	*/
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
+    private void onCraftingWorlds(PlayerDropItemEvent event) {
+    	final Player player = (Player) event.getPlayer();
+    	final World world = player.getWorld();
+    	final ItemStack item = event.getItemDrop().getItemStack().clone();
+    	if (player.getHealth() > 0 && PlayerHandler.isFakeCreativeMode(player) && Creative.isItem(item)) {
+		    event.getItemDrop().getItemStack().setItemMeta(null);
+		    event.getItemDrop().remove();
+    		SchedulerUtils.runLater(2L, () -> { 
+		    	if (!world.equals(player.getWorld())) {
+		    		if (!givenItems) {
+		    			givenItems = true;
+		    			Creative.setTabs(player);
+		    		}
+		    		SchedulerUtils.runLater(4L, () -> givenItems = false);
+		    	}
+		    });
+    	}
+    }
+    private boolean givenItems = false;
+    
+   /**
+    * Attempts to save and return the prior open inventory crafting slots.
+    * 
+    * @param input - The methods to be executed.
+    * @param player - The Player being handled.
+    * @param view - The view being referenced.
+    * @param inventory - The inventory being handled.
+    * @param slotZero - if the slot is zero.
+    */
+	private void handleClose(final Consumer < Integer > input, final Player player, final InventoryView view, final ItemStack[] inventory, final boolean slotZero) {
+		if (PlayerHandler.isCraftingInv(view)) {
+			if (!ItemHandler.isContentsEmpty(inventory)) {
+				boolean isCrafting = false;
+				for (int i = 0; i <= 4; i++) {
+					if (inventory[i] != null && Creative.isItem(inventory[i])) {
+						isCrafting = true;
+						input.accept(i);
+					}
+				}
+				for (int i = 0; i <= 4; i++) {
+					if (isCrafting && i != 0 && inventory[i] != null && inventory[i].getType() != Material.AIR) {
+						if (inventory[i] != null && !Creative.isItem(inventory[i])) {
+							final int k = i;
+							ItemStack drop = inventory[i].clone();
+							SchedulerUtils.run(() -> { 
+								player.getOpenInventory().getTopInventory().setItem(k, new ItemStack(Material.AIR));
+								if (player.getInventory().firstEmpty() != -1) {
+									player.getInventory().addItem(drop);
+								} else { PlayerHandler.dropItem(player, drop); }
+							});
+							inventory[i] = new ItemStack(Material.AIR);
+						}
+					}
+				}
+				this.returnCrafting(player, inventory, 1L, !slotZero);
+			}
+		} else {
+			SchedulerUtils.run(() -> { 
+				if (PlayerHandler.isCraftingInv(player.getOpenInventory()) && PlayerHandler.isFakeCreativeMode(player)) {
+					Inventory craftInventory = player.getOpenInventory().getTopInventory();
+					if (craftInventory.getItem(1) != null && craftInventory.getItem(1).getType() != Material.AIR) {
+						ItemStack drop = craftInventory.getItem(1).clone();
+						craftInventory.setItem(1, new ItemStack(Material.AIR));
+						if (player.getInventory().firstEmpty() != -1) {
+								player.getInventory().addItem(drop);
+						} else {  PlayerHandler.dropItem(player, drop); }
+					}
+					Creative.setTabs(player);
+				}
+			});
+		}
+	}
+	
+   /**
+    * Returns the custom crafting item to the player after the specified delay.
+    * 
+    * @param player - the Player having their item returned.
+    * @param contents - the crafting contents to be returned.
+    * @param delay - the delay to wait before returning the item.
+    * @param slotZero - if the slot is zero.
+    */
+	private void returnCrafting(final Player player, final ItemStack[] contents, final long delay, final boolean slotZero) {
+		SchedulerUtils.runLater(delay, () -> { 
+			if (!player.isOnline()) { return; } else if (!PlayerHandler.isCraftingInv(player.getOpenInventory())) { this.returnCrafting(player, contents, 10L, slotZero); return; }
+			if (!slotZero) {
+				for (int i = 4; i >= 0; i--) {
+					player.getOpenInventory().getTopInventory().setItem(i, contents[i]);
+				}
+			} else { 
+				player.getOpenInventory().getTopInventory().setItem(0, contents[0]);
+			}
+			player.updateInventory();
+		});
+	}
+}

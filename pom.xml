@@ -1,0 +1,221 @@
+<!-- FakeCreative build file -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<packaging>jar</packaging>
+	<groupId>me.RockinChaos.fakecreative</groupId>
+	<artifactId>FakeCreative</artifactId>
+	<name>FakeCreative</name>
+	<version>0.0.1-SNAPSHOT</version>
+	<description>Get custom items on join.</description>
+	<url>https://www.spigotmc.org/resources/fakecreative/</url>
+	
+	<build>
+		<sourceDirectory>${project.basedir}</sourceDirectory>
+		
+		<resources>
+		
+			<resource>
+				<targetPath>.</targetPath>
+				<filtering>true</filtering>
+				<directory>.</directory>
+				<includes>
+					<include>*.yml</include>
+					<include>LICENSE</include>
+				</includes>
+			</resource>
+			
+			<resource>
+				<targetPath>./files</targetPath>
+				<filtering>true</filtering>
+				<directory>./files</directory>
+				<includes>
+					<include>**/*.yml</include>
+					<include>**/*.jpg</include>
+				</includes>
+			</resource>
+			
+		</resources>
+		
+		<plugins>
+			
+			<plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.2</version>
+				<configuration>
+					<altDeploymentRepository>internal.repo::default::file://${env.JENKINS_HOME}/maven-public</altDeploymentRepository>
+				</configuration>
+			</plugin>
+		
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+				<configuration>
+					<encoding>Cp1252</encoding>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>site-maven-plugin</artifactId>
+				<version>0.11</version>
+				<configuration>
+					<message>Published artifacts me.RockinChaos.fakecreative.FakeCreative:${project.version}</message>
+					<outputDirectory>${env.JENKINS_HOME}/maven-public</outputDirectory>
+					<branch>refs/heads/maven-public</branch>
+					<includes>
+						<include>**/*</include>
+					</includes>
+					<repositoryName>Repository</repositoryName>
+					<repositoryOwner>RockinChaos</repositoryOwner>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>site</goal>
+						</goals>
+						<phase>deploy</phase>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.2.1</version>
+				<configuration>
+					<finalName>FakeCreative-${project.version}-b${env.BUILD_NUMBER}</finalName>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<filters>
+								<filter>
+									<artifact>*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+										<exclude>META-INF/*.INF</exclude>
+										<exclude>META-INF/*.MF</exclude>
+									</excludes>
+								</filter>
+							</filters>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+		</plugins>
+		
+	</build>
+	
+	<repositories>
+		<!--Spigot Repository-->
+		<repository>
+			<id>spigot-repo</id>
+			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+		</repository>
+		<!--PlaceholderAPI Repository-->
+		<repository>
+			<id>placeholderapi</id>
+			<url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+		</repository>
+		<!--bStats Repository-->
+		<repository>
+			<id>CodeMC</id>
+			<url>https://repo.codemc.org/repository/maven-public</url>
+		</repository>
+		<!--CraftationGaming Repository-->
+		<repository>
+			<id>CraftationGaming</id>
+			<url>https://raw.githubusercontent.com/RockinChaos/repository/maven-public/</url>
+		</repository>
+	</repositories>
+	
+	<dependencies>
+		<!--Spigot API-->
+		<dependency>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot-api</artifactId>
+			<version>1.16.4-R0.1-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+		<!--PlaceholderAPI API-->
+		<dependency>
+			<groupId>me.clip</groupId>
+			<artifactId>placeholderapi</artifactId>
+			<version>2.10.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<!--bStats API-->
+		<dependency>
+			<groupId>org.bstats</groupId>
+			<artifactId>bstats-bukkit</artifactId>
+			<version>1.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<!--Hikari API-->
+	    <dependency>
+	      <groupId>com.zaxxer</groupId>
+	      <artifactId>HikariCP</artifactId>
+	      <version>LATEST</version>
+	      <scope>compile</scope>
+	    </dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-nop</artifactId>
+			<version>1.7.30</version>
+			<scope>compile</scope>
+		</dependency>
+		<!--BetterNick API-->
+		<dependency>
+			<groupId>de.domedd.betternick</groupId>
+			<artifactId>BetterNick</artifactId>
+			<version>7.4-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+	
+	<scm>
+		<url>https://github.com/RockinChaos/FakeCreative</url>
+		<connection>scm:git:ssh://git@github.com/RockinChaos/FakeCreative</connection>
+		<developerConnection>scm:git:ssh://git@github.com/RockinChaos/FakeCreative.git</developerConnection>
+	</scm>
+	
+	<organization>
+		<name>FakeCreative</name>
+		<url>https://github.com/RockinChaos/FakeCreative</url>
+	</organization>
+	
+	<issueManagement>
+		<url>https://github.com/RockinChaos/FakeCreative/issues</url>
+		<system>Github</system>
+	</issueManagement>
+	
+	<ciManagement>
+		<system>Jenkins</system>
+		<url>https://ci.craftationgaming.com/job/FakeCreative/</url>
+	</ciManagement>
+	
+	<distributionManagement>
+		<repository>
+			<id>internal.repo</id>
+			<name>staging-repository</name>
+			<url>file://${env.JENKINS_HOME}/maven-public</url>
+		</repository>
+	</distributionManagement>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.8</java.version>
+		<github.global.server>github</github.global.server>
+	</properties>
+</project>
