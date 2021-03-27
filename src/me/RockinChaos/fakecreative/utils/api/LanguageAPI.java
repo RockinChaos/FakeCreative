@@ -113,6 +113,7 @@ public class LanguageAPI {
 				.replace("%gamemode%", langHolder[0])
 				.replace("%target_player%", langHolder[1])
 				.replace("%hotbar%", langHolder[2])
+				.replace("%input_example%", langHolder[3])
 				.replace("%prefix%", this.langPrefix);
 		
 	}

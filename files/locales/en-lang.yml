@@ -21,7 +21,7 @@ commands:
   menu:
     savedHotbar: '&6Hotbar &c%hotbar% &6has been set.'
     loadedHotbar: '&6Hotbar &c%hotbar% &6has been loaded.'
-    searchType: '%prefix% &aType the item name you would like to view.'
+    searchType: '%prefix% &aType keywords of items you would like to view.'
     searchExample: '%prefix% &aExample: %input_example%'
   updates:
     checkRequest: '%prefix% &4%player% has requested to check for updates!'

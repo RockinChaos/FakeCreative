@@ -509,8 +509,7 @@ public class Menu {
 			pagedPane.addButton(new Button(ItemHandler.getItem("COMPASS", 1, (selected == 9 ? true : false), true, (selected == 9 ? "&a"  : "&f") + "Search Items", "&7", "&8&oClick to view", "&8&oDouble-click to search."), event -> {
 				event.getWhoClicked().closeInventory();
 				String[] placeHolders = LanguageAPI.getLang(false).newString();
-				placeHolders[16] = "NAME";
-				placeHolders[15] = "DIAMOND";
+				placeHolders[3] = "&cDIAMOND&a or &cDIA";
 				LanguageAPI.getLang(false).sendLangMessage("commands.menu.searchType", event.getWhoClicked(), placeHolders);
 				LanguageAPI.getLang(false).sendLangMessage("commands.menu.searchExample", event.getWhoClicked(), placeHolders);
 			}, event -> {
