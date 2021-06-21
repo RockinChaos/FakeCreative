@@ -26,10 +26,10 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.ChannelPromise;
 import me.RockinChaos.fakecreative.utils.ReflectionUtils;
-import me.RockinChaos.fakecreative.utils.SchedulerUtils;
-import me.RockinChaos.fakecreative.utils.ServerUtils;
 import me.RockinChaos.fakecreative.utils.ReflectionUtils.FieldAccessor;
 import me.RockinChaos.fakecreative.utils.ReflectionUtils.MethodInvoker;
+import me.RockinChaos.fakecreative.utils.SchedulerUtils;
+import me.RockinChaos.fakecreative.utils.ServerUtils;
 import me.RockinChaos.fakecreative.utils.protocol.packet.PacketContainer;
 
 import java.util.Collection;
@@ -66,12 +66,12 @@ public abstract class TinyProtocol {
 	private final AtomicInteger ID = new AtomicInteger(0);
 
 	private final MethodInvoker getPlayerHandle = ReflectionUtils.getMethod("{obc}.entity.CraftPlayer", "getHandle");
-	private final FieldAccessor<Object> getConnection = ReflectionUtils.getField("{nms}.EntityPlayer", "playerConnection", Object.class);
-	private final FieldAccessor<Object> getManager = ReflectionUtils.getField("{nms}.PlayerConnection", "networkManager", Object.class);
-	private final FieldAccessor<Channel> getChannel = ReflectionUtils.getField("{nms}.NetworkManager", Channel.class, 0);
+	private final FieldAccessor<Object> getConnection = ReflectionUtils.getField(ReflectionUtils.getMinecraftClass("EntityPlayer").getCanonicalName(), (ReflectionUtils.noReflections() ? "b" : "playerConnection"), Object.class);
+	private final FieldAccessor<Object> getManager = ReflectionUtils.getField(ReflectionUtils.getMinecraftClass("PlayerConnection").getCanonicalName(), (ReflectionUtils.noReflections() ? "a" : "networkManager"), Object.class);
+	private final FieldAccessor<Channel> getChannel = ReflectionUtils.getField(ReflectionUtils.getMinecraftClass("NetworkManager").getCanonicalName(), Channel.class, 0);
 
-	private final Class<Object> minecraftServerClass = ReflectionUtils.getUntypedClass("{nms}.MinecraftServer");
-	private final Class<Object> serverConnectionClass = ReflectionUtils.getUntypedClass("{nms}.ServerConnection");
+	private final Class<Object> minecraftServerClass = ReflectionUtils.getUntypedClass(ReflectionUtils.getMinecraftClass("MinecraftServer").getCanonicalName());
+	private final Class<Object> serverConnectionClass = ReflectionUtils.getUntypedClass(ReflectionUtils.getMinecraftClass("ServerConnection").getCanonicalName());
 	private final FieldAccessor<Object> getMinecraftServer = ReflectionUtils.getField("{obc}.CraftServer", minecraftServerClass, 0);
 	private final FieldAccessor<Object> getServerConnection = ReflectionUtils.getField(minecraftServerClass, serverConnectionClass, 0);
 	private final FieldAccessor<?> getNetworkMarkers = ReflectionUtils.getField(serverConnectionClass, (Class<?>)List.class, 1);
@@ -185,7 +185,6 @@ public abstract class TinyProtocol {
    /**
 	* Register channel handler.
 	*/
-	@SuppressWarnings("unchecked")
 	private void registerChannelHandler() {
 		Object mcServer = this.getMinecraftServer.get(Bukkit.getServer());
 		Object serverConnection = this.getServerConnection.get(mcServer);
@@ -422,10 +421,12 @@ public abstract class TinyProtocol {
 			channel.eventLoop().execute(new Runnable() {
 				@Override
 				public void run() {
-					channel.pipeline().remove(handlerName);
+					if (channel.pipeline().get(handlerName) != null) {
+						channel.pipeline().remove(handlerName);
+					}
 				}
 			});
-		} catch (NoClassDefFoundError e) { }
+		} catch (NoClassDefFoundError | NoSuchElementException e) { }
 	}
 
    /**
@@ -450,6 +451,7 @@ public abstract class TinyProtocol {
 
    /**
 	* Cease listening for packets. This is called automatically when your plugin is disabled.
+	* 
 	*/
 	public final void close() {
 		if (!this.closed) {
@@ -462,6 +464,10 @@ public abstract class TinyProtocol {
 		}
 	}
 	
+   /**
+	* Gets the Packet as a PacketContainer.
+	* 
+	*/
 	public PacketContainer getContainer(Object packet) {
 		return new PacketContainer(packet);
 	}

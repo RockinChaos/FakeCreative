@@ -17,15 +17,13 @@
  */
 package me.RockinChaos.fakecreative.listeners;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -104,31 +102,21 @@ public class Clicking implements Listener {
 			} else if (Creative.isItem(event.getCurrentItem(), "saveTab")) {
 				event.setCancelled(true);
 				SchedulerUtils.run(() -> Menu.getCreator().hotbarMenu(player));
-			} else if (Creative.isItem(event.getCurrentItem(), "unkTab")) {
+			} else if (Creative.isItem(event.getCurrentItem(), "userTab")) {
 				event.setCancelled(true);
 			} else if (Creative.isItem(event.getCurrentItem(), "destroyTab")) {
 				event.setCancelled(true);
 				if (event.getCursor() != null && event.getCursor().getType() != Material.AIR) {
 					player.setItemOnCursor(new ItemStack(Material.AIR));
-				} else {
-					if (this.destroyPlayers != null && !this.destroyPlayers.isEmpty()) {
-						if (this.destroyPlayers.contains(PlayerHandler.getPlayerID(player))) {
-							player.getInventory().clear();
-							PlayerHandler.setOffHandItem(player, new ItemStack(Material.AIR));
-							player.getInventory().setHelmet(new ItemStack(Material.AIR));
-							player.getInventory().setChestplate(new ItemStack(Material.AIR));
-							player.getInventory().setLeggings(new ItemStack(Material.AIR));
-							player.getInventory().setBoots(new ItemStack(Material.AIR));
-						}
-					} else {
-						this.destroyPlayers.add(PlayerHandler.getPlayerID(player));
-						SchedulerUtils.runLater(40, () -> {
-							this.destroyPlayers.remove(PlayerHandler.getPlayerID(player));
-						});
-					}
+				} else if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
+					player.getInventory().clear();
+					PlayerHandler.setOffHandItem(player, new ItemStack(Material.AIR));
+					player.getInventory().setHelmet(new ItemStack(Material.AIR));
+					player.getInventory().setChestplate(new ItemStack(Material.AIR));
+					player.getInventory().setLeggings(new ItemStack(Material.AIR));
+					player.getInventory().setBoots(new ItemStack(Material.AIR));
 				}
 			}
 		}
 	}
-	private List<String> destroyPlayers = new ArrayList<String>();
 }

@@ -35,27 +35,27 @@ import me.RockinChaos.fakecreative.utils.protocol.packet.PacketContainer;
 
 public class ProtocolManager {
 	
-	private TinyProtocol protocol;
-	private static ProtocolManager manager;
+	private static TinyProtocol protocol;
 	
    /**
     * Handles both server side and client side protocol packets.
     * 
     */
-  	public void handleProtocols() {
-  		if (this.protocol != null) { this.closeProtocol(); }
-  		this.protocol = new TinyProtocol(FakeCreative.getInstance()) {
+  	public static void handleProtocols() {
+  		if (protocol != null) { closeProtocol(); }
+  		protocol = new TinyProtocol(FakeCreative.getInstance()) {
   			
   		   /**
-  		    * Handles all incmming client packets.
+  		    * Handles all incomming client packets.
   		    * 
             * @param player - the player tied to the packet.
             * @param channel - the channel the packet was called on.
             * @param packet - the packet object.
   		    */
   			@Override
-  			public Object onPacketInAsync(Player player, Channel channel, Object packet) {
-	  			if (manageEvents(player, channel, packet)) { 
+  			public Object onPacketInAsync(final Player player, final Channel channel, final Object packet) {
+  				String packetName = (packet != null ? packet.getClass().getSimpleName() : null);
+	  			if (manageEvents(player, packetName, packet)) { 
 	  				return null; 
 	  			}
   				return super.onPacketInAsync(player, channel, packet);
@@ -69,7 +69,7 @@ public class ProtocolManager {
             * @param packet - the packet object.
   		    */
   			@Override
-  			public Object onPacketOutAsync(Player player, Channel channel, Object packet) {
+  			public Object onPacketOutAsync(final Player player, final Channel channel, final Object packet) {
   				return packet;
   			}
   		};
@@ -82,28 +82,27 @@ public class ProtocolManager {
     * @param channel - the channel the packet was called on.
     * @param packet - the packet object.
     */
-  	private boolean manageEvents(Player player, Channel channel, Object packet) {
+  	public static boolean manageEvents(final Player player, final String packetName, final Object packet) {
   		try {
-  			if (packet != null) {
-  				String packetName = packet.getClass().getSimpleName();
+   			if (packetName != null) {
   				if (packetName.equalsIgnoreCase("PacketPlayInWindowClick")) {
-  					PacketContainer container = this.protocol.getContainer(packet);
+  					PacketContainer container = protocol.getContainer(packet);
   					if (container.read(5).getData().toString().equalsIgnoreCase("QUICK_CRAFT") && ((int)container.read(2).getData()) == 9 
   					&& (container.read(4).getData() == null || container.read(4).getData().toString().replaceAll("[0-9]", "").replaceAll(" ", "").equalsIgnoreCase("AIR"))) {
 	  					InventoryClickEvent clickEvent = new InventoryClickEvent(player.getOpenInventory(), null, (int)container.read(1).getData(), ClickType.MIDDLE, null); // replace with custom PlayerCloneItemEvent in the future.
-	  					this.callEvent(clickEvent);
+	  					callEvent(clickEvent);
   					}
   				} else if (packetName.equalsIgnoreCase("PacketPlayInAutoRecipe")) {
 		  			PlayerAutoCraftEvent AutoCraft = new PlayerAutoCraftEvent(player, player.getOpenInventory().getTopInventory());
-		  			this.callEvent(AutoCraft);
+		  			callEvent(AutoCraft);
 				  	return AutoCraft.isCancelled();
 		  		} else if (packetName.equalsIgnoreCase("PacketPlayInCloseWindow")) {
 		  			InventoryCloseEvent CloseInventory = new InventoryCloseEvent(player.getOpenInventory());
-		  			this.callEvent(CloseInventory);
+		  			callEvent(CloseInventory);
 				  	return CloseInventory.isCancelled();
 		  		}
   			}
-  		} catch (Exception e) { e.printStackTrace(); }
+  		} catch (Exception e) { }
   		return false;
   	}
   	
@@ -113,7 +112,7 @@ public class ProtocolManager {
     * 
     * @param event - The event to be triggered.
     */
-    private void callEvent(Event event) {
+    private static void callEvent(final Event event) {
     	HandlerList handlers = event.getHandlers();
     	RegisteredListener[] listeners = handlers.getRegisteredListeners();
     	for (RegisteredListener registration: listeners) {
@@ -138,9 +137,9 @@ public class ProtocolManager {
     * Closes the currently open protocol handler(s).
     * 
     */
-  	public void closeProtocol() {
-  		if (this.protocol != null) {
-  			this.protocol.close();
+  	public static void closeProtocol() {
+  		if (protocol != null) {
+  			protocol.close();
   		}
   	}
   	
@@ -149,18 +148,7 @@ public class ProtocolManager {
     * 
     * @return If the protocol handler(s) are open.
     */
-  	public boolean isHandling() {
-  		return (this.protocol != null);
+  	public static boolean isHandling() {
+  		return (protocol != null);
   	}
-  	
-   /**
-    * Gets the instance of the ProtocolManager.
-    * 
-    * @param regen - If the ProtocolManager should have a new instance created.
-    * @return The ProtocolManager instance.
-    */
-    public static ProtocolManager getManager() { 
-        if (manager == null) { manager = new ProtocolManager(); }
-        return manager; 
-    } 
 }

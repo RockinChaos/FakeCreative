@@ -35,6 +35,8 @@ import me.RockinChaos.fakecreative.handlers.ConfigHandler;
 import me.RockinChaos.fakecreative.utils.SchedulerUtils;
 import me.RockinChaos.fakecreative.utils.ServerUtils;
 import me.RockinChaos.fakecreative.utils.StringUtils;
+import me.RockinChaos.fakecreative.utils.sql.Controller;
+import me.RockinChaos.fakecreative.utils.sql.Database;
 
 public class Database extends Controller {
 	
@@ -370,7 +372,7 @@ public class Database extends Controller {
 				dataExists = true;
 			}
 		} catch (Exception e) {
-			ServerUtils.logSevere("{SQL} Could not read from the database.db file, some ItemJoin features have been disabled!");
+			ServerUtils.logSevere("{SQL} Could not read from the " + data.dataFolder + ".db file, some ItemJoin features have been disabled!");
 			ServerUtils.sendSevereTrace(e);
 		} finally {
 			this.close(ps, rs, conn, false);
@@ -403,8 +405,8 @@ public class Database extends Controller {
 	* @return The Database instance.
 	*/
 	public static Database getDatabase() {
-		if (data == null || !data.dataFolder.equalsIgnoreCase("database")) {
-			data = new Database("database"); 
+		if (data == null || !data.dataFolder.equalsIgnoreCase("playerdata")) {
+			data = new Database("playerdata"); 
 			try {
 				data.getConnection();
 			} catch (Exception e) {
@@ -453,14 +455,14 @@ abstract class Controller {
     * @throws SQLException 
 	*/
 	protected Connection getConnection() throws SQLException {
-		synchronized("FK_SQL") {
+		synchronized("IJ_SQL") {
 			if (this.isClosed(this.connection) && !this.stopConnection) {
 				if (this.isClosed(this.connection)) {
 					if (ConfigHandler.getConfig().sqlEnabled()) {
 						try {
 			                FileConfiguration config = ConfigHandler.getConfig().getFile("config.yml");
 			                String database = "jdbc:mysql://" + config.getString("Database.host") + ":" + config.getString("Database.port") + "/" + (config.getString("Database.table") != null ? config.getString("Database.table") : config.getString("Database.database")) + "?useUnicode=true&characterEncoding=utf-8&connectTimeout=10000&useSSL=false&allowPublicKeyRetrieval=true&useCursorFetch=true&useLocalSessionState=true&rewriteBatchedStatements=true&maintainTimeStats=false";
-			                Class.forName("com.mysql.jdbc.Driver").newInstance();
+			                Class.forName("com.mysql.jdbc.Driver").getDeclaredConstructor().newInstance();
 			                try {
 			                	connection = DriverManager.getConnection(database, config.getString("Database.user"), config.getString("Database.pass"));
 				                Statement statement = connection.createStatement();

@@ -1,3 +1,20 @@
+/*
+ * FakeCreative
+ * Copyright (C) CraftationGaming <https://www.craftationgaming.com/>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package me.RockinChaos.fakecreative.handlers.modes;
 
 import java.util.ArrayList;
@@ -35,12 +52,12 @@ public class Creative {
 
 	private static List<PlayerObject> creativePlayers = new ArrayList<PlayerObject>();
 	
-	private static ItemStack creativeTab = ItemHandler.getItem("APPLE", 1, false, true, "&a&1&c&2&d&e&l&nCreative Tab", "&7", "&7&o*Access the creative menu to", "&7&oselect from a list of minecraft items.");
-	private static ItemStack pickTab = ItemHandler.getItem("STICK", 1, false, true, "&a&1&c&2&d&b&l&nPick Block", "&7", "&7&o*Allows you to clone", "&7&oa existing block item.");
-	private static ItemStack pickItem = ItemHandler.getItem("STICK", 1, true, true, "&d&1&c&2&a&b&l&nPick Block", "&7", "&7&o*Right-click a block to", "&7&oadd to your inventory.");
-	private static ItemStack saveTab = ItemHandler.getItem("PAPER", 1, false, true, "&a&1&c&2&d&a&l&nSaved Hotbars", "&7", "&7&o*Save or restore a hotbar", "&7&oto your current inventory.");
-	private static ItemStack unkTab = ItemHandler.getItem("POPPY", 1, false, true, "&a&1&c&2&d&6&l&nNo Idea?!", "&7", "&7*Feel free to suggest something.");
-	private static ItemStack destroyTab = ItemHandler.getItem("LAVA_BUCKET", 1, false, true, "&a&1&c&2&d&c&l&nDestroy Item", "&7", "&7*Permanently destroy your items.", "&7", "&8&odrop an item to delete it.", "&8&oDouble-click to clear inventory.");
+	private static final ItemStack creativeTab = ItemHandler.getItem("APPLE", 1, false, true, "&a&1&c&2&d&e&l&nCreative Tab", "&7", "&7&o*Access the creative menu to", "&7&oselect from a list of minecraft items.");
+	private static final ItemStack pickTab = ItemHandler.getItem("STICK", 1, false, true, "&a&1&c&2&d&b&l&nPick Block", "&7", "&7&o*Allows you to clone", "&7&oa existing block item.");
+	private static final ItemStack pickItem = ItemHandler.getItem("STICK", 1, true, true, "&d&1&c&2&a&b&l&nPick Block", "&7", "&7&o*Right-click a block to", "&7&oadd to your inventory.");
+	private static final ItemStack saveTab = ItemHandler.getItem("PAPER", 1, false, true, "&a&1&c&2&d&a&l&nSaved Hotbars", "&7", "&7&o*Save or restore a hotbar", "&7&oto your current inventory.");
+	private static final ItemStack userTab = ItemHandler.getItem("SKULL_ITEM:3", 1, false, true, "&a&1&c&2&d&6&l&nPreferences", "&7", "&7*Creative mode settings specific to you.");
+	private static final ItemStack destroyTab = ItemHandler.getItem("LAVA_BUCKET", 1, false, true, "&a&1&c&2&d&c&l&nDestroy Item", "&7", "&7*Permanently destroy your items.", "&7", "&8&oDrop an item to delete it.", "&8&oShift-click to clear inventory.");
 
    /**
     * Puts the Player in Fake Creative Mode.
@@ -152,7 +169,7 @@ public class Creative {
     * 
     * @param player - The Player having their crafting items set.
     */
-    public static void setTabs(Player player) {
+    public static void setTabs(final Player player) {
 		Inventory craftInventory = player.getOpenInventory().getTopInventory();
 		for (int i = 0; i <= 4; i++) {
 			if (craftInventory.getItem(i) != null && craftInventory.getItem(i).getType() != Material.AIR) {
@@ -163,10 +180,12 @@ public class Creative {
 				} else { PlayerHandler.dropItem(player, drop); }
 			}
 		}
+		final ItemStack userClone = userTab.clone();
+		userClone.setItemMeta(ItemHandler.setSkullOwner(userClone.getItemMeta(), player.getName()));
 		craftInventory.setItem(1, creativeTab);
 		craftInventory.setItem(2, pickTab);
 		craftInventory.setItem(3, saveTab);
-		craftInventory.setItem(4, unkTab);
+		craftInventory.setItem(4, userClone);
 		SchedulerUtils.run(() -> { 
 			craftInventory.setItem(0, destroyTab);
 			player.updateInventory();
@@ -324,8 +343,9 @@ public class Creative {
     * @return If the ItemStack and itemName combo is a Fake Creative Tab.
     */
     public static boolean isItem(ItemStack itemStack, String item) {
-    	return itemStack != null && ((item.equals("creativeTab") && itemStack.isSimilar(creativeTab)) || (item.equals("pickTab") && itemStack.isSimilar(pickTab)) || (item.equals("pickItem") && itemStack.isSimilar(pickItem))
-    			|| (item.equals("saveTab") && itemStack.isSimilar(saveTab)) || (item.equals("unkTab") && itemStack.isSimilar(unkTab)) || (item.equals("destroyTab") && itemStack.isSimilar(destroyTab))); 
+    	return itemStack != null && ((item.equals("creativeTab") && ItemHandler.isSimilar(itemStack, creativeTab)) || (item.equals("pickTab") && ItemHandler.isSimilar(itemStack, pickTab)) 
+    			|| (item.equals("pickItem") && ItemHandler.isSimilar(itemStack, pickItem)) || (item.equals("saveTab") && ItemHandler.isSimilar(itemStack, saveTab)) 
+    			|| (item.equals("userTab") && ItemHandler.isSimilar(itemStack, userTab)) || (item.equals("destroyTab") && ItemHandler.isSimilar(itemStack, destroyTab))); 
     }
     
    /**
@@ -335,7 +355,8 @@ public class Creative {
     * @return If the ItemStack is a Fake Creative Tab.
     */
     public static boolean isItem(ItemStack item) {
-    	return item != null && (item.isSimilar(creativeTab) || item.isSimilar(pickTab) || item.isSimilar(pickItem) || item.isSimilar(saveTab) || item.isSimilar(unkTab) || item.isSimilar(destroyTab));
+    	return item != null && (ItemHandler.isSimilar(item, creativeTab) || ItemHandler.isSimilar(item, pickTab) || ItemHandler.isSimilar(item, pickItem) || ItemHandler.isSimilar(item, saveTab) 
+    		|| ItemHandler.isSimilar(item, userTab) || ItemHandler.isSimilar(item, destroyTab));
     }
     
    /**

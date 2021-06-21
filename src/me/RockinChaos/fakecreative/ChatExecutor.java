@@ -21,6 +21,7 @@ import org.bukkit.GameMode;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
+import me.RockinChaos.fakecreative.ChatComponent.ClickAction;
 import me.RockinChaos.fakecreative.handlers.ConfigHandler;
 import me.RockinChaos.fakecreative.handlers.PermissionsHandler;
 import me.RockinChaos.fakecreative.handlers.PlayerHandler;
@@ -42,39 +43,39 @@ public class ChatExecutor implements CommandExecutor {
 	@Override
 	public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
 		if (Execute.DEFAULT.accept(sender, args, 0)) {
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6FakeCreative v" + FakeCreative.getInstance().getDescription().getVersion() + "&c by RockinChaos");
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6Type &6&l/FakeCreative Help &6for the help menu.");
+			LanguageAPI.getLang(false).dispatchMessage(sender, ("&6FakeCreative v" + FakeCreative.getInstance().getDescription().getVersion() + "&c by RockinChaos"), "&bThis should be the version submitted to the developer \n&bwhen submitting a bug or feature request.", "https://github.com/RockinChaos/FakeCreative/issues", ClickAction.OPEN_URL);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6Type &6&l/FakeCreative Help &6for the help menu.", "&eClick to View the Help Menu.", "/fakecreative help", ClickAction.RUN_COMMAND);
 		} else if (Execute.HELP.accept(sender, args, 1)) {
 			LanguageAPI.getLang(false).dispatchMessage(sender, "");
 			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l&m]----------------&6&l[&c FakeCreative &6&l]&6&l&m---------------[");
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6ItemJoin v" + FakeCreative.getInstance().getDescription().getVersion() + "&c by RockinChaos");
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/FakeCreative Help &7- &cThis help menu.");
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/FakeCreative Reload &7- &cReloads the .yml files.");
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/FakeCreative Updates &7- &cChecks for plugin updates.");
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/FakeCreative Upgrade &7- &cUpdate FakeCreative to latest version.");
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6Type &6&l/FakeCreative Help 2 &6for the next page.");
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l&m]---------------&6&l[&c Help Menu 1/3 &6&l]&6&l&m---------------[");
+			LanguageAPI.getLang(false).dispatchMessage(sender, ("&6FakeCreative v" + FakeCreative.getInstance().getDescription().getVersion() + "&c by RockinChaos"), "&bThis should be the version submitted to the developer \n&bwhen submitting a bug or feature request.", "https://github.com/RockinChaos/FakeCreative/issues", ClickAction.OPEN_URL);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/FakeCreative Help &7- &cThis help menu.", "&aExecuting this command shows this help menu!", "/fakecreative help", ClickAction.SUGGEST_COMMAND);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/FakeCreative Reload &7- &cReloads the .yml files.", "&aFully reloads the plugin, fetching \n&aany changes made to the .yml files. \n\n&aBe sure to save changes made to your .yml files!", "/fakecreative reload", ClickAction.SUGGEST_COMMAND);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/FakeCreative Updates &7- &cChecks for plugin updates.", "&aChecks to see if there are any updates available for this plugin.", "/fakecreative updates", ClickAction.SUGGEST_COMMAND);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/FakeCreative Upgrade &7- &cUpdates to latest version.", "&aAttempts to Upgrade this plugin to the latest version. \n&aYou will need to restart the server for this process to complete.", "/fakecreative upgrade", ClickAction.SUGGEST_COMMAND);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6Type &6&l/FakeCreative Help 2 &6for the next page.", "&eClick to View the Next Page.", "/fakecreative help 2", ClickAction.RUN_COMMAND);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l&m]---------------&6&l[&c Help Menu 1/2 &6&l]&6&l&m---------------[");
 			LanguageAPI.getLang(false).dispatchMessage(sender, "");
 		} else if (Execute.HELP.accept(sender, args, 2)) {
 			LanguageAPI.getLang(false).dispatchMessage(sender, "");
 			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l&m]----------------&6&l[&c FakeCreative &6&l]&6&l&m---------------[");
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode Survival &7- &cSets the player to survival.");
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode Creative &7- &cSets the player to creative.");
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode Adventure &7- &cSets the player to adventure.");
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode Spectator &7- &cSets the player to spectator.");
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6Alternative you can use &6&l/FakeCreative <Gamemode>&6 instead.");
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6Type &6&l/FakeCreative Help 3 &6for the next page.");
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode Survival &7- &cSets the player to survival.", "&aSets the player to survival mode. \n\n&aAlias; \n&6/Gamemode 0 \n&6/FakeCreative 0 \n&6/FakeCreative Survival", "/gamemode survival", ClickAction.SUGGEST_COMMAND);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode Creative &7- &cSets the player to creative.", "&aSets the player to creative mode. \n\n&aAlias; \n&6/Gamemode 1 \n&6/FakeCreative 1 \n&6/FakeCreative Creative", "/gamemode creative", ClickAction.SUGGEST_COMMAND);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode Adventure &7- &cSets the player to adventure.", "&aSets the player to adventure mode. \n\n&aAlias; \n&6/Gamemode 2 \n&6/FakeCreative 2 \n&6/FakeCreative Adventure", "/gamemode adventure", ClickAction.SUGGEST_COMMAND);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode Spectator &7- &cSets the player to spectator.", "&aSets the player to adventure mode. \n\n&aAlias; \n&6/Gamemode 3 \n&6/FakeCreative 3 \n&6/FakeCreative Spectator", "/gamemode spectator", ClickAction.SUGGEST_COMMAND);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6Type &6&l/FakeCreative Help 3 &6for the next page.", "&eClick to View the Next Page.", "/fakecreative help 3", ClickAction.RUN_COMMAND);
 			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l&m]---------------&6&l[&c Help Menu 2/3 &6&l]&6&l&m---------------[");
 			LanguageAPI.getLang(false).dispatchMessage(sender, "");
 		} else if (Execute.HELP.accept(sender, args, 3)) {
 			LanguageAPI.getLang(false).dispatchMessage(sender, "");
 			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l&m]----------------&6&l[&c FakeCreative &6&l]&6&l&m---------------[");
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode 0 &7- &cSets the player to survival.");
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode 1 &7- &cSets the player to creative.");
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode 2 &7- &cSets the player to adventure.");
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode 3 &7- &cSets the player to spectator.");
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6Alternative you can use &6&l/FakeCreative <Gamemode>&6 instead.");
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l&m]---------------&6&l[&c Help Menu 3/3 &6&l]&6&l&m---------------[");
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode Survival <User> &7- &cSets user to survival.", "&aSets the specified player to survival mode. \n\n&aAlias; \n&6/Gamemode 0 <User> \n&6/FakeCreative 0 <User> \n&6/FakeCreative Survival <User>", "/gamemode survival ", ClickAction.SUGGEST_COMMAND);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode Creative <User> &7- &cSets user to creative.", "&aSets the specified player to creative mode. \n\n&aAlias; \n&6/Gamemode 2 <User> \n&6/FakeCreative 2 <User> \n&6/FakeCreative Creative <User>", "/gamemode creative ", ClickAction.SUGGEST_COMMAND);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode Adventure <User> &7- &cSets user to adventure.", "&aSets the specified player to adventure mode. \n\n&aAlias; \n&6/Gamemode 2 <User> \n&6/FakeCreative 2 <User> \n&6/FakeCreative Adventure <User>", "/gamemode adventure ", ClickAction.SUGGEST_COMMAND);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode Spectator <User> &7- &cSets user to spectator.", "&aSets the specified player to spectator mode. \n\n&aAlias; \n&6/Gamemode 3 <User> \n&6/FakeCreative 3 <User> \n&6/FakeCreative Spectator <User>", "/gamemode spectator ", ClickAction.SUGGEST_COMMAND);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6Found a bug? Report it @");
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6https://github.com/RockinChaos/FakeCreative/issues", "&eClick to Submit a Bug or Feature Request.", "https://github.com/RockinChaos/FakeCreative/issues", ClickAction.OPEN_URL);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l&m]---------------&6&l[&c Help Menu 2/3 &6&l]&6&l&m---------------[");
 			LanguageAPI.getLang(false).dispatchMessage(sender, "");
 		} else if (Execute.RELOAD.accept(sender, args, 0)) {
 			ConfigHandler.getConfig().reloadConfigs(false);
@@ -220,7 +221,8 @@ public class ChatExecutor implements CommandExecutor {
 	    * 
 	    */
 		private boolean hasSyntax(final String[] args, final int page) {
-			return (args.length >= 2 && args[1].equalsIgnoreCase(String.valueOf(page)) || true);
+			return ((args.length >= 2 && args[1].equalsIgnoreCase(String.valueOf(page))) || !(args.length >= 2)  || this.equals(Execute.CREATIVE) || this.equals(Execute.SURVIVAL) 
+				  || this.equals(Execute.ADVENTURE) || this.equals(Execute.SPECTATOR));
 		}
 		
        /**

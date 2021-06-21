@@ -519,11 +519,11 @@ public class Menu {
 		pagedPane.addButton(new Button(ItemHandler.getItem("LAVA_BUCKET", 1, (selected == 1 ? true : false), true, (selected == 1 ? "&a"  : "&f") + "Miscellaneous", "&7", "&8&oClick to view"), event -> this.miscellaneousMenu(event.getWhoClicked())));
 		pagedPane.addButton(new Button(ItemHandler.getItem("APPLE", 1, (selected == 2 ? true : false), true, (selected == 2 ? "&a"  : "&f") + "Foodstuffs", "&7", "&8&oClick to view"), event -> this.foodMenu(event.getWhoClicked())));
 		pagedPane.addButton(new Button(ItemHandler.getItem("IRON_AXE", 1, (selected == 3 ? true : false), true, (selected == 3 ? "&a"  : "&f") + "Tools", "&7", "&8&oClick to view"), event -> this.toolsMenu(event.getWhoClicked())));
-		pagedPane.addButton(new Button(ItemHandler.getItem("GOLDEN_SWORD", 1, (selected == 4 ? true : false), true, (selected == 4 ? "&a"  : "&f") + "Combat", "&7", "&8&0Click to view"), event -> this.combatMenu(event.getWhoClicked())));
-		pagedPane.addButton(new Button(ItemHandler.getItem("WATER_BOTTLE", 1, (selected == 5 ? true : false), true, (selected == 5 ? "&a"  : "&f") + "Brewing", "&7", "&8&0Click to view"), event -> this.brewingMenu(event.getWhoClicked())));
-		pagedPane.addButton(new Button(ItemHandler.getItem("BRICKS", 1, (selected == 6 ? true : false), true, (selected == 6 ? "&a"  : "&f") + "Building Blocks", "&7", "&8&0Click to view"), event -> this.buildingMenu(event.getWhoClicked())));
-		pagedPane.addButton(new Button(ItemHandler.getItem("PEONY", 1, (selected == 7 ? true : false), true, (selected == 7 ? "&a"  : "&f") + "Decoration Blocks", "&7", "&8&0Click to view"), event -> this.decorationMenu(event.getWhoClicked())));
-		pagedPane.addButton(new Button(ItemHandler.getItem("REDSTONE", 1, (selected == 8 ? true : false), true, (selected == 8 ? "&a"  : "&f") + "Redstone", "&7", "&8&0Click to view"), event -> this.redstoneMenu(event.getWhoClicked())));
+		pagedPane.addButton(new Button(ItemHandler.getItem("GOLDEN_SWORD", 1, (selected == 4 ? true : false), true, (selected == 4 ? "&a"  : "&f") + "Combat", "&7", "&8&oClick to view"), event -> this.combatMenu(event.getWhoClicked())));
+		pagedPane.addButton(new Button(ItemHandler.getItem("WATER_BOTTLE", 1, (selected == 5 ? true : false), true, (selected == 5 ? "&a"  : "&f") + "Brewing", "&7", "&8&oClick to view"), event -> this.brewingMenu(event.getWhoClicked())));
+		pagedPane.addButton(new Button(ItemHandler.getItem("BRICKS", 1, (selected == 6 ? true : false), true, (selected == 6 ? "&a"  : "&f") + "Building Blocks", "&7", "&8&oClick to view"), event -> this.buildingMenu(event.getWhoClicked())));
+		pagedPane.addButton(new Button(ItemHandler.getItem("PEONY", 1, (selected == 7 ? true : false), true, (selected == 7 ? "&a"  : "&f") + "Decoration Blocks", "&7", "&8&oClick to view"), event -> this.decorationMenu(event.getWhoClicked())));
+		pagedPane.addButton(new Button(ItemHandler.getItem("REDSTONE", 1, (selected == 8 ? true : false), true, (selected == 8 ? "&a"  : "&f") + "Redstone", "&7", "&8&oClick to view"), event -> this.redstoneMenu(event.getWhoClicked())));
 	}
 	
    /**

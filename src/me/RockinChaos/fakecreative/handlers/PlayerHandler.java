@@ -42,6 +42,7 @@ import me.RockinChaos.fakecreative.handlers.modes.Creative;
 import me.RockinChaos.fakecreative.utils.SchedulerUtils;
 import me.RockinChaos.fakecreative.utils.ServerUtils;
 import me.RockinChaos.fakecreative.utils.api.LegacyAPI;
+import me.RockinChaos.fakecreative.utils.api.DependAPI;
 
 public class PlayerHandler {
 	
@@ -225,7 +226,7 @@ public class PlayerHandler {
 		} else if (ServerUtils.hasSpecificUpdate("1_9") && player.getInventory().getItemInOffHand().getType() != null && player.getInventory().getItemInOffHand().getType() != Material.AIR) {
 			return player.getInventory().getItemInOffHand();
 		} else if (!ServerUtils.hasSpecificUpdate("1_9")) {
-			//return LegacyAPI.getInHandItem(player);
+			return LegacyAPI.getInHandItem(player);
 		}
 		return null;
 	}
@@ -245,7 +246,7 @@ public class PlayerHandler {
 		} else if (ServerUtils.hasSpecificUpdate("1_9") && type != null && type.equalsIgnoreCase("OFF_HAND")) {
 			return player.getInventory().getItemInOffHand();
 		} else if (!ServerUtils.hasSpecificUpdate("1_9")) {
-			//return LegacyAPI.getInHandItem(player);
+			return LegacyAPI.getInHandItem(player);
 		}
 		return null;
 	}
@@ -262,7 +263,7 @@ public class PlayerHandler {
 		if (ServerUtils.hasSpecificUpdate("1_9")) {
 			return player.getInventory().getItemInMainHand();
 		} else if (!ServerUtils.hasSpecificUpdate("1_9")) {
-			//return LegacyAPI.getInHandItem(player);
+			return LegacyAPI.getInHandItem(player);
 		}
 		return null;
 	}
@@ -279,7 +280,7 @@ public class PlayerHandler {
 		if (ServerUtils.hasSpecificUpdate("1_9")) {
 			return player.getInventory().getItemInOffHand();
 		} else if (!ServerUtils.hasSpecificUpdate("1_9")) {
-			//return LegacyAPI.getInHandItem(player);
+			return LegacyAPI.getInHandItem(player);
 		}
 		return null;
 	}
@@ -296,7 +297,7 @@ public class PlayerHandler {
 		if (ServerUtils.hasSpecificUpdate("1_9")) {
 			player.getInventory().setItemInMainHand(item);
 		} else if (!ServerUtils.hasSpecificUpdate("1_9")) {
-		//	LegacyAPI.setInHandItem(player, item);
+			LegacyAPI.setInHandItem(player, item);
 		}
 	}
 	
@@ -312,7 +313,7 @@ public class PlayerHandler {
 		if (ServerUtils.hasSpecificUpdate("1_9")) {
 			player.getInventory().setItemInOffHand(item);
 		} else if (!ServerUtils.hasSpecificUpdate("1_9")) {
-			//LegacyAPI.setInHandItem(player, item);
+			LegacyAPI.setInHandItem(player, item);
 		}
 	}
 	
@@ -338,11 +339,10 @@ public class PlayerHandler {
     * @param playerName - The player name to be transformed.
     * @return The fetched Player instance.
     */
-	@SuppressWarnings("unused")
 	public static Player getPlayerString(final String playerName) {
 		Player args = null;
-		try { args = Bukkit.getPlayer(UUID.fromString(playerName)); } catch (Exception e) {}
-		if (playerName != null && false) {
+		try { args = Bukkit.getPlayer(UUID.fromString(playerName)); } catch (Exception e) { }
+		if (playerName != null && DependAPI.getDepends(false).nickEnabled()) {
 			try { 
 				de.domedd.betternick.api.nickedplayer.NickedPlayer np = new de.domedd.betternick.api.nickedplayer.NickedPlayer(LegacyAPI.getPlayer(playerName));
 				if (np.isNicked()) { return LegacyAPI.getPlayer(np.getRealName()); }
@@ -362,21 +362,30 @@ public class PlayerHandler {
     * @param player - The player to have their UUID fetched.
     * @return The UUID of the player or if not found, their String name.
     */
-	@SuppressWarnings("unused")
 	public static String getPlayerID(final Player player) {
-		if (player != null && player.getUniqueId() != null) {
-			return player.getUniqueId().toString();
-		} else if (player != null && false) {
-			try {
-				de.domedd.betternick.api.nickedplayer.NickedPlayer np = new de.domedd.betternick.api.nickedplayer.NickedPlayer(player);
-				if (np.isNicked()) { return np.getRealName();
-				} else { return player.getName(); }
-			} catch (NoClassDefFoundError e) {
-				if (BetterNick.getApi().isPlayerNicked(player)) { return BetterNick.getApi().getRealName(player);
-				} else { return player.getName(); }
+		try {
+			if (player != null && ServerUtils.hasSpecificUpdate("1_8") && player.getUniqueId() != null) {
+				return player.getUniqueId().toString();
+			} else if (player != null && DependAPI.getDepends(false).nickEnabled()) {
+				try {
+					de.domedd.betternick.api.nickedplayer.NickedPlayer np = new de.domedd.betternick.api.nickedplayer.NickedPlayer(player);
+					if (np.isNicked()) { 
+						if (ServerUtils.hasSpecificUpdate("1_8") && np.getUniqueId() != null) {
+							return np.getUniqueId().toString();
+						} else {
+							return np.getRealName();
+						}
+					} else { return player.getName(); }
+				} catch (NoClassDefFoundError e) {
+					if (BetterNick.getApi().isPlayerNicked(player)) { return BetterNick.getApi().getRealName(player);
+					} else { return player.getName(); }
+				}
+			} else if (player != null) {
+				return player.getName();
 			}
-		} else if (player != null) {
-			return player.getName();
+		} catch (Exception e) { 
+			if (player != null) { return player.getName(); }
+			ServerUtils.sendDebugTrace(e);
 		}
 		return "";
 	}
@@ -388,21 +397,30 @@ public class PlayerHandler {
     * @param player - The OfflinePlayer instance to have their UUID fetched.
     * @return The UUID of the player or if not found, their String name.
     */
-	@SuppressWarnings("unused")
 	public static String getOfflinePlayerID(final OfflinePlayer player) {
-		if (player != null && player.getUniqueId() != null) {
-			return player.getUniqueId().toString();
-		} else if (player != null && false) {
-			try {
-				de.domedd.betternick.api.nickedplayer.NickedPlayer np = new de.domedd.betternick.api.nickedplayer.NickedPlayer((BetterNick) player);
-				if (np.isNicked()) { return np.getRealName();
-				} else { return player.getName(); }
-			} catch (NoClassDefFoundError e) {
-				if (BetterNick.getApi().isPlayerNicked((Player) player)) { return BetterNick.getApi().getRealName((Player) player);
-				} else { return player.getName(); }
+		try {
+			if (player != null && ServerUtils.hasSpecificUpdate("1_8") && player.getUniqueId() != null) {
+				return player.getUniqueId().toString();
+			} else if (player != null && DependAPI.getDepends(false).nickEnabled()) {
+				try {
+					de.domedd.betternick.api.nickedplayer.NickedPlayer np = new de.domedd.betternick.api.nickedplayer.NickedPlayer((BetterNick) player);
+					if (np.isNicked()) { 
+						if (ServerUtils.hasSpecificUpdate("1_8") && np.getUniqueId() != null) {
+							return np.getUniqueId().toString();
+						} else {
+							return np.getRealName();
+						}
+					} else { return player.getName(); }
+				} catch (NoClassDefFoundError e) {
+					if (BetterNick.getApi().isPlayerNicked((Player) player)) { return BetterNick.getApi().getRealName((Player) player);
+					} else { return player.getName(); }
+				}
+			} else if (player != null) {
+				return player.getName();
 			}
-		} else if (player != null) {
-			return player.getName();
+		} catch (Exception e) { 
+			if (player != null) { return player.getName(); }
+			ServerUtils.sendDebugTrace(e);
 		}
 		return "";
 	}

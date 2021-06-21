@@ -40,8 +40,11 @@ import me.RockinChaos.fakecreative.listeners.Targeting;
 import me.RockinChaos.fakecreative.utils.SchedulerUtils;
 import me.RockinChaos.fakecreative.utils.ServerUtils;
 import me.RockinChaos.fakecreative.utils.StringUtils;
+import me.RockinChaos.fakecreative.utils.api.DependAPI;
 import me.RockinChaos.fakecreative.utils.api.LanguageAPI;
 import me.RockinChaos.fakecreative.utils.api.MetricsAPI;
+import me.RockinChaos.fakecreative.utils.api.ProtocolAPI;
+import me.RockinChaos.fakecreative.utils.protocol.ProtocolManager;
 import me.RockinChaos.fakecreative.utils.sql.SQL;
 
 public class ConfigHandler {
@@ -220,9 +223,8 @@ public class ConfigHandler {
 		final boolean reload = FakeCreative.getInstance().isStarted();
 		ServerUtils.clearErrorStatements();
 		this.copyFiles();
-		if (ServerUtils.hasSpecificUpdate("1_8") && !me.RockinChaos.fakecreative.utils.protocol.ProtocolManager.getManager().isHandling()) { 
-			me.RockinChaos.fakecreative.utils.protocol.ProtocolManager.getManager().handleProtocols(); 
-		}
+		if (ServerUtils.hasSpecificUpdate("1_8") && !DependAPI.getDepends(false).protocolEnabled() && !ProtocolManager.isHandling()) { ProtocolManager.handleProtocols(); }
+		else if (ServerUtils.hasSpecificUpdate("1_8") && DependAPI.getDepends(false).protocolEnabled() && !ProtocolAPI.isHandling()) { ProtocolAPI.handleProtocols(); }
 		FakeCreative.getInstance().setStarted(false);
 		SchedulerUtils.runAsync(() -> {
 			SQL.newData(reload); {

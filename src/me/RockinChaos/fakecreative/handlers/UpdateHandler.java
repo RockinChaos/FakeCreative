@@ -1,5 +1,5 @@
 /*
- * ItemJoin
+ * FakeCreative
  * Copyright (C) CraftationGaming <https://www.craftationgaming.com/>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -96,7 +96,7 @@ public class UpdateHandler {
     			ServerUtils.messageSender(sender, "&aSuccessfully updated to v" + this.latestVersion + "!");
     			ServerUtils.messageSender(sender, "&aYou must restart your server for this to take affect.");
     		} catch (Exception e) {
-    			ServerUtils.messageSender(sender, "&cAn error has occurred while trying to update the plugin ItemJoin.");
+    			ServerUtils.messageSender(sender, "&cAn error has occurred while trying to update the plugin " + FakeCreative.getInstance().getName() + ".");
     			ServerUtils.messageSender(sender, "&cPlease try again later, if you continue to see this please contact the plugin developer.");
     			ServerUtils.sendDebugTrace(e);
     		}
@@ -125,7 +125,7 @@ public class UpdateHandler {
     		}
     		ServerUtils.messageSender(sender, "&cA new version is available: " + "&av" + this.latestVersion + "-RELEASE");
     		ServerUtils.messageSender(sender, "&aGet it from: https://github.com/RockinChaos/" + FakeCreative.getInstance().getName().toLowerCase() + "/releases/latest");
-    		ServerUtils.messageSender(sender, "&aIf you wish to auto update, please type /ItemJoin Upgrade");
+    		ServerUtils.messageSender(sender, "&aIf you wish to auto update, please type /" + FakeCreative.getInstance().getName() + " Upgrade");
     		this.sendNotifications();
     	} else if (this.updatesAllowed) {
     		if (this.betaVersion) {

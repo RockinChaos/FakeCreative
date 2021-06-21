@@ -27,9 +27,12 @@ import java.util.regex.Pattern;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
-import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+
+import de.domedd.betternick.BetterNick;
+import me.RockinChaos.fakecreative.utils.api.DependAPI;
+import me.clip.placeholderapi.PlaceholderAPI;
 
 public class StringUtils {
 	
@@ -213,20 +216,41 @@ public class StringUtils {
     * @param placeHolder - The placeholders to be replaced into the String.
     * @return The newly translated String.
     */
-	public static String translateLayout(String str, final CommandSender player, final String...placeHolder) {
-		String playerName = player.getName();
-		
+	public static String translateLayout(String str, final Player player, final String...placeHolder) {
+		String playerName = "EXEMPT";
+		if (player != null && DependAPI.getDepends(false).nickEnabled()) {
+			try {
+				de.domedd.betternick.api.nickedplayer.NickedPlayer np = new de.domedd.betternick.api.nickedplayer.NickedPlayer(player);
+				if (np.isNicked()) {
+					playerName = np.getRealName();
+				} else { playerName = player.getName(); }
+			} catch (NoClassDefFoundError e) {
+				try {
+					if (BetterNick.getApi().isPlayerNicked(player)) {
+						playerName = BetterNick.getApi().getRealName(player);
+					} else { playerName = player.getName(); }	
+				} catch (NullPointerException e2) { playerName = player.getName(); }
+			}
+		} else if (player != null) { playerName = player.getName(); }
 		if (playerName != null && player != null && !(player instanceof ConsoleCommandSender)) {
 			try { str = str.replace("%player%", playerName); } catch (Exception e) { ServerUtils.sendDebugTrace(e); }
-			try { str = str.replace("%mob_kills%", String.valueOf(((Player)(player)).getStatistic(Statistic.MOB_KILLS))); } catch (Exception e) { ServerUtils.sendDebugTrace(e); }
-			try { str = str.replace("%player_kills%", String.valueOf(((Player)(player)).getStatistic(Statistic.PLAYER_KILLS))); } catch (Exception e) { ServerUtils.sendDebugTrace(e); }
-			try { str = str.replace("%player_deaths%", String.valueOf(((Player)(player)).getStatistic(Statistic.DEATHS))); } catch (Exception e) { ServerUtils.sendDebugTrace(e); }
-			try { str = str.replace("%player_food%", String.valueOf(((Player)(player)).getFoodLevel())); } catch (Exception e) { ServerUtils.sendDebugTrace(e); }
-			try { str = str.replace("%player_health%", String.valueOf(((Player)(player)).getHealth())); } catch (Exception e) { ServerUtils.sendDebugTrace(e); }
-			try { str = str.replace("%player_location%", ((Player)(player)).getLocation().getBlockX() + ", " + ((Player)(player)).getLocation().getBlockY() + ", " + ((Player)(player)).getLocation().getBlockZ()); } catch (Exception e) { ServerUtils.sendDebugTrace(e); }
+			try { str = str.replace("%mob_kills%", String.valueOf(player.getStatistic(Statistic.MOB_KILLS))); } catch (Exception e) { ServerUtils.sendDebugTrace(e); }
+			try { str = str.replace("%player_kills%", String.valueOf(player.getStatistic(Statistic.PLAYER_KILLS))); } catch (Exception e) { ServerUtils.sendDebugTrace(e); }
+			try { str = str.replace("%player_deaths%", String.valueOf(player.getStatistic(Statistic.DEATHS))); } catch (Exception e) { ServerUtils.sendDebugTrace(e); }
+			try { str = str.replace("%player_food%", String.valueOf(player.getFoodLevel())); } catch (Exception e) { ServerUtils.sendDebugTrace(e); }
+			try { 
+				final double health = (ServerUtils.hasSpecificUpdate("1_8") ? player.getHealth() : (double)player.getClass().getMethod("getHealth", double.class).invoke(player));
+				str = str.replace("%player_health%", String.valueOf(health)); 
+			} catch (Exception e) { ServerUtils.sendDebugTrace(e); }
+			try { str = str.replace("%player_location%", player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + ", " + player.getLocation().getBlockZ()); } catch (Exception e) { ServerUtils.sendDebugTrace(e); }
+			try { if (placeHolder != null && placeHolder.length >= 1 && placeHolder[0] != null) { str = str.replace("%player_hit%", placeHolder[0]); } } catch (Exception e) { ServerUtils.sendDebugTrace(e); } }
+			if (player == null) { try { str = str.replace("%player%", "CONSOLE"); } catch (Exception e) { ServerUtils.sendDebugTrace(e); } }
+			str = ChatColor.translateAlternateColorCodes('&', translateHexColorCodes(str));
+		if (DependAPI.getDepends(false).placeHolderEnabled()) {
+			try { try { return PlaceholderAPI.setPlaceholders(player, str); } 
+			catch (NoSuchFieldError e) { ServerUtils.logWarn("An error has occured when setting the PlaceHolder " + e.getMessage() + ", if this issue persits contact the developer of PlaceholderAPI."); return str; }
+			} catch (Exception e) { }
 		}
-		if (player == null) { try { str = str.replace("%player%", "CONSOLE"); } catch (Exception e) { ServerUtils.sendDebugTrace(e); } }
-		str = ChatColor.translateAlternateColorCodes('&', translateHexColorCodes(str));
 		return str;
 	}
 }

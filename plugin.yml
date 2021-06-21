@@ -7,7 +7,7 @@ load: POSTWORLD
 api-version: 1.13
 description: A better creative mode plugin.
 website: https://www.spigotmc.org/resources/fakecreative/
-softdepend: [BetterNick, PlaceholderAPI]
+softdepend: [BetterNick, PlaceholderAPI, ProtocolLib]
 
 commands:
    gamemode:

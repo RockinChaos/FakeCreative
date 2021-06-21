@@ -19,12 +19,18 @@ package me.RockinChaos.fakecreative.utils.api;
 
 import java.util.EnumSet;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.SkullType;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Skull;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import me.RockinChaos.fakecreative.FakeCreative;
 import me.RockinChaos.fakecreative.utils.ServerUtils;
 import me.RockinChaos.fakecreative.utils.StringUtils;
+import me.RockinChaos.fakecreative.handlers.ItemHandler;
 
 /**
  * Welcome to the magical land of make-believe.
@@ -41,6 +47,26 @@ public class LegacyAPI {
     */
     public static void updateInventory(final Player player) {
     	player.updateInventory();
+    }
+    
+   /**
+    * Gets the ItemStack in the Players Hand.
+    * 
+    * @param player - The Player to have its ItemStack found.
+    * @return The found ItemStack.
+    */
+    public static ItemStack getInHandItem(final Player player) {
+    	return player.getInventory().getItemInHand();
+    }
+    
+   /**
+    * Sets the ItemStack to the Players Hand.
+    * 
+    * @param player - The Player to have the ItemStack given.
+    * @param item - The ItemStack to be set to the Players Hand.
+    */
+    public static void setInHandItem(final Player player, final ItemStack item) {
+    	player.setItemInHand(item);
     }
 	
    /**
@@ -88,6 +114,34 @@ public class LegacyAPI {
         EnumSet.allOf(Material.class).forEach(material -> { try { if (StringUtils.containsIgnoreCase(material.toString(), "LEGACY_") && material.getId() == typeID || !ServerUtils.hasSpecificUpdate("1_13") && material.getId() == typeID) { foundMaterial[0] = material; } } catch (Exception e) { }});
         return foundMaterial[0];
     }
+    
+   /**
+    * Sets the owner to the SkullMeta.
+    * 
+    * @param skullMeta - The SkullMeta to have its owner set.
+    * @param owner - The owner to be set to the SkullMeta.
+    * @return The newly set SkullMeta.
+    */
+	public static org.bukkit.inventory.meta.ItemMeta setSkullOwner(final org.bukkit.inventory.meta.SkullMeta skullMeta, final String owner) {
+		skullMeta.setOwner(owner);
+		if (!ServerUtils.hasSpecificUpdate("1_13") && ServerUtils.hasSpecificUpdate("1_8")) {
+			Location loc = new Location(Bukkit.getWorlds().get(0), 200, 1, 200);
+			BlockState blockState = loc.getBlock().getState();
+			try {
+				loc.getBlock().setType(Material.valueOf("SKULL"));
+				Skull skull = (Skull)loc.getBlock().getState();
+				skull.setSkullType(SkullType.PLAYER);
+				skull.setOwner(owner);
+				skull.update();
+				final String texture = ItemHandler.getSkullTexture(skull);
+				if (texture != null && !texture.isEmpty()) {
+					ItemHandler.setSkullTexture(skullMeta, texture);
+				}
+			} catch (Exception e) { }
+			blockState.update(true);
+		}
+		return skullMeta;
+	}
 	
    /**
     * Gets the Bukkit Player from their String name.
@@ -97,5 +151,15 @@ public class LegacyAPI {
     */
 	public static Player getPlayer(final String playerName) {
 		return Bukkit.getPlayer(playerName);
+	}
+	
+   /**
+    * Gets the Bukkit OfflinePlayer from their String name.
+    * 
+    * @param playerName - The String name of the Bukkit OfflinePlayer.
+    * @return The found OfflinePlayer.
+    */
+	public static OfflinePlayer getOfflinePlayer(final String playerName) {
+		return Bukkit.getOfflinePlayer(playerName);
 	}
 }

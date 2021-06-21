@@ -27,6 +27,7 @@ import me.RockinChaos.fakecreative.handlers.PlayerHandler;
 import me.RockinChaos.fakecreative.handlers.modes.Creative;
 import me.RockinChaos.fakecreative.utils.ServerUtils;
 import me.RockinChaos.fakecreative.utils.interfaces.menus.Menu;
+import me.RockinChaos.fakecreative.utils.protocol.ProtocolManager;
 
 public class FakeCreative extends JavaPlugin {
 	
@@ -61,7 +62,7 @@ public class FakeCreative extends JavaPlugin {
 		PlayerHandler.forOnlinePlayers(player -> Creative.setMode(player, null, player.getGameMode(), true));
   		Bukkit.getScheduler().cancelTasks(this);
   		Menu.getCreator().closeMenu();
-	  	me.RockinChaos.fakecreative.utils.protocol.ProtocolManager.getManager().closeProtocol();
+	  	ProtocolManager.closeProtocol();
   		ServerUtils.logInfo("has been Disabled.");
   	}
   	

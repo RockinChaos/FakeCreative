@@ -18,23 +18,49 @@
 package me.RockinChaos.fakecreative.handlers;
 
 import java.io.EOFException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Skull;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
+
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 
 import me.RockinChaos.fakecreative.utils.ServerUtils;
 import me.RockinChaos.fakecreative.utils.StringUtils;
 import me.RockinChaos.fakecreative.utils.api.LegacyAPI;
+import me.RockinChaos.fakecreative.utils.ReflectionUtils;
+import me.RockinChaos.fakecreative.utils.api.DependAPI;
 
 public class ItemHandler {
+	
+   /**
+    * Checks if the ItemStack is similar to the defined ItemMap.
+    * 
+    * @param item - The ItemStack being checked.
+    * @return If the ItemStack is similar.
+    */
+	public static boolean isSimilar(final ItemStack item1, final ItemStack item2) {
+		if (item1 != null && item2 != null && item1.getType() != Material.AIR && item2.getType() != Material.AIR && item1.getType() == item2.getType() && item1.hasItemMeta() && item2.hasItemMeta() 
+		 && item1.getItemMeta().hasDisplayName() && item2.getItemMeta().hasDisplayName() && item1.getItemMeta().getDisplayName().equalsIgnoreCase(item2.getItemMeta().getDisplayName())) {
+			return true;
+		}
+		return false;
+	}
 	
    /**
     * Creates a new ItemStack with the specified material, count, 
@@ -114,6 +140,137 @@ public class ItemHandler {
 		} catch (Exception e) { ServerUtils.sendDebugTrace(e); }
 		return null;
 	}
+	
+   /**
+    * Sets the Skull Texture to the ItemStack.
+    * 
+    * @param item - The ItemStack to have its Skull Texture changed.
+    * @param skullTexture - The Skull Texture to be added to the ItemStack.
+    */
+    public static ItemStack setSkullTexture(final ItemStack item, final String skullTexture) {
+    	try {
+    		if (ServerUtils.hasSpecificUpdate("1_8")) {
+		        ItemMeta itemMeta = item.getItemMeta();
+				GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
+				gameProfile.getProperties().put("textures", new Property("textures", new String(skullTexture)));
+				Field declaredField = itemMeta.getClass().getDeclaredField("profile");
+				declaredField.setAccessible(true);
+				declaredField.set(itemMeta, gameProfile);
+				item.setItemMeta(itemMeta);
+    		}
+    	} catch (Exception e) { ServerUtils.sendDebugTrace(e); }
+    	return item;
+    }
+    
+   /**
+    * Sets the Skull Texture to the ItemStack.
+    * 
+    * @param item - The ItemStack to have its Skull Texture changed.
+    * @param skullTexture - The Skull Texture to be added to the ItemStack.
+    */
+    public static ItemMeta setSkullTexture(final ItemMeta itemMeta, final String skullTexture) {
+    	try {
+    		if (ServerUtils.hasSpecificUpdate("1_8")) {
+				GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
+				gameProfile.getProperties().put("textures", new Property("textures", new String(skullTexture)));
+				Field declaredField = itemMeta.getClass().getDeclaredField("profile");
+				declaredField.setAccessible(true);
+				declaredField.set(itemMeta, gameProfile);
+    		}
+    	} catch (Exception e) { ServerUtils.sendDebugTrace(e); }
+    	return itemMeta;
+    }
+	
+   /**
+    * Gets the current Skull Texture of the ItemMeta.
+    * 
+    * @param meta - The ItemMeta to have its Skull Texture found.
+    * @return The found Skull Texture String value.
+    */
+	public static String getSkullTexture(final ItemMeta meta) {
+		try {
+			final Class < ? > cls = ReflectionUtils.getCraftBukkitClass("inventory.CraftMetaSkull");
+			final Object real = cls.cast(meta);
+			final Field field = real.getClass().getDeclaredField("profile");
+			field.setAccessible(true);
+			final GameProfile profile = (GameProfile) field.get(real);
+			final Collection < Property > props = profile.getProperties().get("textures");
+			for (final Property property: props) {
+				if (property.getName().equals("textures")) { return property.getValue(); }
+			}
+		} catch (Exception e) { }
+		return "";
+	}
+	
+   /**
+    * Gets the current Skull Texture of the ItemMeta.
+    * 
+    * @param skull - The Skull to have its Skull Texture found.
+    * @return The found Skull Texture String value.
+    */
+	public static String getSkullTexture(final Skull skull) {
+		try {
+			final Field field = skull.getClass().getDeclaredField("profile");
+			field.setAccessible(true);
+			final GameProfile profile = (GameProfile) field.get(skull);
+			final Collection < Property > props = profile.getProperties().get("textures");
+			for (final Property property: props) {
+				if (property.getName().equals("textures")) { return property.getValue(); }
+			}
+		} catch (Exception e) { }
+		return "";
+	}
+	
+   /**
+    * Sets the Skull Owner name to the ItemMeta.
+    * 
+    * @param meta - The ItemMeta to have its Skull Owner changed.
+    * @param owner - The String name of the Skull Owner to be set.
+    * @return The ItemMeta with the new Skull Owner.
+    */
+	public static ItemMeta setSkullOwner(final ItemMeta meta, final String owner) {
+		if (!ServerUtils.hasSpecificUpdate("1_8")) {
+			ServerUtils.logDebug("{ItemMap} Minecraft does not support offline player heads below Version 1.8.");
+			ServerUtils.logDebug("{ItemMap} Player heads will only be given a skin if the player has previously joined the sever.");
+		}
+		setStoredSkull(meta, owner);
+		return meta;
+	}
+	
+   /**
+    * Sets the locale stored skull owner.
+    * 
+    * @param meta - The referenced ItemMeta.
+    * @param owner - The referenced Skull Owner
+    */
+	public static void setStoredSkull(final ItemMeta meta, final String owner) {
+		if (!owner.isEmpty()) {
+			SkullMeta skullMeta = (SkullMeta)meta;
+			OfflinePlayer player = LegacyAPI.getOfflinePlayer(owner);
+			if (DependAPI.getDepends(false).skinsRestorerEnabled()) {
+				final String textureValue = DependAPI.getDepends(false).getSkinValue(owner);
+				if (textureValue != null) {
+					setSkullTexture(meta, textureValue);
+				} else if (player != null) {
+					try {
+						skullMeta.setOwningPlayer(player);
+					} catch (Throwable t) {
+						LegacyAPI.setSkullOwner(skullMeta, player.getName());
+					}
+				} else {
+					LegacyAPI.setSkullOwner(skullMeta, owner);
+				}
+			} else if (player != null) {
+				try {
+					skullMeta.setOwningPlayer(player);
+				} catch (Throwable t) {
+					LegacyAPI.setSkullOwner(skullMeta, player.getName());
+				}
+			} else {
+				LegacyAPI.setSkullOwner(skullMeta, owner);
+			}
+		}
+	}
     
    /**
     * Checks if the ItemStack contents are NULL or empty.
@@ -148,7 +305,6 @@ public class ItemHandler {
     	}
     	return copyContents;
     }
-    
     
    /**
     * Converts the Inventory to a Base64 String.
