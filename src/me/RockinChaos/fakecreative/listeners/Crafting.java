@@ -26,6 +26,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -101,6 +102,32 @@ public class Crafting implements Listener {
 	    	}, event.getPlayer(), event.getView(), event.getPreviousContents(true), false);
 		}
     }
+    
+   /**
+	* Called on player switching worlds.
+	* Removes any crafting items from the player which ended up in their inventory slots.
+	* 
+	* @param event - PlayerChangedWorldEvent
+	*/
+	@EventHandler(ignoreCancelled = true)
+	private void onCraftingWorldSwitch(PlayerChangedWorldEvent event) {
+		final Player player = event.getPlayer();
+		final ItemStack[] inventory = player.getInventory().getContents();
+		if (!ItemHandler.isContentsEmpty(inventory)) {
+			for (int i = 0; i < inventory.length; i++) {
+				if (PlayerHandler.isFakeCreativeMode(player) && Creative.isItem(inventory[i])) {
+					player.getInventory().setItem(i, new ItemStack(Material.AIR));
+				}
+			}
+		}
+		SchedulerUtils.runLater(2L, () -> { 
+		    double health = 1;
+			try { health = (ServerUtils.hasSpecificUpdate("1_8") ? player.getHealth() : (double)player.getClass().getMethod("getHealth", double.class).invoke(player)); } catch (Exception e) { health = (player.isDead() ? 0 : 1);  }
+	    	if (health > 0 &&!event.getFrom().equals(player.getWorld())) {
+			    Creative.setTabs(player);
+			}
+		});
+	}
 	
    /**
 	* Returns the custom crafting item to the player if it is dropped automagically when switching worlds,
@@ -111,38 +138,20 @@ public class Crafting implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
     private void onCraftingDrop(PlayerDropItemEvent event) {
     	final Player player = (Player) event.getPlayer();
-    	final ItemStack item = event.getItemDrop().getItemStack().clone();
-    	if (PlayerHandler.isFakeCreativeMode(player) && Creative.isItem(item)) {
-    		event.setCancelled(true);
-    	}
-    }
-    
-   /**
-	* Returns the custom crafting item to the player if it is dropped automagically when switching worlds,
-	* typically via the nether portal causing duplication glitches.
-	* 
-	* @param event - PlayerDropItemEvent
-	*/
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
-    private void onCraftingWorlds(PlayerDropItemEvent event) {
-    	final Player player = (Player) event.getPlayer();
     	final World world = player.getWorld();
     	final ItemStack item = event.getItemDrop().getItemStack().clone();
-    	if (player.getHealth() > 0 && PlayerHandler.isFakeCreativeMode(player) && Creative.isItem(item)) {
+    	if (PlayerHandler.isFakeCreativeMode(player) && Creative.isItem(item)) {
 		    event.getItemDrop().getItemStack().setItemMeta(null);
 		    event.getItemDrop().remove();
-    		SchedulerUtils.runLater(2L, () -> { 
-		    	if (!world.equals(player.getWorld())) {
-		    		if (!givenItems) {
-		    			givenItems = true;
-		    			Creative.setTabs(player);
-		    		}
-		    		SchedulerUtils.runLater(4L, () -> givenItems = false);
-		    	}
+		    SchedulerUtils.runLater(2L, () -> { 
+		    double health = 1;
+			try { health = (ServerUtils.hasSpecificUpdate("1_8") ? player.getHealth() : (double)player.getClass().getMethod("getHealth", double.class).invoke(player)); } catch (Exception e) { health = (player.isDead() ? 0 : 1);  }
+	    		if (health > 0 && world.equals(player.getWorld())) {
+	    			Creative.setTabs(player);
+	    		}
 		    });
     	}
     }
-    private boolean givenItems = false;
     
    /**
     * Attempts to save and return the prior open inventory crafting slots.
@@ -182,7 +191,9 @@ public class Crafting implements Listener {
 			}
 		} else {
 			SchedulerUtils.run(() -> { 
-				if (PlayerHandler.isCraftingInv(player.getOpenInventory()) && PlayerHandler.isFakeCreativeMode(player)) {
+				double health = 1;
+				try { health = (ServerUtils.hasSpecificUpdate("1_8") ? player.getHealth() : (double)player.getClass().getMethod("getHealth", double.class).invoke(player)); } catch (Exception e) { health = (player.isDead() ? 0 : 1);  }
+    			if (health > 0 && PlayerHandler.isCraftingInv(player.getOpenInventory()) && PlayerHandler.isFakeCreativeMode(player)) {
 					Inventory craftInventory = player.getOpenInventory().getTopInventory();
 					if (craftInventory.getItem(1) != null && craftInventory.getItem(1).getType() != Material.AIR) {
 						ItemStack drop = craftInventory.getItem(1).clone();
@@ -207,7 +218,9 @@ public class Crafting implements Listener {
     */
 	private void returnCrafting(final Player player, final ItemStack[] contents, final long delay, final boolean slotZero) {
 		SchedulerUtils.runLater(delay, () -> { 
-			if (!player.isOnline()) { return; } else if (!PlayerHandler.isCraftingInv(player.getOpenInventory())) { this.returnCrafting(player, contents, 10L, slotZero); return; }
+			double health = 1;
+			try { health = (ServerUtils.hasSpecificUpdate("1_8") ? player.getHealth() : (double)player.getClass().getMethod("getHealth", double.class).invoke(player)); } catch (Exception e) { health = (player.isDead() ? 0 : 1);  }
+			if (!player.isOnline() || !(health > 0)) { return; } else if (!PlayerHandler.isCraftingInv(player.getOpenInventory())) { this.returnCrafting(player, contents, 10L, slotZero); return; }
 			if (!slotZero) {
 				for (int i = 4; i >= 0; i--) {
 					player.getOpenInventory().getTopInventory().setItem(i, contents[i]);
