@@ -35,10 +35,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import me.RockinChaos.fakecreative.handlers.ConfigHandler;
 import me.RockinChaos.fakecreative.handlers.ItemHandler;
 import me.RockinChaos.fakecreative.handlers.PlayerHandler;
 import me.RockinChaos.fakecreative.handlers.modes.instance.PlayerObject;
+import me.RockinChaos.fakecreative.handlers.modes.instance.PlayerPreferences;
 import me.RockinChaos.fakecreative.utils.ReflectionUtils;
 import me.RockinChaos.fakecreative.utils.SchedulerUtils;
 import me.RockinChaos.fakecreative.utils.ServerUtils;
@@ -56,7 +56,7 @@ public class Creative {
 	private static final ItemStack pickTab = ItemHandler.getItem("STICK", 1, false, true, "&a&1&c&2&d&b&l&nPick Block", "&7", "&7&o*Allows you to clone", "&7&oa existing block item.");
 	private static final ItemStack pickItem = ItemHandler.getItem("STICK", 1, true, true, "&d&1&c&2&a&b&l&nPick Block", "&7", "&7&o*Right-click a block to", "&7&oadd to your inventory.");
 	private static final ItemStack saveTab = ItemHandler.getItem("PAPER", 1, false, true, "&a&1&c&2&d&a&l&nSaved Hotbars", "&7", "&7&o*Save or restore a hotbar", "&7&oto your current inventory.");
-	private static final ItemStack userTab = ItemHandler.getItem("SKULL_ITEM:3", 1, false, true, "&a&1&c&2&d&6&l&nPreferences", "&7", "&7*Creative mode settings specific to you.");
+	private static final ItemStack userTab = ItemHandler.getItem("SKULL_ITEM:3", 1, false, true, "&a&1&c&2&d&6&l&nPreferences", "&7", "&7*Creative mode settings", "&7that are specific to you.");
 	private static final ItemStack destroyTab = ItemHandler.getItem("LAVA_BUCKET", 1, false, true, "&a&1&c&2&d&c&l&nDestroy Item", "&7", "&7*Permanently destroy your items.", "&7", "&8&oDrop an item to delete it.", "&8&oShift-click to clear inventory.");
 
    /**
@@ -65,26 +65,26 @@ public class Creative {
     * @param who - The executor.
     * @param altWho - The player to be set to Creative.
     */
-    public static void setCreative(CommandSender who, Player altWho) {
-    	Player argsPlayer = (altWho != null ? altWho : (Player)who);
-    	if (argsPlayer != null && !isFakeCreativeMode(argsPlayer)) {
+    public static void setCreative(final CommandSender who, final Player altWho, final boolean refresh) {
+    	final Player argsPlayer = (altWho != null ? altWho : (Player)who);
+    	if (argsPlayer != null && (refresh || !isFakeCreativeMode(argsPlayer))) {
 			if (!PlayerHandler.isSurvivalMode(argsPlayer)) { argsPlayer.setGameMode(GameMode.SURVIVAL); }
-			creativePlayers.add(new PlayerObject(PlayerHandler.getPlayerID(argsPlayer), saveInventory(argsPlayer), argsPlayer.getHealth(), argsPlayer.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue(), argsPlayer.getFoodLevel(), argsPlayer.getFireTicks()));
+			if (!refresh) { creativePlayers.add(new PlayerObject(PlayerHandler.getPlayerID(argsPlayer), saveInventory(argsPlayer), argsPlayer.getHealth(), argsPlayer.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue(), argsPlayer.getFoodLevel(), argsPlayer.getFireTicks())); }
 			setFlight(argsPlayer, true);
-			argsPlayer.setInvulnerable(ConfigHandler.getConfig().getFile("config.yml").getBoolean("Creative.invulnerable"));
-			argsPlayer.setHealth(ConfigHandler.getConfig().getFile("config.yml").getInt("Creative.health"));
-			SchedulerUtils.runLater(1L, () -> { 
-				argsPlayer.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(((ConfigHandler.getConfig().getFile("config.yml").getInt("Creative.heart-scale")) * 2));
-				if (!ConfigHandler.getConfig().getFile("config.yml").getBoolean("Creative.allow-fire")) {
+			argsPlayer.setInvulnerable(PlayerPreferences.god(argsPlayer));
+			if (!refresh) { argsPlayer.setHealth(PlayerPreferences.health(argsPlayer)); }
+			SchedulerUtils.run(() -> { 
+				if (!refresh) { argsPlayer.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(((PlayerPreferences.heartScale(argsPlayer)) * 2)); }
+				if (!PlayerPreferences.allowFire(argsPlayer)) {
 					argsPlayer.setFireTicks(0);
 				}
-				argsPlayer.setFoodLevel(ConfigHandler.getConfig().getFile("config.yml").getInt("Creative.food-level"));
+				argsPlayer.setFoodLevel(PlayerPreferences.foodLevel(argsPlayer));
 				dropTargets(argsPlayer);
 			});
 			setTabs(argsPlayer);
 			ServerUtils.logDebug(argsPlayer.getName() + " was set to fake creative.");
     	}
-    	sendStatus(who, argsPlayer, GameMode.CREATIVE, false);
+    	if (!refresh) { sendStatus(who, argsPlayer, GameMode.CREATIVE, false); }
     }
     
    /**
@@ -96,10 +96,10 @@ public class Creative {
     * @param gamemode - The GameMode to be set.
     * @param silent - If the status message should be sent.
     */
-    public static void setMode(CommandSender who, Player altWho, GameMode gamemode, boolean silent) {
-    	Player argsPlayer = (altWho != null ? altWho : (Player)who);
+    public static void setMode(final CommandSender who, final Player altWho, final GameMode gamemode, final boolean silent) {
+    	final Player argsPlayer = (altWho != null ? altWho : (Player)who);
         if (isFakeCreativeMode(argsPlayer)) {
-    		PlayerObject playerObject = get(argsPlayer);
+    		final PlayerObject playerObject = get(argsPlayer);
     		setFlight(argsPlayer, false);
 	    	argsPlayer.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(playerObject.getMaxHealth());
 			argsPlayer.setFoodLevel(playerObject.getFood());
@@ -121,11 +121,11 @@ public class Creative {
     * @param player - The Player having their Inventory saved.
     * @return The generated Inventory64 Byte.
     */
-    private static String saveInventory(Player player) {
-		if (ConfigHandler.getConfig().getFile("config.yml").getBoolean("Creative.store-inventory")) {
-			PlayerInventory inventory = player.getInventory();
-			Inventory craftView = player.getOpenInventory().getTopInventory();
-			Inventory saveInventory = Bukkit.createInventory(null, 54);
+    private static String saveInventory(final Player player) {
+		if (PlayerPreferences.storeInventory(player)) {
+			final PlayerInventory inventory = player.getInventory();
+			final Inventory craftView = player.getOpenInventory().getTopInventory();
+			final Inventory saveInventory = Bukkit.createInventory(null, 54);
 			for (int i = 0; i <= 47; i++) {
 				if (i <= 41 && inventory.getSize() >= i && inventory.getItem(i) != null) {
 					saveInventory.setItem(i, inventory.getItem(i).clone());
@@ -145,12 +145,12 @@ public class Creative {
     * @param playerOject - The Object instance being referenced.
     * @param player - The Player having their Inventory restored.
     */
-    private static void restoreInventory(PlayerObject playerObject, Player player) {
+    private static void restoreInventory(final PlayerObject playerObject, final Player player) {
     	if (playerObject.getInventory64() != null) {
-			PlayerInventory inventory = player.getInventory();
-			Inventory craftView = player.getOpenInventory().getTopInventory();
+			final PlayerInventory inventory = player.getInventory();
+			final Inventory craftView = player.getOpenInventory().getTopInventory();
 			PlayerHandler.clearItems(player);
-			Inventory inventory64 = ItemHandler.deserializeInventory(playerObject.getInventory64());
+			final Inventory inventory64 = ItemHandler.deserializeInventory(playerObject.getInventory64());
 			for (int i = 47; i >= 0; i--) {
 				if (inventory64 != null && inventory64.getItem(i) != null && inventory64.getItem(i).getType() != Material.AIR) {
 					if (i <= 41) {
@@ -170,14 +170,14 @@ public class Creative {
     * @param player - The Player having their crafting items set.
     */
     public static void setTabs(final Player player) {
-		Inventory craftInventory = player.getOpenInventory().getTopInventory();
+		final Inventory craftInventory = player.getOpenInventory().getTopInventory();
 		for (int i = 0; i <= 4; i++) {
 			if (craftInventory.getItem(i) != null && craftInventory.getItem(i).getType() != Material.AIR) {
-				ItemStack drop = craftInventory.getItem(i).clone();
+				final ItemStack drop = craftInventory.getItem(i).clone();
 				craftInventory.setItem(i, new ItemStack(Material.AIR));
-				if (player.getInventory().firstEmpty() != -1) {
+				if (!isItem(drop) && player.getInventory().firstEmpty() != -1) {
 					player.getInventory().addItem(drop);
-				} else { PlayerHandler.dropItem(player, drop); }
+				} else if (!isItem(drop)) { PlayerHandler.dropItem(player, drop); }
 			}
 		}
 		final ItemStack userClone = userTab.clone();
@@ -197,16 +197,16 @@ public class Creative {
     * 
     * @param player - The Player having their crafting items cleared.
     */
-    private static void clearTabs(Player player) {
+    private static void clearTabs(final Player player) {
     	if (Menu.getCreator().isOpen(player)) {
     		Menu.getCreator().closeMenu();
     	}
-    	for (ItemStack item : player.getInventory()) {
+    	for (final ItemStack item : player.getInventory()) {
     		if (isItem(item)) {
     			player.getInventory().remove(item);
     		}
     	}
-    	for (ItemStack item : player.getOpenInventory().getTopInventory()) {
+    	for (final ItemStack item : player.getOpenInventory().getTopInventory()) {
     		if (isItem(item)) {
     			player.getOpenInventory().getTopInventory().remove(item);
     		}
@@ -219,11 +219,11 @@ public class Creative {
     * @param player - The Player being referenced.
     * @param setFly - If flight should be enabled or disabled.
     */
-    private static void setFlight(Player player, boolean setFly) {
-		if (ConfigHandler.getConfig().getFile("config.yml").getBoolean("Creative.allow-flight")) {
+    private static void setFlight(final Player player, final boolean setFly) {
+		if (PlayerPreferences.allowFlight(player)) {
 			if (setFly) {
 				player.setAllowFlight(true);
-				double speed = (ConfigHandler.getConfig().getFile("config.yml").getInt("Creative.fly-speed"));
+				final double speed = (PlayerPreferences.flySpeed(player));
 				player.setFlySpeed(Float.parseFloat((Double.toString(speed/10))));
 			} else {
 				player.setFlying(false);
@@ -238,8 +238,8 @@ public class Creative {
     * 
     * @param player - The Player being referenced.
     */
-    private static void dropInvulnerable(Player player) {
-    	SchedulerUtils.runLater((ConfigHandler.getConfig().getFile("config.yml").getInt("Creative.invulnerable-delay")) * 20, () -> {
+    private static void dropInvulnerable(final Player player) {
+    	SchedulerUtils.runLater((PlayerPreferences.godDelay(player)) * 20, () -> {
     		if (!isFakeCreativeMode(player)) {
     			player.setInvulnerable(false);
     		}
@@ -251,12 +251,11 @@ public class Creative {
     * 
     * @param player - The Player being referenced.
     */
-    private static void dropTargets(Player player) {
-    	for (Entity current : player.getWorld().getNearbyEntities(player.getLocation(), 20, 20, 20)){
+    private static void dropTargets(final Player player) {
+    	for (final Entity current : player.getWorld().getNearbyEntities(player.getLocation(), 20, 20, 20)){
 	        if (!(current instanceof Item) && !(current instanceof Player) && ReflectionUtils.setTargetExists(current)) {
 	        	try {
-	        		final LivingEntity deadEntity = null;
-					current.getClass().getMethod("setTarget", LivingEntity.class).invoke(current, deadEntity);
+					current.getClass().getMethod("setTarget", LivingEntity.class).invoke(current, (LivingEntity)null);
 				} catch (Exception e) { e.printStackTrace(); }
 	        }
 	    }
@@ -267,14 +266,16 @@ public class Creative {
     * 
     * @param player - The Player being referenced.
     */
-    private static void sendStatus(CommandSender who, Player altWho, GameMode gamemode, boolean silent) {
-    	String[] placeHolders = LanguageAPI.getLang(false).newString();
-		placeHolders[0] = gamemode.name().toLowerCase(); placeHolders[1] = altWho.getName();
-		LanguageAPI.getLang(false).sendLangMessage("commands.gamemode.setMode", who, placeHolders);
-		if (who instanceof ConsoleCommandSender || (!(who instanceof ConsoleCommandSender) && !((Player)who).equals(altWho))) {
-			placeHolders[1] = who.getName();
-			LanguageAPI.getLang(false).sendLangMessage("commands.gamemode.setModeTarget", altWho, placeHolders);
-		}	
+    private static void sendStatus(final CommandSender who, final Player altWho, final GameMode gamemode, final boolean silent) {
+    	if (!silent) {
+    		final String[] placeHolders = LanguageAPI.getLang(false).newString();
+			placeHolders[0] = gamemode.name().toLowerCase(); placeHolders[1] = altWho.getName();
+			LanguageAPI.getLang(false).sendLangMessage("commands.gamemode.setMode", who, placeHolders);
+			if (who instanceof ConsoleCommandSender || (!(who instanceof ConsoleCommandSender) && !((Player)who).equals(altWho))) {
+				placeHolders[1] = who.getName();
+				LanguageAPI.getLang(false).sendLangMessage("commands.gamemode.setModeTarget", altWho, placeHolders);
+			}
+    	}
     }
     
    /**
@@ -283,10 +284,10 @@ public class Creative {
     * @param player - The player to be checked.
     * @return If the player is currently in fake creative mode.
     */
-    public static boolean isFakeCreativeMode(Player player) {
-    	String str = PlayerHandler.getPlayerID(player);
+    public static boolean isFakeCreativeMode(final Player player) {
+    	final String str = PlayerHandler.getPlayerID(player);
     	synchronized ("SET_CREATIVE") {
-	    	for (PlayerObject pl: creativePlayers) {
+	    	for (final PlayerObject pl: creativePlayers) {
 	    		if (pl.getPlayer().equalsIgnoreCase(str)) {
 	    			return true;
 	    		}
@@ -302,10 +303,10 @@ public class Creative {
     * @param hotbat - The hotbar number to be fetched.
     * @return The found inventory64 Byte.
     */
-    public static String getHotbar(Player player, int hotbar) {
-    	String str = PlayerHandler.getPlayerID(player);
+    public static String getHotbar(final Player player, final int hotbar) {
+    	final String str = PlayerHandler.getPlayerID(player);
     	synchronized ("SET_CREATIVE") {
-    		PlayerObject pl = get(player);
+    		final PlayerObject pl = get(player);
 	    	if (pl != null && pl.getPlayer().equalsIgnoreCase(str)) {
 	    		return pl.getHotbars().get(hotbar);
 	    	}
@@ -320,15 +321,15 @@ public class Creative {
     * @param inventoryData - The Inventory64 to be saved.
     * @param hotbar - The hotbar number to be saved.
     */
-    public static void saveHotbar(Player player, String inventoryData, int hotbar) {
-    	String str = PlayerHandler.getPlayerID(player);
+    public static void saveHotbar(final Player player, final String inventoryData, final int hotbar) {
+    	final String str = PlayerHandler.getPlayerID(player);
     	synchronized ("SET_CREATIVE") {
-    		PlayerObject pl = get(player);
+    		final PlayerObject pl = get(player);
 	    	if (pl != null && pl.getPlayer().equalsIgnoreCase(str)) {
-	    		HashMap<Integer, String> hotbars = pl.getHotbars();
+	    		final HashMap<Integer, String> hotbars = pl.getHotbars();
 	    		hotbars.put(hotbar, inventoryData);
 	    		pl.setHotbars(hotbars);
-	    		DataObject dataObject = SQL.getData().getData(new DataObject(Table.HOTBAR, PlayerHandler.getPlayerID(player), player.getWorld().getName(), Integer.toString(hotbar), inventoryData));
+	    		final DataObject dataObject = SQL.getData().getData(new DataObject(Table.HOTBAR, PlayerHandler.getPlayerID(player), player.getWorld().getName(), Integer.toString(hotbar), inventoryData));
 	    		if (dataObject != null) { SQL.getData().removeData(dataObject); }
 	    		SQL.getData().saveData(new DataObject(Table.HOTBAR, PlayerHandler.getPlayerID(player), player.getWorld().getName(), Integer.toString(hotbar), inventoryData));
 	    	}
@@ -342,7 +343,7 @@ public class Creative {
     * @param item - The itemName to be looked up.
     * @return If the ItemStack and itemName combo is a Fake Creative Tab.
     */
-    public static boolean isItem(ItemStack itemStack, String item) {
+    public static boolean isItem(final ItemStack itemStack, final String item) {
     	return itemStack != null && ((item.equals("creativeTab") && ItemHandler.isSimilar(itemStack, creativeTab)) || (item.equals("pickTab") && ItemHandler.isSimilar(itemStack, pickTab)) 
     			|| (item.equals("pickItem") && ItemHandler.isSimilar(itemStack, pickItem)) || (item.equals("saveTab") && ItemHandler.isSimilar(itemStack, saveTab)) 
     			|| (item.equals("userTab") && ItemHandler.isSimilar(itemStack, userTab)) || (item.equals("destroyTab") && ItemHandler.isSimilar(itemStack, destroyTab))); 
@@ -354,7 +355,7 @@ public class Creative {
     * @param item - The ItemStack being referenced.
     * @return If the ItemStack is a Fake Creative Tab.
     */
-    public static boolean isItem(ItemStack item) {
+    public static boolean isItem(final ItemStack item) {
     	return item != null && (ItemHandler.isSimilar(item, creativeTab) || ItemHandler.isSimilar(item, pickTab) || ItemHandler.isSimilar(item, pickItem) || ItemHandler.isSimilar(item, saveTab) 
     		|| ItemHandler.isSimilar(item, userTab) || ItemHandler.isSimilar(item, destroyTab));
     }
@@ -373,10 +374,10 @@ public class Creative {
     * 
     * @param player - The Player being referenced.
     */
-    private static PlayerObject get(Player player) {
-    	String str = PlayerHandler.getPlayerID(player);
+    private static PlayerObject get(final Player player) {
+    	final String str = PlayerHandler.getPlayerID(player);
     	synchronized ("SET_CREATIVE") {
-	    	for (PlayerObject pl: creativePlayers) {
+	    	for (final PlayerObject pl: creativePlayers) {
 	    		if (pl.getPlayer().equalsIgnoreCase(str)) {
 	    			return pl;
 	    		}
@@ -390,10 +391,10 @@ public class Creative {
     * 
     * @param player - The Player being referenced.
     */
-    private static void remove(Player player) {
-    	String str = PlayerHandler.getPlayerID(player);
+    private static void remove(final Player player) {
+    	final String str = PlayerHandler.getPlayerID(player);
     	synchronized ("SET_CREATIVE") {
-	    	for (PlayerObject pl: creativePlayers) {
+	    	for (final PlayerObject pl: creativePlayers) {
 	    		if (pl.getPlayer().equalsIgnoreCase(str)) {
 	    			creativePlayers.remove(pl);
 	    			return;

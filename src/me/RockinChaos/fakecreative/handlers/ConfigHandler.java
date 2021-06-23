@@ -35,7 +35,9 @@ import me.RockinChaos.fakecreative.listeners.Depletion;
 import me.RockinChaos.fakecreative.listeners.Gamemode;
 import me.RockinChaos.fakecreative.listeners.Interact;
 import me.RockinChaos.fakecreative.listeners.Interfaces;
+import me.RockinChaos.fakecreative.listeners.PlayerClear;
 import me.RockinChaos.fakecreative.listeners.PlayerQuit;
+import me.RockinChaos.fakecreative.listeners.PlayerRespawn;
 import me.RockinChaos.fakecreative.listeners.Targeting;
 import me.RockinChaos.fakecreative.utils.SchedulerUtils;
 import me.RockinChaos.fakecreative.utils.ServerUtils;
@@ -73,6 +75,8 @@ public class ConfigHandler {
   		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new Interact(), FakeCreative.getInstance());
   		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new Targeting(), FakeCreative.getInstance());
   		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new PlayerQuit(), FakeCreative.getInstance());
+  		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new PlayerClear(), FakeCreative.getInstance());
+  		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new PlayerRespawn(), FakeCreative.getInstance());
   		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new Interfaces(), FakeCreative.getInstance());
 	}
 
@@ -219,7 +223,7 @@ public class ConfigHandler {
     * Registers new instances of the plugin classes.
     * 
     */
-	private void registerClasses(boolean silent) {
+	private void registerClasses(final boolean silent) {
 		final boolean reload = FakeCreative.getInstance().isStarted();
 		ServerUtils.clearErrorStatements();
 		this.copyFiles();
@@ -228,10 +232,10 @@ public class ConfigHandler {
 		FakeCreative.getInstance().setStarted(false);
 		SchedulerUtils.runAsync(() -> {
 			SQL.newData(reload); {
-				SchedulerUtils.runLater(2L, () -> {
+				SchedulerUtils.runAsyncLater(2L, () -> {
 					FakeCreative.getInstance().setStarted(true);
 				}); { 
-					SchedulerUtils.runLater(100L, () -> {
+					SchedulerUtils.runAsyncLater(100L, () -> {
 						new MetricsAPI(FakeCreative.getInstance(), 10818);
 						ServerUtils.sendErrorStatements(null);
 					});
@@ -253,7 +257,7 @@ public class ConfigHandler {
     * Properly reloads the configuration files.
     * 
     */
-	public void reloadConfigs(boolean silent) {
+	public void reloadConfigs(final boolean silent) {
 		config = new ConfigHandler(); 
 		config.registerClasses(silent);
 	}

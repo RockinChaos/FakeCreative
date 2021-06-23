@@ -39,7 +39,7 @@ public class PlayerObject {
     * @param playerID - The player being accessed.
     * @param object - The Object being referenced.
     */
-	public PlayerObject(String playerID, String inventory64, double health, double maxHealth, int food, int fireTicks) {
+	public PlayerObject(final String playerID, final String inventory64, final double health, final double maxHealth, final int food, final int fireTicks) {
 		this.playerID = playerID;
 		this.inventory64 = inventory64;
 		this.health = health;

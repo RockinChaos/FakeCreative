@@ -104,6 +104,7 @@ public class Clicking implements Listener {
 				SchedulerUtils.run(() -> Menu.getCreator().hotbarMenu(player));
 			} else if (Creative.isItem(event.getCurrentItem(), "userTab")) {
 				event.setCancelled(true);
+				SchedulerUtils.run(() -> Menu.getCreator().userMenu(player, 0, null));
 			} else if (Creative.isItem(event.getCurrentItem(), "destroyTab")) {
 				event.setCancelled(true);
 				if (event.getCursor() != null && event.getCursor().getType() != Material.AIR) {

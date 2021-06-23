@@ -62,6 +62,7 @@ import me.RockinChaos.fakecreative.utils.types.Tools;
 public class Menu {
 	private String GUIName = ServerUtils.hasSpecificUpdate("1_9") ? StringUtils.colorFormat("&7           &0&nCreative Menu") : StringUtils.colorFormat("&7           &0&n Creative Menu");
 	private String HotbarGUIName = ServerUtils.hasSpecificUpdate("1_9") ? StringUtils.colorFormat("&7            &0&nHotbar Menu") : StringUtils.colorFormat("&7            &0&n Hotbar Menu");
+	private String userGUIName = ServerUtils.hasSpecificUpdate("1_9") ? StringUtils.colorFormat("&7               &0&nUser Menu") : StringUtils.colorFormat("&7              &0&n User Menu");
 	private ItemStack fillerPaneBItem = ItemHandler.getItem("STAINED_GLASS_PANE:15", 1, false, false, "&7", "");
 	private ItemStack fillerPaneGItem = ItemHandler.getItem("STAINED_GLASS_PANE:7", 1, false, false, "&7", "");
 	private ItemStack exitItem = ItemHandler.getItem("BARRIER", 1, false, false, "&c&l&nExit", "&7", "&7*Return to playing the game.");
@@ -431,6 +432,23 @@ public class Menu {
 			pagedPane.addButton(new Button(this.exitItem, event -> this.hotbarMenu(player)));
 			pagedPane.addButton(new Button(this.fillerPaneBItem), 7);
 			pagedPane.addButton(new Button(this.exitItem, event -> this.hotbarMenu(player)));
+		});
+		pagedPane.open(player);
+	}
+	
+   /**
+    * Opens the MAIN CREATIVE PANE for the Player.
+    * 
+    * @param sender - The Sender to have the Pane opened.
+    */
+	public void userMenu(final CommandSender sender, final int selected, final String search) {
+		final Player player = (Player) sender;
+		Interface pagedPane = new Interface(false, 6, this.userGUIName, player);
+		SchedulerUtils.runAsync(() -> {
+			
+			pagedPane.addButton(new Button(this.exitItem, event -> player.closeInventory()));
+			pagedPane.addButton(new Button(this.fillerPaneBItem), 7);
+			pagedPane.addButton(new Button(this.exitItem, event -> player.closeInventory()));
 		});
 		pagedPane.open(player);
 	}

@@ -24,8 +24,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 
-import me.RockinChaos.fakecreative.handlers.ConfigHandler;
 import me.RockinChaos.fakecreative.handlers.PlayerHandler;
+import me.RockinChaos.fakecreative.handlers.modes.instance.PlayerPreferences;
 
 public class Depletion implements Listener {
 
@@ -36,7 +36,7 @@ public class Depletion implements Listener {
 	*/
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onHunger(FoodLevelChangeEvent event) {
-        if ((event.getEntity() instanceof Player) && PlayerHandler.isFakeCreativeMode((Player)event.getEntity()) && !ConfigHandler.getConfig().getFile("config.yml").getBoolean("Creative.hunger-depletion")) {
+        if ((event.getEntity() instanceof Player) && PlayerHandler.isFakeCreativeMode((Player)event.getEntity()) && !PlayerPreferences.hunger((Player)event.getEntity())) {
             event.setCancelled(true);
         }
     }
@@ -48,7 +48,7 @@ public class Depletion implements Listener {
 	*/
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onDurability(final PlayerItemDamageEvent event) {
-    	if (PlayerHandler.isFakeCreativeMode((Player)event.getPlayer()) && ConfigHandler.getConfig().getFile("config.yml").getBoolean("Creative.unbreakable-items")) {
+    	if (PlayerHandler.isFakeCreativeMode((Player)event.getPlayer()) && PlayerPreferences.unbreakable(event.getPlayer())) {
     		event.setCancelled(true);
     	}
     }

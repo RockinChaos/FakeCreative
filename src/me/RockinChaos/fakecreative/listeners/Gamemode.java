@@ -52,7 +52,7 @@ public class Gamemode implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onPlayerEnterCreative(PlayerEnterCreativeEvent event) {
     	if (!event.isCancelled()) { 
-	    	Creative.setCreative(event.getSender(), event.getPlayer());
+	    	Creative.setCreative(event.getSender(), event.getPlayer(), false);
     	} else if (!PlayerHandler.isFakeCreativeMode(event.getPlayer())) { ServerUtils.logDebug("Event was cancelled, " + event.getPlayer().getName() + " was not set to fake creative."); }
     }
     

@@ -27,9 +27,12 @@ Database:
   
 # These permissions if enabled, determine whether the permission(s) is/are applied to certain players.
 Permissions:
+  Preferences: true
+  Preferences-OP: true
   Commands-OP: false
 
-Creative:
+Preferences:
+  auto-restore: true # if creative mode should automatically be restored on server restart or HARD reload...
   fly-speed: 1.0 # the creative flight speed.
   allow-flight: true # if the creative player can fly.
   invulnerable: true # if the creative player is damagable.

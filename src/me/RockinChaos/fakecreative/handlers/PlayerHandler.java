@@ -53,7 +53,7 @@ public class PlayerHandler {
     * Fixes a bug with player.closeInventory() not calling the event by default, breaking crafting items.
     * 
     */
-    public static void safeInventoryClose(Player player) {
+    public static void safeInventoryClose(final Player player) {
     	player.openInventory(Bukkit.createInventory(player.getInventory().getHolder(), 9));
     	player.closeInventory();	
     }
@@ -74,7 +74,7 @@ public class PlayerHandler {
     * @param player - The player to be checked.
     * @return If the player is currently in fake creative mode.
     */
-    public static boolean isFakeCreativeMode(Player player) {
+    public static boolean isFakeCreativeMode(final Player player) {
     	return Creative.isFakeCreativeMode(player);
     }
     
@@ -84,8 +84,17 @@ public class PlayerHandler {
     * @param who - The Player being referenced.
     * @param altWho - The other Player being referenced (if any).
     */
-    public static void setCreative(CommandSender who, Player altWho) {
+    public static void setCreative(final CommandSender who, final Player altWho) {
     	Bukkit.getPluginManager().callEvent(new PlayerEnterCreativeEvent(who, altWho));
+    }
+    
+   /**
+    * Refreshes the Creative statss for the Player.
+    * 
+    * @param who - The Player being referenced.
+    */
+    public static void refreshCreative(final CommandSender who) {
+    	Creative.setCreative(who, null, true);
     }
     
    /**
@@ -94,7 +103,7 @@ public class PlayerHandler {
     * @param who - The Player being referenced.
     * @param altWho - The other Player being referenced (if any).
     */
-    public static void setMode(CommandSender who, Player altWho, GameMode gamemode, boolean silent) {
+    public static void setMode(final CommandSender who, final Player altWho, final GameMode gamemode, final boolean silent) {
     	Bukkit.getPluginManager().callEvent(new PlayerExitCreativeEvent(who, altWho, gamemode, silent));
     }
 	
@@ -158,9 +167,9 @@ public class PlayerHandler {
     * @param item - The ItemStack to be dropped.
     */
 	public static void dropItem(final Player player, final ItemStack item) { 
-    	Location location = player.getLocation();
+    	final Location location = player.getLocation();
     	location.setY(location.getY() + 1);
-    	Item dropped = player.getWorld().dropItem(location, item);
+    	final Item dropped = player.getWorld().dropItem(location, item);
 		dropped.setVelocity(location.getDirection().multiply(.30));
 		dropped.setPickupDelay(40);
     }
@@ -171,8 +180,8 @@ public class PlayerHandler {
     * @param player - The Player being referenced.
     */
 	public static void clearItems(final Player player) { 
-		PlayerInventory inventory = player.getInventory();
-		Inventory craftView = player.getOpenInventory().getTopInventory();
+		final PlayerInventory inventory = player.getInventory();
+		final Inventory craftView = player.getOpenInventory().getTopInventory();
 		inventory.setHelmet(new ItemStack(Material.AIR)); 
 		inventory.setChestplate(new ItemStack(Material.AIR)); 
 		inventory.setLeggings(new ItemStack(Material.AIR)); 
@@ -189,8 +198,8 @@ public class PlayerHandler {
     * @return The ItemStack list of crafting slot contents.
     */
     public static ItemStack[] getTopContents(final Player player) {
-		ItemStack[] tempContents = player.getOpenInventory().getTopInventory().getContents();
-		ItemStack[] contents = new ItemStack[5];
+		final ItemStack[] tempContents = player.getOpenInventory().getTopInventory().getContents();
+		final ItemStack[] contents = new ItemStack[5];
 		if (contents != null && tempContents != null) { 
 			for (int i = 0; i <= 4; i++) { 
 				contents[i] = tempContents[i].clone(); 
@@ -344,7 +353,7 @@ public class PlayerHandler {
 		try { args = Bukkit.getPlayer(UUID.fromString(playerName)); } catch (Exception e) { }
 		if (playerName != null && DependAPI.getDepends(false).nickEnabled()) {
 			try { 
-				de.domedd.betternick.api.nickedplayer.NickedPlayer np = new de.domedd.betternick.api.nickedplayer.NickedPlayer(LegacyAPI.getPlayer(playerName));
+				final de.domedd.betternick.api.nickedplayer.NickedPlayer np = new de.domedd.betternick.api.nickedplayer.NickedPlayer(LegacyAPI.getPlayer(playerName));
 				if (np.isNicked()) { return LegacyAPI.getPlayer(np.getRealName()); }
 				else { return LegacyAPI.getPlayer(playerName); }
 			} catch (NoClassDefFoundError e) {
@@ -368,7 +377,7 @@ public class PlayerHandler {
 				return player.getUniqueId().toString();
 			} else if (player != null && DependAPI.getDepends(false).nickEnabled()) {
 				try {
-					de.domedd.betternick.api.nickedplayer.NickedPlayer np = new de.domedd.betternick.api.nickedplayer.NickedPlayer(player);
+					final de.domedd.betternick.api.nickedplayer.NickedPlayer np = new de.domedd.betternick.api.nickedplayer.NickedPlayer(player);
 					if (np.isNicked()) { 
 						if (ServerUtils.hasSpecificUpdate("1_8") && np.getUniqueId() != null) {
 							return np.getUniqueId().toString();
@@ -403,7 +412,7 @@ public class PlayerHandler {
 				return player.getUniqueId().toString();
 			} else if (player != null && DependAPI.getDepends(false).nickEnabled()) {
 				try {
-					de.domedd.betternick.api.nickedplayer.NickedPlayer np = new de.domedd.betternick.api.nickedplayer.NickedPlayer((BetterNick) player);
+					final de.domedd.betternick.api.nickedplayer.NickedPlayer np = new de.domedd.betternick.api.nickedplayer.NickedPlayer((BetterNick) player);
 					if (np.isNicked()) { 
 						if (ServerUtils.hasSpecificUpdate("1_8") && np.getUniqueId() != null) {
 							return np.getUniqueId().toString();
@@ -436,7 +445,7 @@ public class PlayerHandler {
 			* This is for MC 1.12+
 			*/
 			if (Bukkit.class.getMethod("getOnlinePlayers", new Class < ? > [0]).getReturnType() == Collection.class) {
-				for (Object objPlayer: ((Collection < ? > ) Bukkit.class.getMethod("getOnlinePlayers", new Class < ? > [0]).invoke(null, new Object[0]))) { 
+				for (final Object objPlayer: ((Collection < ? > ) Bukkit.class.getMethod("getOnlinePlayers", new Class < ? > [0]).invoke(null, new Object[0]))) { 
 					input.accept(((Player) objPlayer));
 				}
 			} 
@@ -446,7 +455,7 @@ public class PlayerHandler {
 			* @deprecated Legacy version of getting online players.
 			*/
 			else {
-				for (Player player: ((Player[]) Bukkit.class.getMethod("getOnlinePlayers", new Class < ? > [0]).invoke(null, new Object[0]))) {
+				for (final Player player: ((Player[]) Bukkit.class.getMethod("getOnlinePlayers", new Class < ? > [0]).invoke(null, new Object[0]))) {
 					input.accept(player);
 				}
 			}

@@ -20,21 +20,21 @@ package me.RockinChaos.fakecreative.listeners;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 import me.RockinChaos.fakecreative.handlers.PlayerHandler;
 
-public class PlayerQuit implements Listener {
+public class PlayerRespawn implements Listener {
 
    /**
 	* Attempts to remove the player from creative upon exiting the server.
     * 
-	* @param event - PlayerQuitEvent
+	* @param event - PlayerRespawnEvent
 	*/
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    private void onPlayerQuit(final PlayerQuitEvent event) {
-	    if (PlayerHandler.isFakeCreativeMode(event.getPlayer())) {
-	    	PlayerHandler.setMode(event.getPlayer(), null, event.getPlayer().getGameMode(), true);
-	    }
+    private void onPlayerRespawn(final PlayerRespawnEvent event) {
+    	if (PlayerHandler.isFakeCreativeMode(event.getPlayer())) {
+    		PlayerHandler.refreshCreative(event.getPlayer());
+    	}
     }
 }

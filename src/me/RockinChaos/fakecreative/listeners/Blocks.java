@@ -33,8 +33,8 @@ import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import me.RockinChaos.fakecreative.handlers.ConfigHandler;
 import me.RockinChaos.fakecreative.handlers.PlayerHandler;
+import me.RockinChaos.fakecreative.handlers.modes.instance.PlayerPreferences;
 import me.RockinChaos.fakecreative.utils.StringUtils;
 
 public class Blocks implements Listener {
@@ -60,7 +60,7 @@ public class Blocks implements Listener {
 	private void onBreak(final BlockBreakEvent event) {
 		if (PlayerHandler.isFakeCreativeMode((Player) event.getPlayer())) {
 			event.getBlock().getWorld().playEffect(event.getBlock().getLocation(), Effect.STEP_SOUND, event.getBlock().getType(), 6);
-			if (!ConfigHandler.getConfig().getFile("config.yml").getBoolean("Creative.block-drops")) {
+			if (!PlayerPreferences.blockDrops((Player) event.getPlayer())) {
 				event.getBlock().setType(Material.AIR);
 			} else {
 				event.getBlock().breakNaturally();
@@ -90,10 +90,10 @@ public class Blocks implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onInstantBreak(PlayerAnimationEvent event) {
 		final Player player = event.getPlayer();
-		if (PlayerHandler.isFakeCreativeMode(player) && StringUtils.containsIgnoreCase(handMap.get(PlayerHandler.getPlayerID(player)).name(), "LEFT") && (PlayerHandler.getMainHandItem(player) == null || (!PlayerHandler.getMainHandItem(player).getType().name().contains("SWORD")) || !ConfigHandler.getConfig().getFile("config.yml").getBoolean("Creative.sword-block"))) {
+		if (PlayerHandler.isFakeCreativeMode(player) && StringUtils.containsIgnoreCase(handMap.get(PlayerHandler.getPlayerID(player)).name(), "LEFT") && (PlayerHandler.getMainHandItem(player) == null || (!PlayerHandler.getMainHandItem(player).getType().name().contains("SWORD")) || !PlayerPreferences.swordBlock(player))) {
 			final Block block = player.getTargetBlock(null, 6);
 			long dupeDuration = (this.swingDelay != null && !this.swingDelay.isEmpty() && this.swingDelay.get(PlayerHandler.getPlayerID(player)) != null ? (((System.currentTimeMillis()) - this.swingDelay.get(PlayerHandler.getPlayerID(player)))) : -1);
-			if ((dupeDuration == -1 || dupeDuration > ConfigHandler.getConfig().getFile("config.yml").getDouble("Creative.break-speed") * 45) && PlayerHandler.isFakeCreativeMode(player)) {
+			if ((dupeDuration == -1 || dupeDuration > PlayerPreferences.breakSpeed(player) * 45) && PlayerHandler.isFakeCreativeMode(player)) {
 				this.swingDelay.put(PlayerHandler.getPlayerID(player), System.currentTimeMillis());
 				Bukkit.getPluginManager().callEvent(new BlockBreakEvent(block, player));
 			}
