@@ -30,7 +30,7 @@ import me.RockinChaos.fakecreative.utils.SchedulerUtils;
 public class PlayerClear implements Listener {
 
    /**
-	* Attempts to remove the player from creative upon exiting the server.
+	* Prevents the player from clearing their creative tabs.
     * 
 	* @param event - PlayerCommandPreprocessEvent
 	*/

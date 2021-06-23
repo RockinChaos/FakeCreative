@@ -27,7 +27,7 @@ import me.RockinChaos.fakecreative.handlers.PlayerHandler;
 public class PlayerRespawn implements Listener {
 
    /**
-	* Attempts to remove the player from creative upon exiting the server.
+	* Attempts to refresh the creative stats for the player upon respawning.
     * 
 	* @param event - PlayerRespawnEvent
 	*/
