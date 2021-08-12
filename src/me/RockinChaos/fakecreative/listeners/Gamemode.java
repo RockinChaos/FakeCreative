@@ -37,10 +37,10 @@ public class Gamemode implements Listener {
 	* @param event - PlayerGameModeChangeEvent
 	*/
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    private void onPlayerSwitchGameMode(PlayerGameModeChangeEvent event) {
+    private void onPlayerSwitchGameMode(final PlayerGameModeChangeEvent event) {
     	Player player = event.getPlayer();
-    	if (PlayerHandler.isFakeCreativeMode(player)) {
-    		PlayerHandler.setMode(player, null, event.getNewGameMode(), true);
+    	if (PlayerHandler.isCreativeMode(player, true)) {
+    		PlayerHandler.setMode(player, null, event.getNewGameMode(), true, false);
     	}
     }
     
@@ -50,10 +50,10 @@ public class Gamemode implements Listener {
 	* @param event - PlayerEnterCreativeEvent
 	*/
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    private void onPlayerEnterCreative(PlayerEnterCreativeEvent event) {
+    private void onPlayerEnterCreative(final PlayerEnterCreativeEvent event) {
     	if (!event.isCancelled()) { 
-	    	Creative.setCreative(event.getSender(), event.getPlayer(), false);
-    	} else if (!PlayerHandler.isFakeCreativeMode(event.getPlayer())) { ServerUtils.logDebug("Event was cancelled, " + event.getPlayer().getName() + " was not set to fake creative."); }
+	    	Creative.setCreative(event.getSender(), event.getPlayer(), event.isRefresh(), event.isRestore(), event.isSilent());
+    	} else if (!PlayerHandler.isCreativeMode(event.getPlayer(), true)) { ServerUtils.logDebug("Event was cancelled, " + event.getPlayer().getName() + " was not set to fake creative."); }
     }
     
    /**
@@ -62,9 +62,9 @@ public class Gamemode implements Listener {
 	* @param event - PlayerExitCreativeEvent
 	*/
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    private void onPlayerExitCreative(PlayerExitCreativeEvent event) {
+    private void onPlayerExitCreative(final PlayerExitCreativeEvent event) {
     	if (!event.isCancelled()) { 
-	    	Creative.setMode(event.getSender(), event.getPlayer(), event.getGameMode(), event.isSilent());
-    	} else if (PlayerHandler.isFakeCreativeMode(event.getPlayer())) { ServerUtils.logDebug("Event was cancelled, " + event.getPlayer().getName() + " still remains set as fake creative."); }
+	    	Creative.setMode(event.getSender(), event.getPlayer(), event.getGameMode(), event.isSilent(), event.isDoSave());
+    	} else if (PlayerHandler.isCreativeMode(event.getPlayer(), true)) { ServerUtils.logDebug("Event was cancelled, " + event.getPlayer().getName() + " still remains set as fake creative."); }
     }
 }

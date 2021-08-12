@@ -41,8 +41,9 @@ public class SQL {
     */
 	public SQL() {
 		Database.kill(); {
-			this.createTables();
-			this.loadData();
+			this.createTables(); {
+				this.loadData();
+			}
 			ServerUtils.logDebug("{SQL} Database Connected."); 
 		}
 	}
@@ -67,9 +68,9 @@ public class SQL {
     * 
     * @param object - The DataObject data being saved.
     */
-	public void saveData(DataObject object) {
+	public void saveData(final DataObject object) {
 		if (object != null) { 
-			String table = object.getTable().name().toLowerCase();
+			final String table = object.getTable().name().toLowerCase();
 			if (FakeCreative.getInstance().isEnabled()) {
 				SchedulerUtils.runSingleAsync(() -> {
 					synchronized("FK_SQL") {
@@ -82,11 +83,11 @@ public class SQL {
 				}
 			}
 			if (this.databaseData.get(table) != null) {
-				List <DataObject> h1 = this.databaseData.get(table);
+				final List <DataObject> h1 = this.databaseData.get(table);
 				h1.add(object);
 				this.databaseData.put(table, h1);
 			} else {
-				List <DataObject> h1 = new ArrayList<DataObject>();
+				final List <DataObject> h1 = new ArrayList<DataObject>();
 				h1.add(object);
 				this.databaseData.put(table, h1);
 			}
@@ -98,13 +99,13 @@ public class SQL {
     * 
     * @param object - The DataObject being accessed.
     */
-	public void removeData(DataObject object) {
+	public void removeData(final DataObject object) {
 		if (object != null) { 
-			String table = object.getTable().name().toLowerCase();
+			final String table = object.getTable().name().toLowerCase();
 			if (this.databaseData.get(table) != null && !this.databaseData.get(table).isEmpty()) {
-				Iterator<DataObject> dataSet = this.databaseData.get(table).iterator();
+				final Iterator<DataObject> dataSet = this.databaseData.get(table).iterator();
 				while (dataSet.hasNext()) {
-					DataObject dataObject = dataSet.next();
+					final DataObject dataObject = dataSet.next();
 					if (dataObject != null && dataObject.getTable().equals(object.getTable()) && object.equalsData(object, dataObject)) {
 						if (FakeCreative.getInstance().isEnabled()) {
 							SchedulerUtils.runSingleAsync(() -> {
@@ -130,13 +131,13 @@ public class SQL {
     * @param object - The DataObject being accessed.
     * @return The found table data.
     */
-	public DataObject getData(DataObject object) {
+	public DataObject getData(final DataObject object) {
 		if (object != null) { 
-			String table = object.getTable().name().toLowerCase();
+			final String table = object.getTable().name().toLowerCase();
 			if (this.databaseData.get(table) != null && !this.databaseData.get(table).isEmpty()) {
-				Iterator<DataObject> dataSet = this.databaseData.get(table).iterator();
+				final Iterator<DataObject> dataSet = this.databaseData.get(table).iterator();
 				while (dataSet.hasNext()) {
-					DataObject dataObject = dataSet.next();
+					final DataObject dataObject = dataSet.next();
 					if (dataObject != null && dataObject.getTable().equals(object.getTable()) && object.equalsData(object, dataObject)) {
 						return dataObject;
 					}
@@ -152,13 +153,13 @@ public class SQL {
     * @param object - The DataObject being accessed.
     * @return The found table data list.
     */
-	public List<DataObject> getDataList(DataObject object) {
-		List<DataObject> dataList = new ArrayList<DataObject>();
-		String table = object.getTable().name().toLowerCase();
+	public List<DataObject> getDataList(final DataObject object) {
+		final List<DataObject> dataList = new ArrayList<DataObject>();
+		final String table = object.getTable().name().toLowerCase();
 		if (this.databaseData.get(table) != null && !this.databaseData.get(table).isEmpty()) {
-			Iterator<DataObject> dataSet = this.databaseData.get(table).iterator();
+			final Iterator<DataObject> dataSet = this.databaseData.get(table).iterator();
 			while (dataSet.hasNext()) {
-				DataObject dataObject = dataSet.next();
+				final DataObject dataObject = dataSet.next();
 				if (dataObject != null && dataObject.getTable().equals(object.getTable()) && (object.isTemporary() || object.equalsData(object, dataObject))) {
 					dataList.add(dataObject);
 				}
@@ -173,16 +174,25 @@ public class SQL {
     */
 	private void loadData() {
 		for (Table tableEnum: Table.values()) {
-			String table = tableEnum.name().toLowerCase();
-			List<HashMap<String, String>> selectTable = Database.getDatabase().queryTableData("SELECT * FROM " + ConfigHandler.getConfig().getTable() + table, tableEnum.headers().replace("`", ""));
+			final String table = tableEnum.name().toLowerCase();
+			final List<HashMap<String, String>> selectTable = Database.getDatabase().queryTableData("SELECT * FROM " + ConfigHandler.getConfig().getTable() + table, tableEnum.headers().replace("`", ""));
 			if (selectTable != null && !selectTable.isEmpty()) {
 				for (HashMap<String, String> sl1 : selectTable) {
 					DataObject dataObject = null;
-					if (tableEnum.equals(Table.HOTBAR)) {
-						dataObject = new DataObject(tableEnum, sl1.get("Player_UUID"), "", sl1.get("Position"), sl1.get("Inventory64"));
+					if (tableEnum.equals(Table.ALLOW_FLIGHT) || tableEnum.equals(Table.ALLOW_HUNGER) || tableEnum.equals(Table.ALLOW_BURN) || tableEnum.equals(Table.UNBREAKABLE_ITEMS) || tableEnum.equals(Table.DROPS_BLOCK)
+					 || tableEnum.equals(Table.SWORD_BLOCK) || tableEnum.equals(Table.AUTO_RESTORE) || tableEnum.equals(Table.SET_GOD) || tableEnum.equals(Table.STORE_INVENTORY)) {
+						dataObject = new DataObject(tableEnum, sl1.get("Player_UUID"), Boolean.valueOf(sl1.get("Value")));
+					} else if (tableEnum.equals(Table.SPEED_FLIGHT) || tableEnum.equals(Table.SPEED_BREAK) || tableEnum.equals(Table.SET_SCALE)) {
+						dataObject = new DataObject(tableEnum, sl1.get("Player_UUID"), Double.valueOf(sl1.get("Value")));
+					} else if (tableEnum.equals(Table.SET_FOOD) || tableEnum.equals(Table.SET_HEALTH) || tableEnum.equals(Table.DELAY_GOD)) {
+						dataObject = new DataObject(tableEnum, sl1.get("Player_UUID"), Integer.valueOf(sl1.get("Value")));
+					} else if (tableEnum.equals(Table.HOTBAR)) {
+						dataObject = new DataObject(tableEnum, sl1.get("Player_UUID"), sl1.get("Position"), sl1.get("Inventory64"));
+					} else if (tableEnum.equals(Table.PLAYERSTATS)) {
+						dataObject = new DataObject(tableEnum, sl1.get("Player_UUID"), sl1.get("Health"), sl1.get("Scale"), sl1.get("Food"), sl1.get("Fire_Ticks"), sl1.get("Inventory64"));
 					}
 					dataObject.setTimeStamp(sl1.get("Time_Stamp"));
-					List <DataObject> dataSet = (this.databaseData.get(table) != null ? this.databaseData.get(table) : new ArrayList<DataObject>());
+					final List <DataObject> dataSet = (this.databaseData.get(table) != null ? this.databaseData.get(table) : new ArrayList<DataObject>());
 					dataSet.add(dataObject);
 					this.databaseData.put(table, dataSet);
 				}
@@ -196,11 +206,11 @@ public class SQL {
     * @param object - The DataObject being accessed.
     * @return If the data is equal.
     */	
-	public boolean hasDataSet(DataObject object) {
-		String table = object.getTable().name().toLowerCase();
-		Iterator<DataObject> dataSet = this.databaseData.get(table).iterator();
+	public boolean hasDataSet(final DataObject object) {
+		final String table = object.getTable().name().toLowerCase();
+		final Iterator<DataObject> dataSet = this.databaseData.get(table).iterator();
 		while (dataSet.hasNext()) {
-			DataObject dataObject = dataSet.next();
+			final DataObject dataObject = dataSet.next();
 			if (dataObject.getTable().equals(object.getTable()) && object.equalsData(object, dataObject)) {
 				return true;
 			}
@@ -213,7 +223,23 @@ public class SQL {
     * 
     */
 	private void createTables() {
+		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "allow_flight (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
+		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "speed_flight (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
+		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "speed_break (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
+		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "set_food (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
+		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "set_health (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
+		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "set_scale (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
+		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "allow_hunger (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
+		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "allow_burn (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
+		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "unbreakable_items (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
+		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "drops_block (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
+		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "sword_block (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
+		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "auto_restore (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
+		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "set_god (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
+		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "delay_god (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
+		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "store_inventory (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
 		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "hotbar (`Player_UUID` varchar(1000), `Position` varchar(1000), `Inventory64` varchar(1000), `Time_Stamp` varchar(1000));");
+		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "playerstats (`Player_UUID` varchar(1000), `Health` varchar(1000), `Scale` varchar(1000), `Food` varchar(1000), `Fire_Ticks` varchar(1000), `Inventory64` varchar(1000), `Time_Stamp` varchar(1000));");
 	}
 	
 	public static void newData(final boolean reload) {

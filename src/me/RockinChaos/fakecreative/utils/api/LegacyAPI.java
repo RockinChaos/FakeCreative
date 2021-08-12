@@ -23,14 +23,20 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.SkullType;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Skull;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import me.RockinChaos.fakecreative.FakeCreative;
 import me.RockinChaos.fakecreative.utils.ServerUtils;
 import me.RockinChaos.fakecreative.utils.StringUtils;
 import me.RockinChaos.fakecreative.handlers.ItemHandler;
+import me.RockinChaos.fakecreative.listeners.Depletion;
+import me.RockinChaos.fakecreative.listeners.legacy.Legacy_Depletion;
+import me.RockinChaos.fakecreative.listeners.legacy.Legacy_Invulnerable;
 
 /**
  * Welcome to the magical land of make-believe.
@@ -144,6 +150,39 @@ public class LegacyAPI {
 	}
 	
    /**
+	* Checks if setTarget exists for the Entity.
+	* 
+    * @param current - The Entity to be checked.
+	* @return If setTarget exists for the Entity.
+	*/
+    public static boolean setTargetExists(final Entity current) {
+    	try {
+    		current.getClass().getMethod("setTarget", LivingEntity.class);
+    		return true;
+    	} catch (NoSuchMethodException e) { return false; }
+    }
+    
+   /**
+	* Sets the Max Health of the Player.
+	* 
+    * @param player - The Player to have their max health set.
+    * @param maxHealth - The Max Health to be set.
+	*/
+    public static void setMaxHealth(final Player player, final double maxHealth) {
+    	player.setMaxHealth(maxHealth);
+    }
+    
+   /**
+    * Gets the Block Data from the specified Block.
+    * 
+    * @param block - The Block being referenced.
+    * @return The determined Block Data.
+    */
+	public static byte getBlockData(final Block block) {
+		return block.getData();
+	}
+	
+   /**
     * Gets the Bukkit Player from their String name.
     * 
     * @param playerName - The String name of the Bukkit Player.
@@ -161,5 +200,29 @@ public class LegacyAPI {
     */
 	public static OfflinePlayer getOfflinePlayer(final String playerName) {
 		return Bukkit.getOfflinePlayer(playerName);
+	}
+	
+   /**
+    * Registers the Legacy Depletion Listener.
+    * Only called when the Server version is below 1.14.
+    * 
+    */
+	public static void registerDepletion() {
+  		if (ServerUtils.hasSpecificUpdate("1_14")) {
+  			FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new Depletion(), FakeCreative.getInstance());
+  		} else {
+  			FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new Legacy_Depletion(), FakeCreative.getInstance());
+  		}
+	}
+	
+   /**
+    * Registers the Legacy Invulnerable Listener.
+    * Only called when the Server version is below 1.8.
+    * 
+    */
+	public static void registerInvulnerable() {
+  		if (!ServerUtils.hasSpecificUpdate("1_9")) {
+  			FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new Legacy_Invulnerable(), FakeCreative.getInstance());
+  		}
 	}
 }

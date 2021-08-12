@@ -33,6 +33,7 @@ public class PlayerExitCreativeEvent extends PlayerEvent implements Cancellable 
 	private CommandSender who;
 	private GameMode gamemode;
 	private boolean silent;
+	private boolean doSave;
 	private Result result;
 	
    /**
@@ -42,11 +43,12 @@ public class PlayerExitCreativeEvent extends PlayerEvent implements Cancellable 
 	* @param altWho - The other Player being referenced.
 	* @param gamemode - The GameMode to be set.
 	*/
-	public PlayerExitCreativeEvent(final CommandSender who, final Player altWho, final GameMode gamemode, final boolean silent) {
+	public PlayerExitCreativeEvent(final CommandSender who, final Player altWho, final GameMode gamemode, final boolean silent, final boolean doSave) {
 		super((altWho != null ? altWho : (Player)who));
 		this.who = who;
 		this.gamemode = gamemode;
 		this.silent = silent;
+		this.doSave = doSave;
 		this.result = who == null ? Result.DENY : Result.ALLOW;
 	}
 	
@@ -69,7 +71,7 @@ public class PlayerExitCreativeEvent extends PlayerEvent implements Cancellable 
 	*
 	* @param cancel true if you wish to cancel this event.
 	*/
-	public void setCancelled(boolean cancel) {
+	public void setCancelled(final boolean cancel) {
 		this.getResult(cancel ? Result.DENY : this.returnResult() == Result.DENY ? Result.DEFAULT : this.returnResult());
 	}
 	
@@ -89,7 +91,7 @@ public class PlayerExitCreativeEvent extends PlayerEvent implements Cancellable 
     * 
 	* @param exitCreative - the action to take with the creative mode action.
 	*/
-	public void getResult(Result exitCreative) {
+	public void getResult(final Result exitCreative) {
 		this.result = exitCreative;
 	}
 	
@@ -118,6 +120,15 @@ public class PlayerExitCreativeEvent extends PlayerEvent implements Cancellable 
 	*/
 	public boolean isSilent() {
 		return this.silent;
+	}
+	
+   /**
+    * Gets if the GameMode change should have the PlayerStats saved.
+    * 
+	* @return If the change should be saved.
+	*/
+	public boolean isDoSave() {
+		return this.doSave;
 	}
 	
    /**

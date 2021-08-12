@@ -34,7 +34,7 @@ public class Page {
     * 
     * @param maxSize - The size of the inventory page.
     */
-	public Page(int maxSize) {
+	public Page(final int maxSize) {
 		this.maxSize = maxSize;
 	}
 	
@@ -44,14 +44,14 @@ public class Page {
     * 
     * @param event - InventoryClickEvent
     */
-	public void handleClick(InventoryClickEvent event) {
+	public void handleClick(final InventoryClickEvent event) {
 		if (event.getRawSlot() > event.getInventory().getSize()) {
 			return;
 		}
 		if (event.getSlot() >= this.buttons.size()) {
 			return;
 		}
-		Button button = this.buttons.get(event.getSlot());
+		final Button button = this.buttons.get(event.getSlot());
 		button.onClick(event);
 	}
 	
@@ -62,8 +62,8 @@ public class Page {
     * @param event - AsyncPlayerChatEvent
     * @param slot - The slot that relates to the button that was clicked for the page.
     */
-	public void handleChat(AsyncPlayerChatEvent event, int slot) {
-		Button button = this.buttons.get(slot);
+	public void handleChat(final AsyncPlayerChatEvent event, final int slot) {
+		final Button button = this.buttons.get(slot);
 		button.onChat(event);
 	}
 	
@@ -73,7 +73,7 @@ public class Page {
     * @param button - The button to be added.
     * @return The button was successfully added.
     */
-	public boolean addButton(Button button) {
+	public boolean addButton(final Button button) {
 		if (!this.hasSpace()) {
 			return false;
 		}
@@ -87,7 +87,7 @@ public class Page {
     * @param button - The button to be removed.
     * @return The button was successfully removed.
     */
-	public boolean removeButton(Button button) {
+	public boolean removeButton(final Button button) {
 		return this.buttons.remove(button);
 	}
 	
@@ -96,9 +96,9 @@ public class Page {
     * 
     * @param inventory - The inventory to have the page rendered.
     */
-	public void render(Inventory inventory) {
+	public void render(final Inventory inventory) {
 		for (int i = 0; i < this.buttons.size(); i++) {
-			Button button = this.buttons.get(i);
+			final Button button = this.buttons.get(i);
 			inventory.setItem(i, button.getItemStack());
 		}
 	}
@@ -127,7 +127,7 @@ public class Page {
     * @param slot - The slot of the clicked button.
     * @return The chat event was successfully passed through to the button.
     */
-	public boolean chatEvent(int slot) {
+	public boolean chatEvent(final int slot) {
 		if (slot <= this.buttons.size()) {
 			return this.buttons.get(slot).chatEvent();
 		}

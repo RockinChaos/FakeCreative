@@ -40,10 +40,10 @@ public enum Combat {
 	* @param material - The Material being checked.
 	* @return If the Material is a Combat type.
 	*/
-	public static boolean isCombat(Material material) {
+	public static boolean isCombat(final Material material) {
 	    if (material.isBlock()) { return false; }
 	    for (Combat tag: Combat.values()) {
-	    	String[] mats = material.name().split("_");
+	    	final String[] mats = material.name().split("_");
 	    	if (tag.name().equalsIgnoreCase((tag.name().contains("_") ? material.name() : (mats.length > 1 ? mats[(mats.length - 1)] : mats[0])))) {
 	        	return true;
 	        }

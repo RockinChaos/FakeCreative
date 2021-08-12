@@ -17,7 +17,10 @@
  */
 package me.RockinChaos.fakecreative;
 
+import java.util.HashMap;
+
 import org.bukkit.GameMode;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
@@ -27,8 +30,13 @@ import me.RockinChaos.fakecreative.handlers.PermissionsHandler;
 import me.RockinChaos.fakecreative.handlers.PlayerHandler;
 import me.RockinChaos.fakecreative.handlers.UpdateHandler;
 import me.RockinChaos.fakecreative.utils.SchedulerUtils;
+import me.RockinChaos.fakecreative.utils.ServerUtils;
 import me.RockinChaos.fakecreative.utils.StringUtils;
 import me.RockinChaos.fakecreative.utils.api.LanguageAPI;
+import me.RockinChaos.fakecreative.utils.api.LegacyAPI;
+import me.RockinChaos.fakecreative.utils.sql.DataObject;
+import me.RockinChaos.fakecreative.utils.sql.DataObject.Table;
+import me.RockinChaos.fakecreative.utils.sql.SQL;
 
 public class ChatExecutor implements CommandExecutor {
 	
@@ -54,19 +62,28 @@ public class ChatExecutor implements CommandExecutor {
 			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/FakeCreative Updates &7- &cChecks for plugin updates.", "&aChecks to see if there are any updates available for this plugin.", "/fakecreative updates", ClickAction.SUGGEST_COMMAND);
 			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/FakeCreative Upgrade &7- &cUpdates to latest version.", "&aAttempts to Upgrade this plugin to the latest version. \n&aYou will need to restart the server for this process to complete.", "/fakecreative upgrade", ClickAction.SUGGEST_COMMAND);
 			LanguageAPI.getLang(false).dispatchMessage(sender, "&6Type &6&l/FakeCreative Help 2 &6for the next page.", "&eClick to View the Next Page.", "/fakecreative help 2", ClickAction.RUN_COMMAND);
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l&m]---------------&6&l[&c Help Menu 1/2 &6&l]&6&l&m---------------[");
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l&m]---------------&6&l[&c Help Menu 1/4 &6&l]&6&l&m---------------[");
 			LanguageAPI.getLang(false).dispatchMessage(sender, "");
 		} else if (Execute.HELP.accept(sender, args, 2)) {
+			LanguageAPI.getLang(false).dispatchMessage(sender, "");
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l&m]----------------&6&l[&c FakeCreative &6&l]&6&l&m---------------[");
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/FakeCreative Permissions &7- &cLists your permissions.", "&aLists the Permissions for your Player. \n\n&aGreen &bmeans you have permission whereas \n&cRed &bmeans you do not have permission.", "/fakecreative permissions", ClickAction.SUGGEST_COMMAND);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/FakeCreative Purge &7- &cDeletes the database file.", "&c&l[DANGER] &eThe Following Destroys Data &nPermanently!&e&c&l [DANGER] \n\n&aPurges ALL Player Data from the PlayerData database file! \n\n&c&n&lTHIS CANNOT BE UNDONE.", "/fakecreative purge", ClickAction.SUGGEST_COMMAND);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/FakeCreative Purge <User> &7- &cDeletes the users data.", "&c&l[DANGER] &eThe Following Destroys Data &nPermanently!&e&c&l [DANGER] \n\n&aPurges The specified users data from the PlayerData database file! \n\n&c&n&lTHIS CANNOT BE UNDONE.", "/fakecreative purge ", ClickAction.SUGGEST_COMMAND);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6Type &6&l/FakeCreative Help 3 &6for the next page.", "&eClick to View the Next Page.", "/fakecreative help 3", ClickAction.RUN_COMMAND);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l&m]---------------&6&l[&c Help Menu 2/4 &6&l]&6&l&m---------------[");
+			LanguageAPI.getLang(false).dispatchMessage(sender, "");
+		} else if (Execute.HELP.accept(sender, args, 3)) {
 			LanguageAPI.getLang(false).dispatchMessage(sender, "");
 			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l&m]----------------&6&l[&c FakeCreative &6&l]&6&l&m---------------[");
 			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode Survival &7- &cSets the player to survival.", "&aSets the player to survival mode. \n\n&aAlias; \n&6/Gamemode 0 \n&6/FakeCreative 0 \n&6/FakeCreative Survival", "/gamemode survival", ClickAction.SUGGEST_COMMAND);
 			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode Creative &7- &cSets the player to creative.", "&aSets the player to creative mode. \n\n&aAlias; \n&6/Gamemode 1 \n&6/FakeCreative 1 \n&6/FakeCreative Creative", "/gamemode creative", ClickAction.SUGGEST_COMMAND);
 			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode Adventure &7- &cSets the player to adventure.", "&aSets the player to adventure mode. \n\n&aAlias; \n&6/Gamemode 2 \n&6/FakeCreative 2 \n&6/FakeCreative Adventure", "/gamemode adventure", ClickAction.SUGGEST_COMMAND);
 			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode Spectator &7- &cSets the player to spectator.", "&aSets the player to adventure mode. \n\n&aAlias; \n&6/Gamemode 3 \n&6/FakeCreative 3 \n&6/FakeCreative Spectator", "/gamemode spectator", ClickAction.SUGGEST_COMMAND);
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6Type &6&l/FakeCreative Help 3 &6for the next page.", "&eClick to View the Next Page.", "/fakecreative help 3", ClickAction.RUN_COMMAND);
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l&m]---------------&6&l[&c Help Menu 2/3 &6&l]&6&l&m---------------[");
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6Type &6&l/FakeCreative Help 4 &6for the next page.", "&eClick to View the Next Page.", "/fakecreative help 4", ClickAction.RUN_COMMAND);
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l&m]---------------&6&l[&c Help Menu 3/4 &6&l]&6&l&m---------------[");
 			LanguageAPI.getLang(false).dispatchMessage(sender, "");
-		} else if (Execute.HELP.accept(sender, args, 3)) {
+		} else if (Execute.HELP.accept(sender, args, 4)) {
 			LanguageAPI.getLang(false).dispatchMessage(sender, "");
 			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l&m]----------------&6&l[&c FakeCreative &6&l]&6&l&m---------------[");
 			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode Survival <User> &7- &cSets user to survival.", "&aSets the specified player to survival mode. \n\n&aAlias; \n&6/Gamemode 0 <User> \n&6/FakeCreative 0 <User> \n&6/FakeCreative Survival <User>", "/gamemode survival ", ClickAction.SUGGEST_COMMAND);
@@ -75,13 +92,30 @@ public class ChatExecutor implements CommandExecutor {
 			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l/Gamemode Spectator <User> &7- &cSets user to spectator.", "&aSets the specified player to spectator mode. \n\n&aAlias; \n&6/Gamemode 3 <User> \n&6/FakeCreative 3 <User> \n&6/FakeCreative Spectator <User>", "/gamemode spectator ", ClickAction.SUGGEST_COMMAND);
 			LanguageAPI.getLang(false).dispatchMessage(sender, "&6Found a bug? Report it @");
 			LanguageAPI.getLang(false).dispatchMessage(sender, "&6https://github.com/RockinChaos/FakeCreative/issues", "&eClick to Submit a Bug or Feature Request.", "https://github.com/RockinChaos/FakeCreative/issues", ClickAction.OPEN_URL);
-			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l&m]---------------&6&l[&c Help Menu 2/3 &6&l]&6&l&m---------------[");
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l&m]---------------&6&l[&c Help Menu 4/4 &6&l]&6&l&m---------------[");
 			LanguageAPI.getLang(false).dispatchMessage(sender, "");
 		} else if (Execute.RELOAD.accept(sender, args, 0)) {
 			ConfigHandler.getConfig().reloadConfigs(false);
 			LanguageAPI.getLang(false).sendLangMessage("commands.default.configReload", sender);
+		} else if (Execute.PERMISSIONS.accept(sender, args, 0)) {
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l&m]----------------&6&l[&c FakeCreative &6&l]&6&l&m---------------[");
+			LanguageAPI.getLang(false).dispatchMessage(sender, (PermissionsHandler.hasPermission(sender, "fakecreative.*") ? "&a[\u2714]" : "&c[\u2718]") + " FakeCreative.*");
+			LanguageAPI.getLang(false).dispatchMessage(sender, (PermissionsHandler.hasPermission(sender, "fakecreative.all") ? "&a[\u2714]" : "&c[\u2718]") + " FakeCreative.All");
+			LanguageAPI.getLang(false).dispatchMessage(sender, (PermissionsHandler.hasPermission(sender, "fakecreative.use") ? "&a[\u2714]" : "&c[\u2718]") + " FakeCreative.Use");
+			LanguageAPI.getLang(false).dispatchMessage(sender, (PermissionsHandler.hasPermission(sender, "fakecreative.reload") ? "&a[\u2714]" : "&c[\u2718]") + " FakeCreative.Reload");
+			LanguageAPI.getLang(false).dispatchMessage(sender, (PermissionsHandler.hasPermission(sender, "fakecreative.updates") ? "&a[\u2714]" : "&c[\u2718]") + " FakeCreative.Updates");
+			LanguageAPI.getLang(false).dispatchMessage(sender, (PermissionsHandler.hasPermission(sender, "fakecreative.upgrade") ? "&a[\u2714]" : "&c[\u2718]") + " FakeCreative.Upgrade");
+			LanguageAPI.getLang(false).dispatchMessage(sender, (PermissionsHandler.hasPermission(sender, "fakecreative.permissions") ? "&a[\u2714]" : "&c[\u2718]") + " FakeCreative.Permissions");
+			LanguageAPI.getLang(false).dispatchMessage(sender, (PermissionsHandler.hasPermission(sender, "fakecreative.mode.creative") ? "&a[\u2714]" : "&c[\u2718]") + " FakeCreative.Mode.Creative");
+			LanguageAPI.getLang(false).dispatchMessage(sender, (PermissionsHandler.hasPermission(sender, "fakecreative.mode.survival") ? "&a[\u2714]" : "&c[\u2718]") + " FakeCreative.Mode.Survival");
+			LanguageAPI.getLang(false).dispatchMessage(sender, (PermissionsHandler.hasPermission(sender, "fakecreative.mode.adventure") ? "&a[\u2714]" : "&c[\u2718]") + " FakeCreative.Mode.Adventure");
+			LanguageAPI.getLang(false).dispatchMessage(sender, (PermissionsHandler.hasPermission(sender, "fakecreative.mode.spectator") ? "&a[\u2714]" : "&c[\u2718]") + " FakeCreative.Mode.Spectator");
+			LanguageAPI.getLang(false).dispatchMessage(sender, "&6&l&m]-------------&6&l[&c Permissions Menu 1/1 &6&l]&6&l&m------------[");
+		} else if (Execute.PURGE.accept(sender, args, 0)) {
+			if (args.length == 1) { this.purge(sender, "Database", "All Players"); } 
+			else { this.purge(sender, "Database", args[1]); }
 		} else if (Execute.CREATIVE.accept(sender, args, 0)) {
-			Player argsPlayer = (args.length > 1 ? PlayerHandler.getPlayerString(args[1]) : null);
+			final Player argsPlayer = (args.length > 1 ? PlayerHandler.getPlayerString(args[1]) : null);
 			if (args.length > 1 && argsPlayer != null) {
 				PlayerHandler.setCreative(sender, argsPlayer);
 			}  else if (args.length > 1) {
@@ -92,39 +126,38 @@ public class ChatExecutor implements CommandExecutor {
 				PlayerHandler.setCreative(sender, argsPlayer);
 			}
 		} else if (Execute.SURVIVAL.accept(sender, args, 0)) {
-			Player argsPlayer = (args.length > 1 ? PlayerHandler.getPlayerString(args[1]) : null);
+			final Player argsPlayer = (args.length > 1 ? PlayerHandler.getPlayerString(args[1]) : null);
 			if (args.length > 1 && argsPlayer != null) {
-				PlayerHandler.setMode(sender, argsPlayer, GameMode.SURVIVAL, false);
+				PlayerHandler.setMode(sender, argsPlayer, GameMode.SURVIVAL, false, false);
 			} else if (args.length > 1) {
 				String[] placeHolders = LanguageAPI.getLang(false).newString();
 				placeHolders[0] = "survival"; placeHolders[1] = args[1];
 				LanguageAPI.getLang(false).sendLangMessage("commands.default.noTarget", sender, placeHolders);
 			} else {
-				PlayerHandler.setMode(sender, argsPlayer, GameMode.SURVIVAL, false);
+				PlayerHandler.setMode(sender, argsPlayer, GameMode.SURVIVAL, false, false);
 			}
 		} else if (Execute.ADVENTURE.accept(sender, args, 0)) {
-			Player argsPlayer = (args.length > 1 ? PlayerHandler.getPlayerString(args[1]) : null);
+			final Player argsPlayer = (args.length > 1 ? PlayerHandler.getPlayerString(args[1]) : null);
 			if (args.length > 1 && argsPlayer != null) {
-				PlayerHandler.setMode(sender, argsPlayer, GameMode.ADVENTURE, false);
+				PlayerHandler.setMode(sender, argsPlayer, GameMode.ADVENTURE, false, false);
 			}  else if (args.length > 1) {
 				String[] placeHolders = LanguageAPI.getLang(false).newString();
 				placeHolders[0] = "adventure"; placeHolders[1] = args[1];
 				LanguageAPI.getLang(false).sendLangMessage("commands.default.noTarget", sender, placeHolders);
 			} else {
-				PlayerHandler.setMode(sender, argsPlayer, GameMode.ADVENTURE, false);
+				PlayerHandler.setMode(sender, argsPlayer, GameMode.ADVENTURE, false, false);
 			}
-		} else if (Execute.SPECTATOR.accept(sender, args, 0)) {
-			Player argsPlayer = (args.length > 1 ? PlayerHandler.getPlayerString(args[1]) : null);
+		} else if (ServerUtils.hasSpecificUpdate("1_8") && Execute.SPECTATOR.accept(sender, args, 0)) {
+			final Player argsPlayer = (args.length > 1 ? PlayerHandler.getPlayerString(args[1]) : null);
 			if (args.length > 1 && argsPlayer != null) {
-				PlayerHandler.setMode(sender, argsPlayer, GameMode.SPECTATOR, false);
+				PlayerHandler.setMode(sender, argsPlayer, GameMode.SPECTATOR, false, false);
 			}  else if (args.length > 1) {
 				String[] placeHolders = LanguageAPI.getLang(false).newString();
 				placeHolders[0] = "spectator"; placeHolders[1] = args[1];
 				LanguageAPI.getLang(false).sendLangMessage("commands.default.noTarget", sender, placeHolders);
 			} else {
-				PlayerHandler.setMode(sender, argsPlayer, GameMode.SPECTATOR, false);
+				PlayerHandler.setMode(sender, argsPlayer, GameMode.SPECTATOR, false, false);
 			}
-			
 		} else if (Execute.UPDATE.accept(sender, args, 0)) {
 			LanguageAPI.getLang(false).sendLangMessage("commands.updates.checkRequest", sender);
 			SchedulerUtils.runAsync(() -> {
@@ -161,6 +194,58 @@ public class ChatExecutor implements CommandExecutor {
 	}
 	
    /**
+	* Called when the CommandSender executes the Purge command.
+	* @param sender - Source of the command. 
+	* @param data - The table being purged of data.
+	* @param args - The player name having their data purged.
+	* 
+	*/
+	private HashMap < String, Boolean > confirmationRequests = new HashMap < String, Boolean > ();
+	private void purge(final CommandSender sender, final String data, final String args) {
+		String[] placeHolders = LanguageAPI.getLang(false).newString(); placeHolders[1] = args; placeHolders[5] = data; 
+		OfflinePlayer foundPlayer = LegacyAPI.getOfflinePlayer(args);;
+		if (!data.equalsIgnoreCase("Database")) { 
+			placeHolders[4] = "/ij purge <player>"; 
+			if (foundPlayer == null) { LanguageAPI.getLang(false).sendLangMessage("commands.default.noTarget", sender, placeHolders); return; } 
+		} else { placeHolders[4] = "/ij purge"; }
+		if (this.confirmationRequests.get(data + sender.getName()) != null && this.confirmationRequests.get(data + sender.getName()).equals(true)) {
+			if (!data.equalsIgnoreCase("Database")) { 
+				PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args));
+				for (Table table : Table.values()) {
+				DataObject dataObject = new DataObject(table, PlayerHandler.getOfflinePlayerID(foundPlayer), false);
+					if (dataObject != null) { SQL.getData().removeData(dataObject); }
+				}
+			} 
+			else {
+			FakeCreative.getInstance().setStarted(false);
+				SQL.getData().purgeDatabase(); {
+					SchedulerUtils.runAsync(() -> {
+						SQL.newData(false); {
+							SchedulerUtils.runAsyncLater(2L, () -> {
+								SchedulerUtils.runSingleAsync(() -> {
+									FakeCreative.getInstance().setStarted(true);	
+								});
+							});
+						}
+					});
+				}
+			}
+			LanguageAPI.getLang(false).sendLangMessage("commands.database.purgeSuccess", sender, placeHolders);
+			this.confirmationRequests.remove(data + sender.getName());
+		} else {
+			this.confirmationRequests.put(data + sender.getName(), true);
+			LanguageAPI.getLang(false).sendLangMessage("commands.database.purgeWarn", sender, placeHolders);
+			LanguageAPI.getLang(false).sendLangMessage("commands.database.purgeConfirm", sender, placeHolders);
+			SchedulerUtils.runLater(100L, () -> {
+				if (this.confirmationRequests.get(data + sender.getName()) != null && this.confirmationRequests.get(data + sender.getName()).equals(true)) {
+					LanguageAPI.getLang(false).sendLangMessage("commands.database.purgeTimeOut", sender);
+					this.confirmationRequests.remove(data + sender.getName());
+				} 
+			});
+		}
+	}
+	
+   /**
 	* Defines the config Command type for the command.
 	* 
 	*/
@@ -168,10 +253,12 @@ public class ChatExecutor implements CommandExecutor {
 		DEFAULT("", "fakecreative.use", false),
 		HELP("help", "fakecreative.use", false),
 		RELOAD("rl, reload", "fakecreative.reload", false),
+		PERMISSIONS("permission, permissions", "fakecreative.permissions", true),
 		SURVIVAL("su, survival, 0", "fakecreative.mode.survival", true),
 		CREATIVE("cr, creative, 1", "fakecreative.mode.creative", true),
 		ADVENTURE("ad, adventure, 2", "fakecreative.mode.adventure", true),
 		SPECTATOR("sp, spectator, 3", "fakecreative.mode.spectator", true),
+		PURGE("purge", "fakecreative.purge", false),
 		UPDATE("update, updates", "fakecreative.updates", false),
 		UPGRADE("upgrade", "fakecreative.upgrade", false);
 		private final String command;
@@ -222,7 +309,7 @@ public class ChatExecutor implements CommandExecutor {
 	    */
 		private boolean hasSyntax(final String[] args, final int page) {
 			return ((args.length >= 2 && args[1].equalsIgnoreCase(String.valueOf(page))) || !(args.length >= 2)  || this.equals(Execute.CREATIVE) || this.equals(Execute.SURVIVAL) 
-				  || this.equals(Execute.ADVENTURE) || this.equals(Execute.SPECTATOR));
+				  || this.equals(Execute.ADVENTURE) || this.equals(Execute.SPECTATOR) || this.equals(Execute.PURGE));
 		}
 		
        /**

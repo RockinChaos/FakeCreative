@@ -17,21 +17,17 @@
  */
 package me.RockinChaos.fakecreative.handlers.modes.instance;
 
-import java.util.HashMap;
-
-import me.RockinChaos.fakecreative.utils.sql.DataObject;
-import me.RockinChaos.fakecreative.utils.sql.SQL;
-import me.RockinChaos.fakecreative.utils.sql.DataObject.Table;
+import me.RockinChaos.fakecreative.handlers.PlayerHandler;
 
 public class PlayerObject {
 	
+	private PlayerStats playerStats;
 	private String playerID;
 	private String inventory64;
 	private double health;
 	private double maxHealth;
 	private int food;
 	private int fireTicks;
-	private HashMap<Integer, String> hotbars = new HashMap<Integer, String>();
 	
    /**
     * Creates a new PlayerObject instance
@@ -39,80 +35,84 @@ public class PlayerObject {
     * @param playerID - The player being accessed.
     * @param object - The Object being referenced.
     */
-	public PlayerObject(final String playerID, final String inventory64, final double health, final double maxHealth, final int food, final int fireTicks) {
+	public PlayerObject(final String playerID, final double health, final double maxHealth, final int food, final int fireTicks) {
 		this.playerID = playerID;
-		this.inventory64 = inventory64;
 		this.health = health;
 		this.maxHealth = maxHealth;
 		this.food = food;
 		this.fireTicks = fireTicks;
-		for (int i = 1; i <= 9; i++) {
-			DataObject dataObject = SQL.getData().getData(new DataObject(Table.HOTBAR, playerID, "", Integer.toString(i), ""));
-			if (dataObject != null) {
-				this.hotbars.put(Integer.valueOf(dataObject.getPosition()), dataObject.getInventory64());
-			}
-		}
 	}
 	
    /**
-    * Gets the Guild of the GuildObject
+    * Gets the Player UUID of the PlayerObject.
     * 
-    * @return The Guild.
+    * @return The Player UUID.
     */
 	public String getPlayer() {
 		return this.playerID;
 	}
 	
    /**
-    * Gets the Object of the GuildObject
+    * Gets the Health of the PlayerObject.
     * 
-    * @return The Object.
+    * @return The Health.
     */
 	public double getHealth() {
 		return this.health;
 	}
 	
    /**
-    * Gets the Object of the GuildObject
+    * Gets the Health Scale of the PlayerObject.
     * 
-    * @return The Object.
+    * @return The Health Scale.
     */
 	public double getMaxHealth() {
 		return this.maxHealth;
 	}
 	
    /**
-    * Gets the Object of the GuildObject
+    * Gets the Food Level of the PlayerObject.
     * 
-    * @return The Object.
+    * @return The Food Level.
     */
 	public int getFood() {
 		return this.food;
 	}
 	
    /**
-    * Gets the Object of the GuildObject
+    * Gets the Fire Ticks of the PlayerObject.
     * 
-    * @return The Object.
+    * @return The Fire Ticks.
     */
 	public int getFireTicks() {
 		return this.fireTicks;
 	}
 	
    /**
-    * Gets the Object of the GuildObject
+    * Gets the Inventory64 of the PlayerObject.
     * 
-    * @return The Object.
+    * @return The Inventory64.
     */
 	public String getInventory64() {
 		return this.inventory64;
 	}
 	
-	public void setHotbars(final HashMap<Integer, String> hotbars) {
-		this.hotbars = hotbars;
+   /**
+    * Sets the String Byte of the Inventory64 for the PlayerObject.
+    * 
+    * @param inventory64 - The Inventory64 to be saved.
+    */
+	public void setInventory64(final String inventory64) {
+		this.inventory64 = inventory64;
 	}
 	
-	public HashMap<Integer, String> getHotbars() {
-		return this.hotbars;
+   /**
+    * Gets the PlayerStats of the PlayerObject.
+    * 
+    * @return The PlayerStats.
+    */
+	public PlayerStats getStats() {
+		if (this.playerStats == null) { this.playerStats = new PlayerStats(PlayerHandler.getPlayerString(playerID)); }
+		return this.playerStats;
 	}
 }

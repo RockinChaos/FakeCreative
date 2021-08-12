@@ -89,7 +89,7 @@ public abstract class ChatComponent {
         * 
         * @param parent - The TextSection with the Hover text to be set.
         */
-        public HoverEvent(TextSection parent) {
+        public HoverEvent(final TextSection parent) {
             this.text = parent;
         }
         
@@ -98,7 +98,7 @@ public abstract class ChatComponent {
         * 
         * @param action - The HoverAction to be set.
         */
-        public final void action(HoverAction action) {
+        public final void action(final HoverAction action) {
             this.action = action;
         }
         
@@ -135,7 +135,7 @@ public abstract class ChatComponent {
         * 
         * @param action - The click action to be set.
         */
-        public void action(ClickAction action) {
+        public void action(final ClickAction action) {
             this.action = action;
         }
         
@@ -153,7 +153,7 @@ public abstract class ChatComponent {
         * 
         * @param click - The click text to be set.
         */
-        public void click(String click) {
+        public void click(final String click) {
             this.click = click;
         }
         
@@ -249,7 +249,7 @@ public abstract class ChatComponent {
         * @param isParent - If this TextSection is a parent or a child.
         * @param parent - A parent TextSection (superior).
         */
-        private TextSection(boolean events, boolean isParent, TextSection parent) {
+        private TextSection(final boolean events, final boolean isParent, final TextSection parent) {
             this.canHaveEvents = events;
             this.isParent = isParent;
             if (!isParent) {
@@ -262,7 +262,7 @@ public abstract class ChatComponent {
         * 
         * @param player - The Player to have the ChatComponent sent.
         */
-        public final void sendTo(Player player) {
+        public final void sendTo(final Player player) {
             sendTo(this, player);
         }
         
@@ -272,8 +272,8 @@ public abstract class ChatComponent {
         * @param text - The text to append to this current section.
         * @return The newly created text section.
         */
-        public final TextSection append(String text) {
-            TextSection section = new TextSection(true, false, this.getParent()).setText(text);
+        public final TextSection append(final String text) {
+            final TextSection section = new TextSection(true, false, this.getParent()).setText(text);
             this.getExtra().add(section);
             return section;
         }
@@ -283,8 +283,8 @@ public abstract class ChatComponent {
         * 
         * @param consumer - The text to append to this current section.
         */
-        public final TextSection append(Consumer<TextSection> consumer) {
-            TextSection section = new TextSection(true, false, this.getParent());
+        public final TextSection append(final Consumer<TextSection> consumer) {
+            final TextSection section = new TextSection(true, false, this.getParent());
             consumer.accept(section);
             this.getExtra().add(section);
             return this;
@@ -295,7 +295,7 @@ public abstract class ChatComponent {
         * 
         * @param textSection - The text to append to this current section.
         */
-        public final TextSection append(TextSection textSection) {
+        public final TextSection append(final TextSection textSection) {
             this.getExtra().add(textSection.getParent());
             return this;
         }
@@ -306,7 +306,7 @@ public abstract class ChatComponent {
         * @param text - The text.
         * @return This TextSection.
         */
-        public TextSection setText(String text) {
+        public TextSection setText(final String text) {
             this.text = text;
             return this;
         }
@@ -321,7 +321,7 @@ public abstract class ChatComponent {
         * Any formatting such as bold or italics must be set with the appropriate methods.
         * </p>
         */
-        public TextSection setColor(ChatColor color) {
+        public TextSection setColor(final ChatColor color) {
             if (21 > color.ordinal() && color.ordinal() > 15) {
                 return this;
             }
@@ -335,7 +335,7 @@ public abstract class ChatComponent {
         * @param bold - True to set bold, false otherwise.
         * @return This TextSection.
         */
-        public TextSection setBold(boolean bold) {
+        public TextSection setBold(final boolean bold) {
             this.bold = bold;
             return this;
         }
@@ -346,7 +346,7 @@ public abstract class ChatComponent {
         * @param italics - True to set italics, false otherwise.
         * @return This TextSection.
         */
-        public TextSection setItalics(boolean italics) {
+        public TextSection setItalics(final boolean italics) {
             this.italics = italics;
             return this;
         }
@@ -357,7 +357,7 @@ public abstract class ChatComponent {
         * @param underline - True to set underlined, false otherwise.
         * @return This TextSection.
         */
-        public TextSection setUnderlined(boolean underline) {
+        public TextSection setUnderlined(final boolean underline) {
             this.underline = underline;
             return this;
         }
@@ -368,7 +368,7 @@ public abstract class ChatComponent {
         * @param obfuscated - True to set obfuscated, false otherwise.
         * @return This TextSection.
         */
-        public TextSection setObfuscated(boolean obfuscated) {
+        public TextSection setObfuscated(final boolean obfuscated) {
             this.obfuscated = obfuscated;
             return this;
         }
@@ -379,7 +379,7 @@ public abstract class ChatComponent {
         * @param strikethrough - True to set strikethrough, false otherwise.
         * @return This TextSection.
         */
-        public TextSection setStrikethrough(boolean strikethrough) {
+        public TextSection setStrikethrough(final boolean strikethrough) {
             this.strikethrough = strikethrough;
             return this;
         }
@@ -390,7 +390,7 @@ public abstract class ChatComponent {
         * @param insertion - The text to insert.
         * @return This TextSection.
         */
-        public TextSection shiftClickEvent(String insertion) {
+        public TextSection shiftClickEvent(final String insertion) {
             if (!this.canHaveEvents) return this;
             this.insertion = insertion;
             return this;
@@ -402,7 +402,7 @@ public abstract class ChatComponent {
         * @param hoverEvent - The hover event.
         * @return This TextSection.
         */
-        public TextSection hoverEvent(Consumer<HoverEvent> hoverEvent) {
+        public TextSection hoverEvent(final Consumer<HoverEvent> hoverEvent) {
             if (!this.canHaveEvents) return this;
             this.hoverEvent = new HoverEvent(this.parent);
             hoverEvent.accept(this.hoverEvent);
@@ -415,7 +415,7 @@ public abstract class ChatComponent {
         * @param hoverEvent - The hover event.
         * @return This TextSection.
         */
-        public TextSection hoverEvent(HoverEvent hoverEvent) {
+        public TextSection hoverEvent(final HoverEvent hoverEvent) {
             if (!this.canHaveEvents) return this;
             this.hoverEvent = hoverEvent;
             return this;
@@ -427,7 +427,7 @@ public abstract class ChatComponent {
         * @param clickEvent - The click event.
         * @return This TextSection.
         */
-        public TextSection clickEvent(Consumer<ClickEvent> clickEvent) {
+        public TextSection clickEvent(final Consumer<ClickEvent> clickEvent) {
             if (!this.canHaveEvents) return this;
             this.clickEvent = new ClickEvent();
             clickEvent.accept(this.clickEvent);
@@ -440,7 +440,7 @@ public abstract class ChatComponent {
         * @param clickEvent - The click event.
         * @return This TextSection.
         */
-        public TextSection clickEvent(ClickEvent clickEvent) {
+        public TextSection clickEvent(final ClickEvent clickEvent) {
             if (!this.canHaveEvents) return this;
             this.clickEvent = clickEvent;
             return this;
@@ -493,7 +493,7 @@ public abstract class ChatComponent {
             JsonObject hover = null;
             if (this.hoverEvent != null && this.canHaveEvents) {
                 hover = new JsonObject();
-                List<JsonObject> val = new ArrayList<>();
+                final List<JsonObject> val = new ArrayList<>();
                 val.add(this.hoverEvent.getHover().getJson());
                 hover.addProperty("action", this.hoverEvent.getAction().toString().toLowerCase());
                 hover.add("value", this.gson.toJsonTree(val));
@@ -504,7 +504,7 @@ public abstract class ChatComponent {
                 click.addProperty("action", this.clickEvent.getAction().toString().toLowerCase());
                 click.addProperty("value", this.clickEvent.getClick());
             }
-            JsonObject json = new JsonObject();
+            final JsonObject json = new JsonObject();
             json.addProperty("text", this.text);
             json.addProperty("color", this.color.name());
             if (this.bold) json.addProperty("bold", true);
@@ -535,7 +535,7 @@ public abstract class ChatComponent {
         * @return Formatted String.
         */
         public String getFormatted() {
-            StringBuilder stringBuilder = new StringBuilder();
+            final StringBuilder stringBuilder = new StringBuilder();
             if (this.bold) stringBuilder.append(ChatColor.BOLD);
             if (this.italics) stringBuilder.append(ChatColor.ITALIC);
             if (this.underline) stringBuilder.append(ChatColor.UNDERLINE);
@@ -566,7 +566,7 @@ public abstract class ChatComponent {
         * @return The plain text.
         */
         public String toUnformatted() {
-            StringBuilder builder = new StringBuilder();
+            final StringBuilder builder = new StringBuilder();
             this.getParent().getSections().stream().map(TextSection::getText).forEach(builder::append);
             return builder.toString();
         }
@@ -577,7 +577,7 @@ public abstract class ChatComponent {
         * @return A list of TextSections.
         */
         public List<TextSection> getSections() {
-            List<TextSection> sections = new ArrayList<>(this.getParent().getExtra());
+            final List<TextSection> sections = new ArrayList<>(this.getParent().getExtra());
             sections.add(0, this.getParent());
             return sections;
         }

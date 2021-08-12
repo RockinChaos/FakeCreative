@@ -7,34 +7,69 @@ load: POSTWORLD
 api-version: 1.13
 description: A better creative mode plugin.
 website: https://www.spigotmc.org/resources/fakecreative/
-softdepend: [BetterNick, PlaceholderAPI, ProtocolLib]
+softdepend: [BetterNick, PlaceholderAPI, ProtocolLib, SkinsRestorer]
 
+permissions:
+   fakecreative.*:
+      description: Grants access to all aspects of the plugin, including every permission node.
+      default: false
+      children:
+          fakecreative.all: true
+   fakecreative.all:
+      description: Grants access to all aspects of the plugin, including every permission node.
+      default: false
+      children:
+          fakecreative.use: true
+          fakecreative.reload: true
+          fakecreative.updates: true
+          fakecreative.upgrade: true
+          fakecreative.permissions: true
+          fakecreative.purge: true
+          fakecreative.mode.creative: true
+          fakecreative.mode.survival: true
+          fakecreative.mode.adventure: true
+          fakecreative.mode.spectator: true
+   fakecreative.use:
+      description: Grants access to basic plugin commands.
+      default: true
+   fakecreative.reload:
+      description: Grants access to the reload command.
+      default: false
+   fakecreative.updates:
+      description: Grants access to the updates command.
+      default: false
+   fakecreative.upgrade:
+      description: Grants access to the upgrade command.
+      default: false
+   fakecreative.permissions:
+      description: Grants access to the permissions command
+      default: true
+   fakecreative.purge:
+      description: Grants access to the purge command.
+      default: false
+   fakecreative.mode.creative:
+      description: Grants access to the creative command.
+      default: false
+   fakecreative.mode.survival:
+      description: Grants access to the survival command.
+      default: false
+   fakecreative.mode.adventure:
+      description: Grants access to the adventure command.
+      default: false
+   fakecreative.mode.spectator:
+      description: Grants access to the spectator command.
+      default: false
+      
 commands:
-   gamemode:
-      description: Displays a menu giving credit to the author and the help menu command.
-      permission: gamemode.use
-      aliases: [gamemode]
-      usage: |
-          /gamemode
-          Example: /gamemode
-   gm:
-      description: Displays a menu giving credit to the author and the help menu command.
-      permission: gamemode.use
-      aliases: [gm]
-      usage: |
-          /gm
-          Example: /gm
    fakecreative:
       description: Displays a menu giving credit to the author and the help menu command.
-      permission: gamemode.use
-      aliases: [fakecreative]
+      aliases: [fc]
       usage: |
           /fakecreative
           Example: /fakecreative
-   fc:
-      description: Displays a menu giving credit to the author and the help menu command.
-      permission: gamemode.use
-      aliases: [fc]
+   gamemode:
+      description: Switches the executing players gamemode.
+      aliases: [gm]
       usage: |
-          /fc
-          Example: /fc
+          /gamemode
+          Example: /gamemode

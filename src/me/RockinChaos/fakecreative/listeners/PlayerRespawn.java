@@ -33,7 +33,7 @@ public class PlayerRespawn implements Listener {
 	*/
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onPlayerRespawn(final PlayerRespawnEvent event) {
-    	if (PlayerHandler.isFakeCreativeMode(event.getPlayer())) {
+    	if (PlayerHandler.isCreativeMode(event.getPlayer(), true)) {
     		PlayerHandler.refreshCreative(event.getPlayer());
     	}
     }

@@ -32,7 +32,7 @@ public class PacketContainer {
 	* 
 	* @param packet - The packet being deciphered.
 	*/
-	public PacketContainer(Object packet) {
+	public PacketContainer(final Object packet) {
 		this.packet = packet;
 		int fieldNumber = 0;
 		try {
@@ -59,7 +59,7 @@ public class PacketContainer {
 	* @param readable - The line to be read.
 	* @return The found PacketObject of the Data Field.
 	*/
-	public PacketObject read(int readable) {
+	public PacketObject read(final int readable) {
 		return this.dataFields.get(readable);
 	}
 }

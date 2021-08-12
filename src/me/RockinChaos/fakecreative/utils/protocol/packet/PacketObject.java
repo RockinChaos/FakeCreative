@@ -28,7 +28,7 @@ public class PacketObject {
 	* @param field - The field of the Packet.
 	* @param data - The data of the Packet.
 	*/
-	public PacketObject(String field, Object data) {
+	public PacketObject(final String field, final Object data) {
 		this.field = field;
 		this.data = data;
 	}

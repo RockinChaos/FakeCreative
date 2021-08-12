@@ -33,7 +33,7 @@ public class PermissionsHandler {
     * @return If the entity has the proper permission.
     */
 	public static boolean hasPermission(final CommandSender sender, final String permission) {
-		if (sender.hasPermission(permission) || sender.hasPermission("itemjoin.*") || sender.hasPermission("itemjoin.all") || isDeveloper(sender) || (sender instanceof ConsoleCommandSender)) {
+		if (sender.hasPermission(permission) || sender.hasPermission("fakecreative.*") || sender.hasPermission("fakecreative.all") || isDeveloper(sender) || (sender instanceof ConsoleCommandSender)) {
 			return true;
 		} else if (!ConfigHandler.getConfig().getFile("config.yml").getBoolean("Permissions.Commands-OP") && sender.isOp()) {
 			if (permission.equalsIgnoreCase("fakecreative.use") || permission.equalsIgnoreCase("fakecreative.reload") || permission.equalsIgnoreCase("fakecreative.updates") || permission.equalsIgnoreCase("fakecreative.upgrade")

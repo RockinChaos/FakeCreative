@@ -45,6 +45,7 @@ public class Interface implements InventoryHolder {
 	private SortedMap < Integer, Page > pages = new TreeMap < > ();
 	
 	private boolean isPaged;
+	private boolean canChat = false;
 	private boolean pendingChat = false;
 	private boolean pendingClick = false;
 	
@@ -59,7 +60,7 @@ public class Interface implements InventoryHolder {
     * @param rows - Number of rows for the inventory.
     * @param title - Title to be displayed on the inventory.
     */
-	public Interface(boolean isPaged, int rows, String title, Player player) {
+	public Interface(final boolean isPaged, final int rows, final String title, final Player player) {
 		this.panePlayer = player;
 		this.isPaged = isPaged;
 		if (this.isPaged) {
@@ -79,7 +80,7 @@ public class Interface implements InventoryHolder {
     * 
     * @param event - InventoryClickEvent
     */
-	public void onClick(InventoryClickEvent event) {
+	public void onClick(final InventoryClickEvent event) {
 		if (this.panePlayer.equals(event.getWhoClicked()) && !(this.pendingClick && event.getSlot() <= event.getWhoClicked().getInventory().getSize() && event.getSlot() >= 0 && this.clickInventory(event))) {
 			if (this.isPaged && event.getSlot() == this.inventory.getSize() - 8 && this.getCurrentPage() > 1) {
 				if (this.controlBack != null) {
@@ -110,11 +111,13 @@ public class Interface implements InventoryHolder {
     * 
     * @param event - AsyncPlayerChatEvent
     */
-	public void onChat(AsyncPlayerChatEvent event) {
-		if (this.panePlayer.equals(event.getPlayer()) && this.activeButton != -1) {
+	public void onChat(final AsyncPlayerChatEvent event) {
+		if (this.panePlayer.equals(event.getPlayer()) && this.activeButton != -1 && !this.canChat) {
 			this.pages.get(this.currentIndex).handleChat(event, this.activeButton);
 			this.pendingChat = false;
 			event.setCancelled(true);
+		} else if (!canChat) {
+			this.pendingChat = false;
 		}
 	}
 	
@@ -123,8 +126,17 @@ public class Interface implements InventoryHolder {
     * 
     * @param bool - Allows the button to be clicked.
     */
-	public void allowClick(boolean bool) {
+	public void allowClick(final boolean bool) {
 		this.pendingClick = bool;
+	}
+	
+   /**
+    * Allows the button to be clicked without a chat requirement.
+    * 
+    * @param bool - Allows the button to be clicked without a chat requirement.
+    */
+	public void allowChat(final boolean bool) {
+		this.canChat = bool;
 	}
 	
    /**
@@ -132,8 +144,8 @@ public class Interface implements InventoryHolder {
     * 
     * @param button - The button to be added.
     */
-	public void addButton(Button button) {
-		for (Entry < Integer, Page > entry: this.pages.entrySet()) {
+	public void addButton(final Button button) {
+		for (Entry < Integer, Page > entry : this.pages.entrySet()) {
 			if (entry.getValue().addButton(button)) {
 				if (entry.getKey() == this.currentIndex) {
 					this.renderPage();
@@ -141,7 +153,7 @@ public class Interface implements InventoryHolder {
 				return;
 			}
 		}
-		Page page = new Page(this.pageSize);
+		final Page page = new Page(this.pageSize);
 		page.addButton(button);
 		this.pages.put(this.pages.lastKey() + 1, page);
 		this.renderPage();
@@ -153,7 +165,7 @@ public class Interface implements InventoryHolder {
     * @param button - The button to be added.
     * @param amount - The number of buttons to be added.
     */
-	public void addButton(Button button, int amount) {
+	public void addButton(final Button button, final int amount) {
 		if (amount == 0 || amount == 1) { this.addButton(button); }
 		else {
 			for (int i = 0; i < amount; i++) {
@@ -167,9 +179,9 @@ public class Interface implements InventoryHolder {
     * 
     * @param button - The button to be removed.
     */
-	public void removeButton(Button button) {
+	public void removeButton(final Button button) {
 		for (Iterator < Entry < Integer, Page >> iterator = pages.entrySet().iterator(); iterator.hasNext();) {
-			Entry < Integer, Page > entry = iterator.next();
+			final Entry < Integer, Page > entry = iterator.next();
 			if (entry.getValue().removeButton(button)) {
 				if (entry.getValue().isEmpty()) {
 					if (this.pages.size() > 1) {
@@ -192,7 +204,7 @@ public class Interface implements InventoryHolder {
     * 
     * @param button - The button to be set as the return button.
     */
-	public void setReturnButton(Button button) {
+	public void setReturnButton(final Button button) {
 		if (this.isPaged) {
 			this.controlExit = button;
 			this.inventory.setItem(inventory.getSize() - 9, button.getItemStack());
@@ -205,8 +217,9 @@ public class Interface implements InventoryHolder {
     * 
     * @param inventory - The inventory to have the controls added.
     */
-	private void createControls(Inventory inventory) {
+	private void createControls(final Inventory inventory) {
 		if (this.isPaged) {
+			final ItemStack blackPane = ItemHandler.getItem("STAINED_GLASS_PANE:15", 1, false, false, "&f", "");
 			if (this.getCurrentPage() > 1) {
 				ItemStack backItem;
 				backItem = ItemHandler.getItem("ARROW", 1, false, false, "&3&n&lPrevious Page", "&7", "&7*Previous page &a&l" + (this.getCurrentPage() - 1) + "&7 / &c&l" + this.getPageAmount());
@@ -236,7 +249,6 @@ public class Interface implements InventoryHolder {
 			}
 			inventory.setItem(inventory.getSize() - 9, exitItem);
 			inventory.setItem(inventory.getSize() - 1, exitItem);
-			ItemStack blackPane = ItemHandler.getItem("STAINED_GLASS_PANE:15", 1, false, false, "&f", "");
 			inventory.setItem(inventory.getSize() - 3, blackPane);
 			inventory.setItem(inventory.getSize() - 4, blackPane);
 			inventory.setItem(inventory.getSize() - 6, blackPane);
@@ -277,7 +289,7 @@ public class Interface implements InventoryHolder {
     * 
     * @param index - The page to become the current page.
     */
-	private void selectPage(int index) {
+	private void selectPage(final int index) {
 		if (index == this.currentIndex) {
 			return;
 		}
@@ -292,7 +304,7 @@ public class Interface implements InventoryHolder {
     * @param event - InventoryClickEvent
     * @return If the inventory clicked is the same as the current inventory page.
     */
-	public boolean clickInventory(InventoryClickEvent event) {
+	public boolean clickInventory(final InventoryClickEvent event) {
 		if (ServerUtils.hasSpecificUpdate("1_14")) {
 			return (event.getClickedInventory() == event.getWhoClicked().getInventory());
 		} else {
@@ -316,7 +328,7 @@ public class Interface implements InventoryHolder {
     * 
     * @param player - The player to have the current inventory page opened.
     */
-	public void open(Player player) {
+	public void open(final Player player) {
 		SchedulerUtils.run(() -> {
 			this.renderPage();
 			player.openInventory(this.getInventory());

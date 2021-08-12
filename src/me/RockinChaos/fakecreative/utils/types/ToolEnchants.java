@@ -35,7 +35,7 @@ public enum ToolEnchants {
 	* @param enchant - The Enchantment being checked.
 	* @return If the Enchantment is a Tool Enchant type.
 	*/
-	public static boolean isEnchant(Enchantment enchant) {
+	public static boolean isEnchant(final Enchantment enchant) {
 		for (ToolEnchants ench: ToolEnchants.values()) {
 			if (enchant.toString().split(", ")[1].replace("]", "").equalsIgnoreCase(ench.name())) {
 				return true;

@@ -32,18 +32,18 @@ Permissions:
   Commands-OP: false
 
 Preferences:
-  auto-restore: true # if creative mode should automatically be restored on server restart or HARD reload...
-  fly-speed: 1.0 # the creative flight speed.
   allow-flight: true # if the creative player can fly.
-  invulnerable: true # if the creative player is damagable.
-  invulnerable-delay: 5 # how long the player should be invulnerable after EXITING creative. (in seconds)
-  unbreakable-items: true # if items should take durability damage in creative.
+  fly-speed: 1.0 # the creative flight speed.
+  break-speed: 4.0 # total number of ticks to wait before allowing the player to break the next block. Tweaking this changes the speed at which you can destroy items (via left-click) in creative.
+  food-level: 20 # food level of a creative player.
   health: 20 # health points of a player relative to heart-scale.
   heart-scale: 1.0 # number of hearts of a creative player.
-  food-level: 20 # food level of a creative player.
-  hunger-depletion: false # if the player should use their hunger bar while in creative, setting to false maintains the defined food-level until creative is exited.
-  allow-fire: false # if the player should catch fire. If you have invulnerable set to true and you set this to false it essentially prevents a very lengthy fire animation on the screen. (Prevents the annoying animation when using a notch apple or fire resistance potion and jumping into the lava.)
+  allow-hunger: false # if the player should use their hunger bar while in creative, setting to false maintains the defined food-level until creative is exited.
+  allow-burn: false # if the player should catch fire. If you have invulnerable set to true and you set this to false it essentially prevents a very lengthy fire animation on the screen. (Prevents the annoying animation when using a notch apple or fire resistance potion and jumping into the lava.)
+  unbreakable-items: true # if items should take durability damage in creative.
   block-drops: false # if blocks should drop when breaking blocks.
   sword-block: true # if sword items should be BLOCKED from breaking blocks.
-  break-speed: 4.0 # total number of ticks to wait before allowing the player to break the next block. Tweaking this changes the speed at which you can destroy items (via left-click) in creative.
+  auto-restore: true # if creative mode should automatically be restored on server restart or HARD reload... This will also restore the inventory if the player quits the server while in creative.
+  invulnerable: true # if the creative player is damagable.
+  invulnerable-delay: 5 # how long the player should be invulnerable after EXITING creative. (in seconds)
   store-inventory: true # acts like Multiverse-Inventories so that once you enter creative your items are cleared and once you exit creative your items get restored.

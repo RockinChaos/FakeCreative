@@ -53,9 +53,9 @@ public enum Redstone {
 	* @param material - The Material being checked.
 	* @return If the Material is a Redstone type.
 	*/
-	public static boolean isRedstone(Material material) {
+	public static boolean isRedstone(final Material material) {
 	    for (Redstone tag: Redstone.values()) {
-	    	String[] mats = material.name().split("_");
+	    	final String[] mats = material.name().split("_");
 	    	if (tag.name().equalsIgnoreCase((tag.name().contains("_") ? material.name() : (mats.length > 1 ? mats[(mats.length - 1)] : mats[0])))) {
 	        	return true;
 	        }

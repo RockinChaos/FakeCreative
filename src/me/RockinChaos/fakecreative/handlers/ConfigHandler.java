@@ -27,15 +27,16 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import me.RockinChaos.fakecreative.ChatExecutor;
+import me.RockinChaos.fakecreative.ChatTab;
 import me.RockinChaos.fakecreative.FakeCreative;
 import me.RockinChaos.fakecreative.listeners.Blocks;
 import me.RockinChaos.fakecreative.listeners.Clicking;
 import me.RockinChaos.fakecreative.listeners.Crafting;
-import me.RockinChaos.fakecreative.listeners.Depletion;
 import me.RockinChaos.fakecreative.listeners.Gamemode;
 import me.RockinChaos.fakecreative.listeners.Interact;
 import me.RockinChaos.fakecreative.listeners.Interfaces;
 import me.RockinChaos.fakecreative.listeners.PlayerClear;
+import me.RockinChaos.fakecreative.listeners.PlayerJoin;
 import me.RockinChaos.fakecreative.listeners.PlayerQuit;
 import me.RockinChaos.fakecreative.listeners.PlayerRespawn;
 import me.RockinChaos.fakecreative.listeners.Targeting;
@@ -44,17 +45,18 @@ import me.RockinChaos.fakecreative.utils.ServerUtils;
 import me.RockinChaos.fakecreative.utils.StringUtils;
 import me.RockinChaos.fakecreative.utils.api.DependAPI;
 import me.RockinChaos.fakecreative.utils.api.LanguageAPI;
+import me.RockinChaos.fakecreative.utils.api.LegacyAPI;
 import me.RockinChaos.fakecreative.utils.api.MetricsAPI;
 import me.RockinChaos.fakecreative.utils.api.ProtocolAPI;
 import me.RockinChaos.fakecreative.utils.protocol.ProtocolManager;
 import me.RockinChaos.fakecreative.utils.sql.SQL;
 
 public class ConfigHandler {
-	
-	private HashMap < String, Boolean > noSource = new HashMap < String, Boolean > ();
-	
+
 	private YamlConfiguration configFile;
 	private YamlConfiguration langFile;
+	
+	private HashMap < String, Boolean > noSource = new HashMap < String, Boolean > ();
 	
 	private static ConfigHandler config;
 	
@@ -63,21 +65,23 @@ public class ConfigHandler {
     * 
     */
 	public void registerEvents() {
-  		FakeCreative.getInstance().getCommand("gm").setExecutor(new ChatExecutor());
-  		FakeCreative.getInstance().getCommand("gamemode").setExecutor(new ChatExecutor());
-  		FakeCreative.getInstance().getCommand("fc").setExecutor(new ChatExecutor());
+		FakeCreative.getInstance().getCommand("gamemode").setExecutor(new ChatExecutor());
+		FakeCreative.getInstance().getCommand("gamemode").setTabCompleter(new ChatTab());
   		FakeCreative.getInstance().getCommand("fakecreative").setExecutor(new ChatExecutor());
+  		FakeCreative.getInstance().getCommand("fakecreative").setTabCompleter(new ChatTab());
   		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new Blocks(), FakeCreative.getInstance());
   		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new Clicking(), FakeCreative.getInstance());
   		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new Crafting(), FakeCreative.getInstance());
-  		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new Depletion(), FakeCreative.getInstance());
   		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new Gamemode(), FakeCreative.getInstance());
   		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new Interact(), FakeCreative.getInstance());
   		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new Targeting(), FakeCreative.getInstance());
+  		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new PlayerJoin(), FakeCreative.getInstance());
   		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new PlayerQuit(), FakeCreative.getInstance());
   		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new PlayerClear(), FakeCreative.getInstance());
   		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new PlayerRespawn(), FakeCreative.getInstance());
   		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new Interfaces(), FakeCreative.getInstance());
+  		LegacyAPI.registerDepletion();
+  		LegacyAPI.registerInvulnerable();
 	}
 
    /**
@@ -195,7 +199,7 @@ public class ConfigHandler {
     * @param dataFile - The FileConfiguration being modified.
     * @param file - The file name being accessed.
     */
-	public void saveFile(FileConfiguration dataFile, File fileFolder, String file) {
+	public void saveFile(final FileConfiguration dataFile, final File fileFolder, final String file) {
 		try {
 			dataFile.save(fileFolder); 
 			this.getSource(file); 
@@ -206,6 +210,11 @@ public class ConfigHandler {
 		}	
 	}
 	
+   /**
+    * Checks if Debugging is enabled.
+    * 
+    * @return If Debugging is enabled.
+    */
 	public boolean debugEnabled() {
 		return this.getFile("config.yml").getBoolean("General.Debugging");
 	}
@@ -222,6 +231,7 @@ public class ConfigHandler {
    /**
     * Registers new instances of the plugin classes.
     * 
+    * @param silent - If any messages should be sent.
     */
 	private void registerClasses(final boolean silent) {
 		final boolean reload = FakeCreative.getInstance().isStarted();
@@ -231,6 +241,12 @@ public class ConfigHandler {
 		else if (ServerUtils.hasSpecificUpdate("1_8") && DependAPI.getDepends(false).protocolEnabled() && !ProtocolAPI.isHandling()) { ProtocolAPI.handleProtocols(); }
 		FakeCreative.getInstance().setStarted(false);
 		SchedulerUtils.runAsync(() -> {
+			if (!silent) { 
+				DependAPI.getDepends(false).sendUtilityDepends();
+				if (ServerUtils.hasSpecificUpdate("1_13")) {
+					ServerUtils.logInfo("Initializing Legacy Material Support ..."); 
+				}
+			}
 			SQL.newData(reload); {
 				SchedulerUtils.runAsyncLater(2L, () -> {
 					FakeCreative.getInstance().setStarted(true);
@@ -256,6 +272,7 @@ public class ConfigHandler {
    /**
     * Properly reloads the configuration files.
     * 
+    * @param silent - If any messages should be sent.
     */
 	public void reloadConfigs(final boolean silent) {
 		config = new ConfigHandler(); 
@@ -283,7 +300,6 @@ public class ConfigHandler {
    /**
     * Gets the instance of the ConfigHandler.
     * 
-    * @param regen - If the instance should be regenerated.
     * @return The ConfigHandler instance.
     */
     public static ConfigHandler getConfig() { 

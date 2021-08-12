@@ -34,11 +34,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
-
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 
 import me.RockinChaos.fakecreative.utils.ServerUtils;
 import me.RockinChaos.fakecreative.utils.StringUtils;
@@ -51,7 +47,8 @@ public class ItemHandler {
    /**
     * Checks if the ItemStack is similar to the defined ItemMap.
     * 
-    * @param item - The ItemStack being checked.
+    * @param item1 - The ItemStack being checked.
+    * @param item2 - The ItemStack being checked.
     * @return If the ItemStack is similar.
     */
 	public static boolean isSimilar(final ItemStack item1, final ItemStack item2) {
@@ -72,7 +69,7 @@ public class ItemHandler {
     * @param name - The custom name to be added to the ItemStack.
     * @param lores - The custom lore to be added to the ItemStack.
     */
-    public static ItemStack getItem(String material, final int count, final boolean glowing, boolean hideAttributes, String name, final String... lores) { ///
+    public static ItemStack getItem(String material, final int count, final boolean glowing, boolean hideAttributes, String name, final String... lores) {
         ItemStack tempItem; 
         String refMat = "";
         if (!ServerUtils.hasSpecificUpdate("1_8") && material.equals("BARRIER")) { material = "WOOL:14"; }
@@ -106,8 +103,8 @@ public class ItemHandler {
 			tempMeta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_POTION_EFFECTS);
 			tempMeta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_UNBREAKABLE);
 		}
-		if (refMat.equalsIgnoreCase("WATER_BOTTLE")) { 
-			((PotionMeta)tempMeta).setBasePotionData(new PotionData(PotionType.WATER));
+		if (ServerUtils.hasSpecificUpdate("1_9") && refMat.equalsIgnoreCase("WATER_BOTTLE")) { 
+			((PotionMeta)tempMeta).setBasePotionData(new org.bukkit.potion.PotionData(PotionType.WATER));
 		}
         tempItem.setItemMeta(tempMeta);
         return tempItem;
@@ -151,8 +148,8 @@ public class ItemHandler {
     	try {
     		if (ServerUtils.hasSpecificUpdate("1_8")) {
 		        ItemMeta itemMeta = item.getItemMeta();
-				GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
-				gameProfile.getProperties().put("textures", new Property("textures", new String(skullTexture)));
+				com.mojang.authlib.GameProfile gameProfile = new com.mojang.authlib.GameProfile(UUID.randomUUID(), null);
+				gameProfile.getProperties().put("textures", new com.mojang.authlib.properties.Property("textures", new String(skullTexture)));
 				Field declaredField = itemMeta.getClass().getDeclaredField("profile");
 				declaredField.setAccessible(true);
 				declaredField.set(itemMeta, gameProfile);
@@ -171,8 +168,8 @@ public class ItemHandler {
     public static ItemMeta setSkullTexture(final ItemMeta itemMeta, final String skullTexture) {
     	try {
     		if (ServerUtils.hasSpecificUpdate("1_8")) {
-				GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
-				gameProfile.getProperties().put("textures", new Property("textures", new String(skullTexture)));
+				com.mojang.authlib.GameProfile gameProfile = new com.mojang.authlib.GameProfile(UUID.randomUUID(), null);
+				gameProfile.getProperties().put("textures", new com.mojang.authlib.properties.Property("textures", new String(skullTexture)));
 				Field declaredField = itemMeta.getClass().getDeclaredField("profile");
 				declaredField.setAccessible(true);
 				declaredField.set(itemMeta, gameProfile);
@@ -193,9 +190,9 @@ public class ItemHandler {
 			final Object real = cls.cast(meta);
 			final Field field = real.getClass().getDeclaredField("profile");
 			field.setAccessible(true);
-			final GameProfile profile = (GameProfile) field.get(real);
-			final Collection < Property > props = profile.getProperties().get("textures");
-			for (final Property property: props) {
+			final com.mojang.authlib.GameProfile profile = (com.mojang.authlib.GameProfile) field.get(real);
+			final Collection < com.mojang.authlib.properties.Property > props = profile.getProperties().get("textures");
+			for (final com.mojang.authlib.properties.Property property: props) {
 				if (property.getName().equals("textures")) { return property.getValue(); }
 			}
 		} catch (Exception e) { }
@@ -212,9 +209,9 @@ public class ItemHandler {
 		try {
 			final Field field = skull.getClass().getDeclaredField("profile");
 			field.setAccessible(true);
-			final GameProfile profile = (GameProfile) field.get(skull);
-			final Collection < Property > props = profile.getProperties().get("textures");
-			for (final Property property: props) {
+			final com.mojang.authlib.GameProfile profile = (com.mojang.authlib.GameProfile) field.get(skull);
+			final Collection < com.mojang.authlib.properties.Property > props = profile.getProperties().get("textures");
+			for (final com.mojang.authlib.properties.Property  property: props) {
 				if (property.getName().equals("textures")) { return property.getValue(); }
 			}
 		} catch (Exception e) { }

@@ -18,12 +18,22 @@
 package me.RockinChaos.fakecreative;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.util.StringUtil;
+
+import me.RockinChaos.fakecreative.handlers.PermissionsHandler;
+import me.RockinChaos.fakecreative.handlers.PlayerHandler;
+import me.RockinChaos.fakecreative.utils.ServerUtils;
+import me.RockinChaos.fakecreative.utils.StringUtils;
+import me.RockinChaos.fakecreative.utils.sql.DataObject;
+import me.RockinChaos.fakecreative.utils.sql.DataObject.Table;
+import me.RockinChaos.fakecreative.utils.sql.SQL;
 
 public class ChatTab implements TabCompleter {
 	
@@ -38,76 +48,46 @@ public class ChatTab implements TabCompleter {
 	@Override
 	public List < String > onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
 		final List < String > completions = new ArrayList < > ();
-		/* final List < String > commands = new ArrayList < > ();
-		 if (args.length == 2 && args[0].equalsIgnoreCase("help") && PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.use")) {
-			 commands.addAll( Arrays.asList("2","3","4","5","6","7","8","9"));
-		} else if (args.length == 2 && args[0].equalsIgnoreCase("permissions") && PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.permissions")) {
-			commands.add("2");
-		} else if ((args.length == 2 || args.length == 3) && args[0].equalsIgnoreCase("purge") && PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.purge")) {
-			if (args.length == 2) {
-				commands.addAll(Arrays.asList("map-ids","first-join","first-world","ip-limits","enabled-players","first-commands"));
-			} else {
-				List<DataObject> dataList = new ArrayList<DataObject>();
-				try {
-					dataList = SQL.getData().getDataList(new DataObject(Table.valueOf("IJ_" + args[1].toUpperCase().replace("-", "_"))));
-				} catch (Exception e) { }
-				for (DataObject dataObject: dataList) {
-					String objectString = (args[1].equalsIgnoreCase("map-ids") ? dataObject.getMapIMG() : 
-						(PlayerHandler.getPlayer().getPlayerString(dataObject.getPlayerId()) != null ? PlayerHandler.getPlayer().getPlayerString(dataObject.getPlayerId()).getName() : dataObject.getPlayerId()));
-					commands.add(objectString);
-				}
-			}
-		} else if ((args.length == 2 || args.length == 3) && (args[0].equalsIgnoreCase("disable") || args[0].equalsIgnoreCase("enable"))) {
-			if (args.length == 2 && ((PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.enable.others") && args[0].equalsIgnoreCase("enable")) 
-				|| (PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.disable.others") && args[0].equalsIgnoreCase("disable")))) {
-				PlayerHandler.getPlayer().forOnlinePlayers(player -> {
+		final List < String > commands = new ArrayList < > ();
+		final boolean isGamemode = command.getName().equalsIgnoreCase("gm") || command.getName().equalsIgnoreCase("gamemode");
+		if (args.length == 2) {
+			if (!isGamemode && args[0].equalsIgnoreCase("help") && PermissionsHandler.hasPermission(sender, "fakecreative.use")) {
+				commands.addAll( Arrays.asList("2", "3", "4"));
+			} else if (((args[0].equalsIgnoreCase("creative") && PermissionsHandler.hasPermission(sender, "fakecreative.mode.creative")) 
+					|| (args[0].equalsIgnoreCase("survival") && PermissionsHandler.hasPermission(sender, "fakecreative.mode.survival")) 
+					|| (args[0].equalsIgnoreCase("adventure") && PermissionsHandler.hasPermission(sender, "fakecreative.mode.adventure")) 
+					|| (ServerUtils.hasSpecificUpdate("1_8") && (args[0].equalsIgnoreCase("spectator") && PermissionsHandler.hasPermission(sender, "fakecreative.mode.spectator"))))) {
+				PlayerHandler.forOnlinePlayers(player -> {
 					commands.add(player.getName());
 				});
-			} else {
-				for (World world: Bukkit.getServer().getWorlds()) {
-					commands.add(world.getName());
+			} else if (args[0].equalsIgnoreCase("purge") && PermissionsHandler.hasPermission(sender, "fakecreative.purge")) {
+				for (Table table : Table.values()) {
+					List<DataObject> dataList = new ArrayList<DataObject>();
+					try {
+						dataList = SQL.getData().getDataList(new DataObject(table));
+					} catch (Exception e) { }
+					for (DataObject dataObject: dataList) {
+						String objectString = (PlayerHandler.getPlayerString(dataObject.getPlayerId()) != null ? PlayerHandler.getPlayerString(dataObject.getPlayerId()).getName() : dataObject.getPlayerId());
+						if (!StringUtils.containsValue(commands, objectString)) {
+							commands.add(objectString);
+						}
+					}
 				}
 			}
-		} else if ((args.length == 2 || args.length == 3 || args.length == 4) && (args[0].equalsIgnoreCase("get") || args[0].equalsIgnoreCase("getOnline") || args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("removeOnline"))) {
-			if (args.length == 2) {
-				for (ItemMap itemMap: ItemUtilities.getUtilities().getItems()) {
-					commands.add(itemMap.getConfigName());
-				}
-			} else if (args.length == 3 && ((PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.get.others") && (args[0].equalsIgnoreCase("get") || args[0].equalsIgnoreCase("getOnline"))) 
-				|| (PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.remove.others") && (args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("removeOnline"))))) {
-				commands.addAll(Arrays.asList("2","4","8","16"));
-				if (!args[0].equalsIgnoreCase("getOnline") && !args[0].equalsIgnoreCase("removeOnline")) {
-					PlayerHandler.getPlayer().forOnlinePlayers(player -> {
-						commands.add(player.getName());
-					});
-				}
-			} else if (args.length == 4 && !Utils.getUtils().isInt(args[2]) && !args[0].equalsIgnoreCase("getOnline") && !args[0].equalsIgnoreCase("removeOnline") && ((PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.get.others") 
-				&& args[0].equalsIgnoreCase("get")) || (PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.remove.others") && args[0].equalsIgnoreCase("remove")))) {
-				commands.addAll(Arrays.asList("2","3","4","6","8","16","32","64"));
-			}
-		} else if (args.length == 2 && (args[0].equalsIgnoreCase("getAll") && PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.get.others") || args[0].equalsIgnoreCase("removeAll") 
-			&& PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.remove.others"))) {
-			PlayerHandler.getPlayer().forOnlinePlayers(player -> {
-				commands.add(player.getName());
-			});
-		} else if (args.length == 1) {
-			if (PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.use")) { 		 	commands.addAll(Arrays.asList("help","info","world")); }
-			if (PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.permissions")) { 	commands.add("permissions"); }
-			if (PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.purge")) { 		 	commands.add("purge"); }
-			if (PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.enable")) { 	 	commands.add("enable"); }
-			if (PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.disable")) { 	 	commands.add("disable"); }
-			if (PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.get")) { 	   	 	commands.addAll(Arrays.asList("get","getAll")); }
-			if (PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.get.others")) {  	commands.add("getOnline"); }
-			if (PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.remove")) { 	    commands.addAll(Arrays.asList("remove","removeAll")); }
-			if (PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.remove.others")) {  commands.add("removeOnline"); }
-			if (PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.reload")) { 		commands.add("reload"); }
-			if (PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.menu")) { 			commands.add("menu"); }
-			if (PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.list")) { 			commands.add("list"); }
-			if (PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.updates")) { 		commands.add("updates"); }
-			if (PermissionsHandler.getPermissions().hasPermission(sender, "itemjoin.autoupdate")) { 	commands.add("autoupdate"); }
+		 } else if (args.length == 1) {
+			if (PermissionsHandler.hasPermission(sender, "fakecreative.mode.creative")) { 	commands.add("creative"); }
+			if (PermissionsHandler.hasPermission(sender, "fakecreative.mode.survival")) { 	commands.add("survival"); }
+			if (PermissionsHandler.hasPermission(sender, "fakecreative.mode.adventure")) { 	commands.add("adventure"); }
+			if (ServerUtils.hasSpecificUpdate("1_8") && PermissionsHandler.hasPermission(sender, "fakecreative.mode.spectator")) { 	commands.add("spectator"); }
+			if (!isGamemode && PermissionsHandler.hasPermission(sender, "fakecreative.use")) { 		 	commands.addAll(Arrays.asList("help")); }
+			if (!isGamemode && PermissionsHandler.hasPermission(sender, "fakecreative.permissions")) { 	commands.add("permissions"); }
+			if (!isGamemode && PermissionsHandler.hasPermission(sender, "fakecreative.purge")) { 		 	commands.add("purge"); }
+			if (!isGamemode && PermissionsHandler.hasPermission(sender, "fakecreative.reload")) { 		    commands.add("reload"); }
+			if (!isGamemode && PermissionsHandler.hasPermission(sender, "fakecreative.updates")) { 		commands.add("updates"); }
+			if (!isGamemode && PermissionsHandler.hasPermission(sender, "fakecreative.autoupdate")) { 	    commands.add("autoupdate"); }
 		}
 		StringUtil.copyPartialMatches(args[(args.length - 1)], commands, completions);
-		*/Collections.sort(completions);
+		Collections.sort(completions);
 		return completions;
 	}
 }

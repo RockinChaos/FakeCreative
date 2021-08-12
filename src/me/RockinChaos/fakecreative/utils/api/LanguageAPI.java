@@ -153,6 +153,8 @@ public class LanguageAPI {
 				.replace("%target_player%", langHolder[1])
 				.replace("%hotbar%", langHolder[2])
 				.replace("%input_example%", langHolder[3])
+				.replace("%command%", langHolder[4])
+				.replace("%purge_data%", langHolder[5])
 				.replace("%prefix%", this.langPrefix);
 		
 	}

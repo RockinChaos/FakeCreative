@@ -19,8 +19,6 @@ package me.RockinChaos.fakecreative.utils.api;
 
 import org.bukkit.Bukkit;
 
-import com.mojang.authlib.properties.Property;
-
 import me.RockinChaos.fakecreative.utils.ServerUtils;
 import me.RockinChaos.fakecreative.utils.api.MetricsAPI.SimplePie;
 import me.RockinChaos.fakecreative.utils.ReflectionUtils;
@@ -96,7 +94,7 @@ public class DependAPI {
 				final Object playerData = skinsAPI.getClass().getMethod("getSkinName", String.class).invoke(skinsAPI, owner);
 				final String ownerData = (playerData != null ? (String) playerData : owner);
 				final Object skinData = skinsAPI.getClass().getMethod("getSkinData", String.class).invoke(skinsAPI, ownerData);
-				return (skinData != null ? ((Property) skinData).getValue() : null);
+				return (skinData != null ? ((com.mojang.authlib.properties.Property) skinData).getValue() : null);
 			} catch (Exception e1) {
 				try {
 					netty = ReflectionUtils.getClass("net.skinsrestorer.api.SkinsRestorerAPI");
@@ -104,7 +102,7 @@ public class DependAPI {
 					final Object playerData = skinsRestorer.getClass().getMethod("getSkinName", String.class).invoke(skinsRestorer, owner);
 					final String ownerData = (playerData != null ? (String) playerData : owner);
 					final Object skinData = skinsRestorer.getClass().getMethod("getSkinData", String.class).invoke(skinsRestorer, ownerData);
-					return (skinData != null ? ((Property) skinData).getValue() : null);
+					return (skinData != null ? ((com.mojang.authlib.properties.Property) skinData).getValue() : null);
 				} catch (Exception e2) {
 					ServerUtils.sendDebugTrace(e2);
 					ServerUtils.logSevere("{DependAPI} [2] Unsupported SkinsRestorer version detected, unable to set the skull owner " + owner + ".");

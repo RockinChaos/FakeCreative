@@ -18,6 +18,8 @@
 package me.RockinChaos.fakecreative.listeners;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -34,7 +36,7 @@ import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import me.RockinChaos.fakecreative.handlers.PlayerHandler;
-import me.RockinChaos.fakecreative.handlers.modes.instance.PlayerPreferences;
+import me.RockinChaos.fakecreative.utils.ServerUtils;
 import me.RockinChaos.fakecreative.utils.StringUtils;
 
 public class Blocks implements Listener {
@@ -46,7 +48,7 @@ public class Blocks implements Listener {
 	*/
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	private void onDamage(final BlockDamageEvent event) {
-		if (PlayerHandler.isFakeCreativeMode((Player) event.getPlayer())) {
+		if (PlayerHandler.isCreativeMode((Player) event.getPlayer(), true)) {
 			event.setCancelled(true);
 		}
 	}
@@ -58,9 +60,9 @@ public class Blocks implements Listener {
 	*/
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	private void onBreak(final BlockBreakEvent event) {
-		if (PlayerHandler.isFakeCreativeMode((Player) event.getPlayer())) {
+		if (PlayerHandler.isCreativeMode((Player) event.getPlayer(), true)) {
 			event.getBlock().getWorld().playEffect(event.getBlock().getLocation(), Effect.STEP_SOUND, event.getBlock().getType(), 6);
-			if (!PlayerPreferences.blockDrops((Player) event.getPlayer())) {
+			if (!PlayerHandler.getCreativeStats((Player)event.getPlayer()).blockDrops()) {
 				event.getBlock().setType(Material.AIR);
 			} else {
 				event.getBlock().breakNaturally();
@@ -69,14 +71,14 @@ public class Blocks implements Listener {
 	}
 	
    /**
-	* Allows the Player to instantly break any block.
+	* Prevents glitching with the PlayerAnimationEvent when instant breaking blocks.
 	* 
-	* @param event - PlayerAnimationEvent
+	* @param event - PlayerInteractEvent
 	*/
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
-	public void onInstantBreak(PlayerInteractEvent event) {
+	public void onInstantBreak(final PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
-		if (PlayerHandler.isFakeCreativeMode(player)) {
+		if (PlayerHandler.isCreativeMode(player, true)) {
 			handMap.put(PlayerHandler.getPlayerID(player), event.getAction());
 		}
 	}
@@ -88,12 +90,23 @@ public class Blocks implements Listener {
 	* @param event - PlayerAnimationEvent
 	*/
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onInstantBreak(PlayerAnimationEvent event) {
+	public void onInstantBreak(final PlayerAnimationEvent event) {
 		final Player player = event.getPlayer();
-		if (PlayerHandler.isFakeCreativeMode(player) && StringUtils.containsIgnoreCase(handMap.get(PlayerHandler.getPlayerID(player)).name(), "LEFT") && (PlayerHandler.getMainHandItem(player) == null || (!PlayerHandler.getMainHandItem(player).getType().name().contains("SWORD")) || !PlayerPreferences.swordBlock(player))) {
-			final Block block = player.getTargetBlock(null, 6);
+		if (PlayerHandler.isCreativeMode(player, true) 
+				&& this.handMap != null && this.handMap.get(PlayerHandler.getPlayerID(player)) != null && StringUtils.containsIgnoreCase(this.handMap.get(PlayerHandler.getPlayerID(player)).name(), "LEFT") 
+		&& (PlayerHandler.getMainHandItem(player) == null || (!PlayerHandler.getMainHandItem(player).getType().name().contains("SWORD")) || !PlayerHandler.getCreativeStats(player).swordBlock())) {
+			Block block = null;
+			try {
+				block = event.getPlayer().getTargetBlock((Set < Material > ) null, 6);
+			} catch (final Throwable t) {
+				try {
+					block = (Block) event.getPlayer().getClass().getMethod("getTargetBlock", HashSet.class, int.class).invoke(event.getPlayer(), (HashSet < Byte > ) null, 6);
+				} catch (Exception e) {
+					ServerUtils.sendSevereTrace(e);
+				}
+			}
 			long dupeDuration = (this.swingDelay != null && !this.swingDelay.isEmpty() && this.swingDelay.get(PlayerHandler.getPlayerID(player)) != null ? (((System.currentTimeMillis()) - this.swingDelay.get(PlayerHandler.getPlayerID(player)))) : -1);
-			if ((dupeDuration == -1 || dupeDuration > PlayerPreferences.breakSpeed(player) * 45) && PlayerHandler.isFakeCreativeMode(player)) {
+			if ((dupeDuration == -1 || dupeDuration > PlayerHandler.getCreativeStats(player).breakSpeed() * 45) && PlayerHandler.isCreativeMode(player, true)) {
 				this.swingDelay.put(PlayerHandler.getPlayerID(player), System.currentTimeMillis());
 				Bukkit.getPluginManager().callEvent(new BlockBreakEvent(block, player));
 			}

@@ -18,7 +18,6 @@
 package me.RockinChaos.fakecreative;
 
 import java.io.File;
-
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -49,7 +48,9 @@ public class FakeCreative extends JavaPlugin {
     */
   	@Override
 	public void onEnable() {
-  		ConfigHandler.getConfig().registerEvents();
+  		ConfigHandler.getConfig().registerEvents(); {
+  			PlayerHandler.restartCreative(true);
+  		}
         ServerUtils.logInfo("has been Enabled.");
   	}
   	
@@ -59,11 +60,13 @@ public class FakeCreative extends JavaPlugin {
     */
   	@Override
 	public void onDisable() {
-		PlayerHandler.forOnlinePlayers(player -> Creative.setMode(player, null, player.getGameMode(), true));
-  		Bukkit.getScheduler().cancelTasks(this);
-  		Menu.getCreator().closeMenu();
-	  	ProtocolManager.closeProtocol();
-  		ServerUtils.logInfo("has been Disabled.");
+  		PlayerHandler.saveCreative(); {
+			PlayerHandler.forOnlinePlayers(player -> Creative.setMode(player, null, player.getGameMode(), true, true));
+	  		Bukkit.getScheduler().cancelTasks(this);
+	  		Menu.getCreator().closeMenu();
+		  	ProtocolManager.closeProtocol();
+	  		ServerUtils.logInfo("has been Disabled.");
+  		}
   	}
   	
    /**

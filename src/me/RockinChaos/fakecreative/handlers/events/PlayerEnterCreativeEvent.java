@@ -30,6 +30,9 @@ import org.bukkit.event.player.PlayerEvent;
 public class PlayerEnterCreativeEvent extends PlayerEvent implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 	private CommandSender who;
+	private boolean refresh;
+	private boolean restore;
+	private boolean silent;
 	private Result result;
 	
    /**
@@ -38,9 +41,12 @@ public class PlayerEnterCreativeEvent extends PlayerEvent implements Cancellable
 	* @param who - The Sender triggering the event.
 	* @param altWho - The other Player being referenced.
 	*/
-	public PlayerEnterCreativeEvent(final CommandSender who, final Player altWho) {
+	public PlayerEnterCreativeEvent(final CommandSender who, final Player altWho, final boolean refresh, final boolean restore, final boolean silent) {
 		super((altWho != null ? altWho : (Player)who));
 		this.who = who;
+		this.refresh = refresh;
+		this.restore = restore;
+		this.silent = silent;
 		this.result = who == null ? Result.DENY : Result.ALLOW;
 	}
 	
@@ -63,7 +69,7 @@ public class PlayerEnterCreativeEvent extends PlayerEvent implements Cancellable
 	*
 	* @param cancel true if you wish to cancel this event.
 	*/
-	public void setCancelled(boolean cancel) {
+	public void setCancelled(final boolean cancel) {
 		this.getResult(cancel ? Result.DENY : this.returnResult() == Result.DENY ? Result.DEFAULT : this.returnResult());
 	}
 	
@@ -83,7 +89,7 @@ public class PlayerEnterCreativeEvent extends PlayerEvent implements Cancellable
     * 
 	* @param setCreative - the action to take with the creative mode action.
 	*/
-	public void getResult(Result setCreative) {
+	public void getResult(final Result setCreative) {
 		this.result = setCreative;
 	}
 
@@ -94,6 +100,33 @@ public class PlayerEnterCreativeEvent extends PlayerEvent implements Cancellable
 	*/
 	public CommandSender getSender() {
 		return this.who;
+	}
+	
+   /**
+    * Gets if the GameMode change is being refreshed.
+    * 
+	* @return If the change should be refreshed.
+	*/
+	public boolean isRefresh() {
+		return this.refresh;
+	}
+	
+   /**
+    * Gets if the GameMode change is being restored from a reload or restart.
+    * 
+	* @return If the change should be restored.
+	*/
+	public boolean isRestore() {
+		return this.restore;
+	}
+	
+   /**
+    * Gets if the GameMode change should be silent.
+    * 
+	* @return If the change is silent.
+	*/
+	public boolean isSilent() {
+		return this.silent;
 	}
 	
    /**

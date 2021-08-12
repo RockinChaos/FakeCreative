@@ -40,9 +40,9 @@ public enum Brewing {
 	* @param material - The Material being checked.
 	* @return If the Material is a Brewing type.
 	*/
-	public static boolean isBrewing(Material material) {
+	public static boolean isBrewing(final Material material) {
 	    for (Brewing tag: Brewing.values()) {
-	    	String[] mats = material.name().split("_");
+	    	final String[] mats = material.name().split("_");
 	    	if (tag.name().equalsIgnoreCase((tag.name().contains("_") ? material.name() : (mats.length > 1 ? mats[(mats.length - 1)] : mats[0])))) {
 	        	return true;
 	        }

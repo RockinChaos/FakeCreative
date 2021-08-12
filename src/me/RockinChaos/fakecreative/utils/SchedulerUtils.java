@@ -17,6 +17,9 @@
  */
 package me.RockinChaos.fakecreative.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -25,7 +28,8 @@ import me.RockinChaos.fakecreative.FakeCreative;
 public class SchedulerUtils {
 
 	
-	public static boolean SINGLE_THREAD_TRANSACTING = false;
+	private static List < Runnable > SINGLE_QUEUE = new ArrayList < Runnable > ();
+	private static Boolean SINGLE_ACTIVE = false;
 
    /**
     * Runs the task on the main thread
@@ -100,24 +104,34 @@ public class SchedulerUtils {
     * @param runnable - The task to be performed.
     */
     public static void runSingleAsync(final Runnable runnable) {
+    	SINGLE_QUEUE.add(runnable);
+    	if (SINGLE_ACTIVE == false) { 
+    		SINGLE_ACTIVE = true; {
+    			cycleAsync();
+    		}
+    	}
+    }
+    
+   /**
+    * Runs the task on another thread without duplication.
+    * 
+    */
+    public static void cycleAsync() {
     	if (FakeCreative.getInstance().isEnabled()) {
-    		if (!SINGLE_THREAD_TRANSACTING) {
-    			SINGLE_THREAD_TRANSACTING = true;
+    		if (!SINGLE_QUEUE.isEmpty()) {
+    			final Runnable runnable = SINGLE_QUEUE.get(0);
     			new BukkitRunnable() {
-		            @Override
-		            public void run() {
-		            	runnable.run(); {
-		            		SINGLE_THREAD_TRANSACTING = false;
-		            	}
-		            }
-		        }.runTaskAsynchronously(FakeCreative.getInstance());
-    		} else { 
-				try { 
-					Thread.sleep(500);
-					runSingleAsync(runnable);
-				} catch (InterruptedException e) { 
-					runSingleAsync(runnable);
-				} 
+    				@Override
+    				public void run() {
+    					runnable.run(); {
+    						SINGLE_QUEUE.remove(runnable); {
+    							cycleAsync();
+    						}
+    					}
+    				}
+    			}.runTaskAsynchronously(FakeCreative.getInstance());
+    		} else {
+    			SINGLE_ACTIVE = false;
     		}
     	}
     }

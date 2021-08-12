@@ -120,9 +120,9 @@ public enum Decoration {
 	* @param material - The Material being checked.
 	* @return If the Material is a Decoration type.
 	*/
-	public static boolean isDecoration(Material material) {
+	public static boolean isDecoration(final Material material) {
 	    for (Decoration tag: Decoration.values()) {
-	    	String[] mats = material.name().split("_");
+	    	final String[] mats = material.name().split("_");
 	    	if (tag.name().equalsIgnoreCase((tag.name().contains("_") ? material.name() : (mats.length > 1 ? mats[(mats.length - 1)] : mats[0])))) {
 	        	return true;
 	        }

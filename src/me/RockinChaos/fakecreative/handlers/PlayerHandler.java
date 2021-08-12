@@ -39,6 +39,8 @@ import de.domedd.betternick.BetterNick;
 import me.RockinChaos.fakecreative.handlers.events.PlayerEnterCreativeEvent;
 import me.RockinChaos.fakecreative.handlers.events.PlayerExitCreativeEvent;
 import me.RockinChaos.fakecreative.handlers.modes.Creative;
+import me.RockinChaos.fakecreative.handlers.modes.instance.PlayerObject;
+import me.RockinChaos.fakecreative.handlers.modes.instance.PlayerStats;
 import me.RockinChaos.fakecreative.utils.SchedulerUtils;
 import me.RockinChaos.fakecreative.utils.ServerUtils;
 import me.RockinChaos.fakecreative.utils.api.LegacyAPI;
@@ -69,13 +71,30 @@ public class PlayerHandler {
     }
     
    /**
-    * Checks if the player is currently in creative mode.
+    * Attempts to set all Player back to Creative mode who were previously in Creative.
     * 
-    * @param player - The player to be checked.
-    * @return If the player is currently in fake creative mode.
+    * @param silent - If the Creative status should be silent.
     */
-    public static boolean isFakeCreativeMode(final Player player) {
-    	return Creative.isFakeCreativeMode(player);
+    public static void restartCreative(final boolean silent) {
+    	Creative.restart(silent);
+    }
+    
+   /**
+    * Attempts to set the specified Player back to Creative mode who were previously in Creative.
+    * 
+    * @param who - The Player being referenced.
+    * @param silent - If the Creative status should be silent.
+    */
+    public static void restartCreative(final Player who, final boolean silent) {
+    	Creative.restart(who, silent);
+    }
+    
+   /**
+    * Saves the Creative Stats of all Players.
+    * 
+    */
+    public static void saveCreative() {
+    	Creative.save();
     }
     
    /**
@@ -85,16 +104,98 @@ public class PlayerHandler {
     * @param altWho - The other Player being referenced (if any).
     */
     public static void setCreative(final CommandSender who, final Player altWho) {
-    	Bukkit.getPluginManager().callEvent(new PlayerEnterCreativeEvent(who, altWho));
+    	Bukkit.getPluginManager().callEvent(new PlayerEnterCreativeEvent(who, altWho, false, false, false));
     }
     
    /**
-    * Refreshes the Creative statss for the Player.
+    * Refreshes the Creative stats for the Player.
     * 
     * @param who - The Player being referenced.
     */
     public static void refreshCreative(final CommandSender who) {
-    	Creative.setCreative(who, null, true);
+    	Bukkit.getPluginManager().callEvent(new PlayerEnterCreativeEvent(who, null, true, false, true));
+    }
+    
+   /**
+    * Checks if the ItemStack and itemName combo is a Fake Creative Tab.
+    * 
+    * @param itemStack - The ItemStack being referenced.
+    * @param item - The itemName to be looked up.
+    * @return If the ItemStack and itemName combo is a Fake Creative Tab.
+    */
+    public static boolean isCreativeItem(final ItemStack itemStack, final String item) {
+    	return Creative.isItem(itemStack, item);
+    }
+    
+   /**
+    * Checks if the ItemStack is a Fake Creative Tab.
+    * 
+    * @param item - The ItemStack being referenced.
+    * @return If the ItemStack is a Fake Creative Tab.
+    */
+    public static boolean isCreativeItem(final ItemStack itemStack) {
+    	return Creative.isItem(itemStack);
+    }
+    
+   /**
+    * Attempts to get the specified Creative item.
+    * 
+    * @param item - The Item to be located.
+    * @return The found Creative Item.
+    */
+    public static ItemStack getCreativeItem(final String item) {
+    	return Creative.getItem(item);
+    }
+    
+    
+   /**
+    * Sets the Creative Tabs to the crafting items slots.
+    * 
+    * @param player - The Player having their crafting items set.
+    */
+    public static void setCreativeTabs(final Player player) {
+    	Creative.setTabs(player);
+    }
+    
+   /**
+    * Attempts to get the PlayerStats of the Creative Player.
+    * 
+    * @param who - The Player being referenced.
+    */
+    public static PlayerStats getCreativeStats(final CommandSender who) {
+    	return Creative.get((Player) who).getStats();
+    }
+    
+   /**
+    * Gets the Fake Creative HotBar from the Player's Hotbar list.
+    * 
+    * @param player - The Player being referenced.
+    * @param hotbat - The hotbar number to be fetched.
+    * @return The found inventory64 Byte.
+    */
+    public static String getHotbarTab(final Player player, final int hotbar) {
+    	synchronized ("SET_CREATIVE") {
+	    	return getCreativeStats(player).getHotbars().get(hotbar);
+    	}
+    }
+    
+   /**
+    * Saves and Clears the Player Inventory.
+    * 
+    * @param player - The Player having their Inventory saved.
+    * @return The generated Inventory64 Byte.
+    */
+    public static String saveInventory(final Player player) {
+		return Creative.saveInventory(player);
+    }
+    
+   /**
+    * Clears and Restores the Player Inventory that was previously saved.
+    * 
+    * @param player - The Player having their Inventory restored.
+    */
+    public static void restoreInventory(final Player player) {
+    	Creative.restoreInventory(player);
     }
     
    /**
@@ -103,22 +204,35 @@ public class PlayerHandler {
     * @param who - The Player being referenced.
     * @param altWho - The other Player being referenced (if any).
     */
-    public static void setMode(final CommandSender who, final Player altWho, final GameMode gamemode, final boolean silent) {
-    	Bukkit.getPluginManager().callEvent(new PlayerExitCreativeEvent(who, altWho, gamemode, silent));
+    public static void setMode(final CommandSender who, final Player altWho, final GameMode gamemode, final boolean silent, final boolean doSave) {
+    	Bukkit.getPluginManager().callEvent(new PlayerExitCreativeEvent(who, altWho, gamemode, silent, doSave));
     }
 	
    /**
     * Checks if the player is currently in creative mode.
     * 
     * @param player - The player to be checked.
+    * @param isFake - If the player should be checked for fake creative mode.
     * @return If the player is currently in creative mode.
     */
-	public static boolean isCreativeMode(final Player player) {
-		if (player.getGameMode() == GameMode.CREATIVE) {
+	public static boolean isCreativeMode(final Player player, final boolean isFake) {
+		if (!isFake && player.getGameMode() == GameMode.CREATIVE) {
 			return true;
+		} else if (isFake) {
+			return Creative.isFakeCreativeMode(player);
 		}
 		return false;
 	}
+	
+   /**
+    * Attempts to get the PlayerObject of the Player.
+    * 
+    * @param player - The Player being referenced.
+    * @return The PlayerObject.
+    */
+    public static PlayerObject getCreative(final Player player) {
+    	return Creative.get(player);
+    }
 	
    /**
     * Checks if the player is currently in adventure mode.

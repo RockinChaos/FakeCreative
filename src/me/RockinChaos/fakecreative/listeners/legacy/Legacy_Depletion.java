@@ -15,23 +15,29 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package me.RockinChaos.fakecreative.listeners;
+package me.RockinChaos.fakecreative.listeners.legacy;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.player.PlayerItemDamageEvent;
-
+import org.bukkit.event.player.PlayerAnimationEvent;
 import me.RockinChaos.fakecreative.handlers.PlayerHandler;
+import me.RockinChaos.fakecreative.utils.SchedulerUtils;
 
-public class Depletion implements Listener {
+/**
+* Handles the Stat Depletion for Creative Players.
+* 
+* @deprecated This is a LEGACY listener, only use on Minecraft versions below 1.8.
+*/
+public class Legacy_Depletion implements Listener {
 
    /**
 	* Protects the Player from hunger depletion.
 	* 
 	* @param event - FoodLevelChangeEvent
+	* @deprecated This is a LEGACY event, only use on Minecraft versions below 1.8.
 	*/
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onHunger(final FoodLevelChangeEvent event) {
@@ -44,11 +50,13 @@ public class Depletion implements Listener {
 	* Prevents the Player from damaging any items.
 	* 
 	* @param event - PlayerItemDamageEvent
+	* @deprecated This is a LEGACY event, only use on Minecraft versions below 1.8.
 	*/
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    private void onDurability(final PlayerItemDamageEvent event) {
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	public void onDurability(final PlayerAnimationEvent event) {
     	if (PlayerHandler.isCreativeMode((Player)event.getPlayer(), true) && PlayerHandler.getCreativeStats((Player)event.getPlayer()).unbreakableItems()) {
-    		event.setCancelled(true);
+    		SchedulerUtils.runAsync(() -> PlayerHandler.getHandItem(event.getPlayer()).setDurability((short)0));
+    		PlayerHandler.updateInventory(event.getPlayer(), 0);
     	}
     }
 }

@@ -56,7 +56,7 @@ public class ServerUtils {
     * @param message - The unformatted message text to be sent.
     */
 	public static void logInfo(String message) {
-		String prefix = "[FakeCreative] ";
+		final String prefix = "[FakeCreative] ";
 		message = prefix + message;
 		if (message.equalsIgnoreCase("") || message.isEmpty()) { message = ""; }
 		Bukkit.getServer().getLogger().info(message);
@@ -68,7 +68,7 @@ public class ServerUtils {
     * @param message - The unformatted message text to be sent.
     */
 	public static void logWarn(String message) {
-		String prefix = "[FakeCreative_WARN] ";
+		final String prefix = "[FakeCreative_WARN] ";
 		message = prefix + message;
 		if (message.equalsIgnoreCase("") || message.isEmpty()) { message = ""; }
 		Bukkit.getServer().getLogger().warning(message);
@@ -80,7 +80,7 @@ public class ServerUtils {
     * @param message - The unformatted message text to be sent.
     */
 	public static void logDev(String message) {
-		String prefix = "[FakeCreative_DEVELOPER] ";
+		final String prefix = "[FakeCreative_DEVELOPER] ";
 		message = prefix + message;
 		if (message.equalsIgnoreCase("") || message.isEmpty()) { message = ""; }
 		Bukkit.getServer().getLogger().warning(message);
@@ -92,7 +92,7 @@ public class ServerUtils {
     * @param message - The unformatted message text to be sent.
     */
 	public static void logSevere(String message) {
-		String prefix = "[FakeCreative_ERROR] ";
+		final String prefix = "[FakeCreative_ERROR] ";
 		message = prefix + message;
 		if (message.equalsIgnoreCase("") || message.isEmpty()) { message = ""; }
 		Bukkit.getServer().getLogger().severe(message);
@@ -106,7 +106,7 @@ public class ServerUtils {
     */
 	public static void logDebug(String message) {
 		if (ConfigHandler.getConfig().debugEnabled()) {
-			String prefix = "[FakeCreative_DEBUG] ";
+			final String prefix = "[FakeCreative_DEBUG] ";
 			message = prefix + message;
 			if (message.equalsIgnoreCase("") || message.isEmpty()) { message = ""; }
 			Bukkit.getServer().getLogger().warning(message);
@@ -138,7 +138,7 @@ public class ServerUtils {
     * @param message - The unformatted message text to be sent.
     */
 	public static void messageSender(CommandSender sender, String message) {
-		String prefix = "&7[&6FakeCreative&7] ";
+		final String prefix = "&7[&6FakeCreative&7] ";
 		message = prefix + message;
 		message = ChatColor.translateAlternateColorCodes('&', message).toString();
 		if (message.contains("blankmessage") || message.equalsIgnoreCase("") || message.isEmpty()) { message = ""; }

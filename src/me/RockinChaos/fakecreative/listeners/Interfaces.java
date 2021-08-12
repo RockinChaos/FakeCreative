@@ -36,7 +36,7 @@ public class Interfaces implements Listener {
     * @param event - InventoryClickEvent
     */
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
-	private void onClick(InventoryClickEvent event) {
+	private void onClick(final InventoryClickEvent event) {
 		InventoryHolder holder = event.getInventory().getHolder();
 		if (holder instanceof Interface) {
 			((Interface) holder).onClick(event);
@@ -50,7 +50,7 @@ public class Interfaces implements Listener {
 	* @param event - AsyncPlayerChatEvent
 	*/
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
-	private void onChat(AsyncPlayerChatEvent event) {
+	private void onChat(final AsyncPlayerChatEvent event) {
 		if (this.expiredInventory != null && this.expiredInventory.chatPending()) {
 			this.expiredInventory.onChat(event);
 		}

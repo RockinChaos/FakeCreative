@@ -48,7 +48,7 @@ public class Database extends Controller {
 	* @param databaseName - The name of the database.
 	* @param createStatement - the statement to be run.
 	*/
-	public Database(String baseName) {
+	public Database(final String baseName) {
 		this.dataFolder = baseName;
 	}
 	
@@ -176,46 +176,6 @@ public class Database extends Controller {
 						if (!this.isClosed(rs) && !this.isClosed(conn)) {
 							columnData.put(singleRow, rs.getString(singleRow));
 						}
-					}
-					existingData.add(columnData);
-				}
-			}
-		} catch (Exception e) {
-			ServerUtils.logSevere("{SQL} [4] Failed to execute database statement.");
-			try {
-				ServerUtils.logSevere("{SQL} [4] Database Status: Open: " + !this.isClosed(conn) + "! Writable: " + !conn.isReadOnly() + "!");
-			} catch (Exception e2) {
-				ServerUtils.logSevere("{SQL} [4] Failed to determine the Database Status.");
-			}
-			ServerUtils.logSevere("{SQL} [4] Statement: " + statement);
-			ServerUtils.sendSevereTrace(e);
-		} finally {
-			this.close(ps, rs, conn, false);
-		}
-		return existingData;
-	}
-	
-   /**
-	* Queries a list of rows for their specified statements for a specific list of multiple values.
-	* 
-	* @param statement - the statement to be executed.
-	* @param row - the list of rows being queried.
-	* @return The result in as a listed list of strings.
-	*/
-	public List < List < String >> queryTableData(final String statement, final String...row) { //old remove later
-		final List < List < String > > existingData = new ArrayList < List < String > > ();
-		Connection conn = null;
-		Statement ps = null;
-		ResultSet rs = null;
-		try {
-			conn = this.getConnection();
-			if (conn != null) {
-				ps = conn.createStatement();
-				rs = ps.executeQuery(statement);
-				while (rs.next()) {
-					final List < String > columnData = new ArrayList < String > ();
-					for (final String singleRow: row) {
-						columnData.add(rs.getString(singleRow));
 					}
 					existingData.add(columnData);
 				}

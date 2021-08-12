@@ -66,11 +66,11 @@ public class InventoryCloseEvent extends InventoryEvent implements Cancellable {
 		}
 	}
     
-    /**
-     * Returns the player involved in this event
-     *
-     * @return Player who is involved in this event
-     */
+   /**
+    * Returns the player involved in this event
+    *
+    * @return Player who is involved in this event
+    */
     public final Player getPlayer() {
     	this.saveContents();
         return (Player) this.transaction.getPlayer();
@@ -82,7 +82,7 @@ public class InventoryCloseEvent extends InventoryEvent implements Cancellable {
 	* @param isTop - If the top inventory should be returned.
 	* @return The Previous Contents of the top or bottom inventory.
 	*/
-	public ItemStack[] getPreviousContents(boolean isTop) {
+	public ItemStack[] getPreviousContents(final boolean isTop) {
 		return (isTop ? this.topContents : this.bottomContents);
 	}
 	
@@ -109,7 +109,7 @@ public class InventoryCloseEvent extends InventoryEvent implements Cancellable {
 	*
 	* @param stack - The ItemStack to be removed.
 	*/
-	public void removeItem(ItemStack stack, int slot) {
+	public void removeItem(final ItemStack stack, final int slot) {
 			stack.setAmount(0);
 			stack.setType(Material.AIR);
 		try {
@@ -132,7 +132,7 @@ public class InventoryCloseEvent extends InventoryEvent implements Cancellable {
 	*
 	* @param cancel true if you wish to cancel this event.
 	*/
-	public void setCancelled(boolean cancel) { 
+	public void setCancelled(final boolean cancel) { 
 		this.inventoryClose(cancel ? Result.DENY : this.inventoryClose() == Result.DENY ? Result.DEFAULT : this.inventoryClose());
 	}
 	
@@ -150,7 +150,7 @@ public class InventoryCloseEvent extends InventoryEvent implements Cancellable {
     * 
 	* @param inventoryClose the action to take with the InventoryCloseEvent.
 	*/
-	public void inventoryClose(Result inventoryClose) {
+	public void inventoryClose(final Result inventoryClose) {
 		this.inventoryClose = inventoryClose;
 	}
 	

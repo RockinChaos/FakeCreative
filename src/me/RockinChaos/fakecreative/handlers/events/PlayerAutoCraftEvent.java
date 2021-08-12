@@ -65,7 +65,7 @@ public class PlayerAutoCraftEvent extends PlayerEvent implements Cancellable {
 	*
 	* @param cancel true if you wish to cancel this event.
 	*/
-	public void setCancelled(boolean cancel) {
+	public void setCancelled(final boolean cancel) {
 		this.useAutoCraft(cancel ? Result.DENY : this.useAutoCraft() == Result.DENY ? Result.DEFAULT : this.useAutoCraft());
 	}
 	
@@ -105,7 +105,7 @@ public class PlayerAutoCraftEvent extends PlayerEvent implements Cancellable {
     * 
 	* @param useAutoCraft the action to take with the autocraft pattern.
 	*/
-	public void useAutoCraft(Result useAutoCraft) {
+	public void useAutoCraft(final Result useAutoCraft) {
 		this.useAutoCraft = useAutoCraft;
 	}
 	

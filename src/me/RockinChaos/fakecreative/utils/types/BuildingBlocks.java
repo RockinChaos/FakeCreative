@@ -41,10 +41,10 @@ public enum BuildingBlocks {
 	* @param material - The Material being checked.
 	* @return If the Material is a Building Blocks type.
 	*/
-	public static boolean isBuildingBlocks(Material material) {
+	public static boolean isBuildingBlocks(final Material material) {
 	    if (!material.isBlock() || Brewing.isBrewing(material) || Redstone.isRedstone(material) || Decoration.isDecoration(material)) { return false; }
 	    for (BuildingBlocks tag: BuildingBlocks.values()) {
-	    	String[] mats = material.name().split("_");
+	    	final String[] mats = material.name().split("_");
 	    	if (tag.name().equalsIgnoreCase((tag.name().contains("_") ? material.name() : (mats.length > 1 ? mats[(mats.length - 1)] : mats[0])))) {
 	        	return false;
 	        }

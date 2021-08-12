@@ -40,7 +40,7 @@ public class Button {
     * 
     * @param itemStack - The ItemStack the button is to be placed as.
     */
-    public Button(ItemStack itemStack) {
+    public Button(final ItemStack itemStack) {
     	this(itemStack, event -> {});
     }
     
@@ -51,7 +51,7 @@ public class Button {
     * @param itemStack - The ItemStack the button is to be placed as.
     * @param clickAction - The method to be executed upon clicking the button.
     */
-    public Button(ItemStack itemStack, Consumer < InventoryClickEvent > clickAction) {
+    public Button(final ItemStack itemStack, Consumer < InventoryClickEvent > clickAction) {
     	this.itemStack = itemStack;
     	this.clickAction = clickAction;
     }
@@ -63,7 +63,7 @@ public class Button {
     * @param clickAction - The method to be executed upon clicking the button.
     * @param chatAction - The method to be executed upon chatting after clicking the button.
     */
-    public Button(ItemStack itemStack, Consumer < InventoryClickEvent > clickAction, Consumer < AsyncPlayerChatEvent > chatAction) {
+    public Button(final ItemStack itemStack, Consumer < InventoryClickEvent > clickAction, final Consumer < AsyncPlayerChatEvent > chatAction) {
     	this.itemStack = itemStack;
     	this.clickAction = clickAction;
     	this.chatAction = chatAction;
@@ -83,7 +83,7 @@ public class Button {
     * 
     * @param clickAction - The click action method to be executed.
     */
-    public void setClickAction(Consumer < InventoryClickEvent > clickAction) {
+    public void setClickAction(final Consumer < InventoryClickEvent > clickAction) {
     	this.clickAction = clickAction;
     }
     
@@ -92,7 +92,7 @@ public class Button {
     * 
     * @param chatAction - The chat action method to be executed.
     */
-    public void setChatAction(Consumer < AsyncPlayerChatEvent > chatAction) {
+    public void setChatAction(final Consumer < AsyncPlayerChatEvent > chatAction) {
     	this.chatAction = chatAction;
     }
     
@@ -102,7 +102,7 @@ public class Button {
     * 
     * @param event - InventoryClickEvent
     */
-    public void onClick(InventoryClickEvent event) {
+    public void onClick(final InventoryClickEvent event) {
     	SchedulerUtils.run(() -> {
     		this.clickAction.accept(event);
     	});
@@ -114,7 +114,7 @@ public class Button {
     * 
     * @param event - AsyncPlayerChatEvent
     */
-    public void onChat(AsyncPlayerChatEvent event) {
+    public void onChat(final AsyncPlayerChatEvent event) {
     	SchedulerUtils.run(() -> {
     	    this.chatAction.accept(event);
     	});
@@ -138,10 +138,10 @@ public class Button {
     * @param obj - The object being compared.
     */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
     	if (this == obj) { return true; }
     	if (!(obj instanceof Button)) { return false; }
-    	Button button = (Button) obj;
+    	final Button button = (Button) obj;
     	return this.ID == button.ID;
     }
     

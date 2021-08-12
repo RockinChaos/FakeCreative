@@ -25,6 +25,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -32,17 +33,16 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
 import me.RockinChaos.fakecreative.FakeCreative;
 import me.RockinChaos.fakecreative.handlers.ItemHandler;
 import me.RockinChaos.fakecreative.handlers.PlayerHandler;
-import me.RockinChaos.fakecreative.handlers.modes.Creative;
 import me.RockinChaos.fakecreative.utils.SchedulerUtils;
 import me.RockinChaos.fakecreative.utils.ServerUtils;
 import me.RockinChaos.fakecreative.utils.StringUtils;
 import me.RockinChaos.fakecreative.utils.api.LanguageAPI;
+import me.RockinChaos.fakecreative.utils.api.LegacyAPI;
 import me.RockinChaos.fakecreative.utils.interfaces.Button;
 import me.RockinChaos.fakecreative.utils.interfaces.Interface;
 import me.RockinChaos.fakecreative.utils.types.Brewing;
@@ -50,11 +50,12 @@ import me.RockinChaos.fakecreative.utils.types.BuildingBlocks;
 import me.RockinChaos.fakecreative.utils.types.Combat;
 import me.RockinChaos.fakecreative.utils.types.Decoration;
 import me.RockinChaos.fakecreative.utils.types.Miscellaneous;
+import me.RockinChaos.fakecreative.utils.types.Monster;
+import me.RockinChaos.fakecreative.utils.types.Potion;
 import me.RockinChaos.fakecreative.utils.types.Redstone;
 import me.RockinChaos.fakecreative.utils.types.ToolEnchants;
 import me.RockinChaos.fakecreative.utils.types.Tools;
 
-	
 /**
 * Handles the in-game GUI.
 * 
@@ -66,7 +67,7 @@ public class Menu {
 	private ItemStack fillerPaneBItem = ItemHandler.getItem("STAINED_GLASS_PANE:15", 1, false, false, "&7", "");
 	private ItemStack fillerPaneGItem = ItemHandler.getItem("STAINED_GLASS_PANE:7", 1, false, false, "&7", "");
 	private ItemStack exitItem = ItemHandler.getItem("BARRIER", 1, false, false, "&c&l&nExit", "&7", "&7*Return to playing the game.");
-	private List<Player> modifyMenu = new ArrayList<Player>();
+	private List<String> modifyMenu = new ArrayList<String>();
 	
 	private static Menu creator;
 
@@ -78,6 +79,8 @@ public class Menu {
     * Opens the MAIN CREATIVE PANE for the Player.
     * 
     * @param sender - The Sender to have the Pane opened.
+    * @param selected - The selected creative section.
+    * @param search - The type of material to search for (if any).
     */
 	public void creativeMenu(final CommandSender sender, final int selected, final String search) {
 		final Player player = (Player) sender;
@@ -345,7 +348,7 @@ public class Menu {
 			for (int i = 1; i <= 9; i++) {
 				final int k = i;
 				String existingMats = "";
-				String hotbarData = Creative.getHotbar(player, k);
+				String hotbarData = PlayerHandler.getHotbarTab(player, k);
 				if (hotbarData != null) {
 					Inventory inventory = ItemHandler.deserializeInventory(hotbarData);
 					for (int j = 0; j < 9; j++) {
@@ -360,7 +363,7 @@ public class Menu {
 						"&8&oLeft-click to save.", (existingMats != null && !existingMats.isEmpty() ? "&8&oShift+Left-click to load." : ""), (existingMats != null && !existingMats.isEmpty() ? "&8&oRight-click to view." : "")), event -> {
 					boolean empty = true;
 					if (event.getClick() == ClickType.LEFT) {
-						if (PlayerHandler.isFakeCreativeMode(player)) {
+						if (PlayerHandler.isCreativeMode(player, true)) {
 							Inventory inventoryData = Bukkit.getServer().createInventory(null, 9);
 							for (int j = 0; j < 9; j++) {
 								if (player.getOpenInventory().getBottomInventory().getItem(j) != null && player.getOpenInventory().getBottomInventory().getItem(j).getType() != Material.AIR) {
@@ -371,13 +374,13 @@ public class Menu {
 								String[] placeHolders = LanguageAPI.getLang(false).newString();
 								placeHolders[2] = Integer.toString(k);
 								LanguageAPI.getLang(false).sendLangMessage("commands.menu.savedHotbar", sender, placeHolders);
-								Creative.saveHotbar(player, ItemHandler.serializeInventory(inventoryData), k);
+								PlayerHandler.getCreativeStats(player).saveHotbar(player, ItemHandler.serializeInventory(inventoryData), k);
 								SchedulerUtils.run(() -> this.hotbarMenu(sender));
 							}
 						}
 					} else if (event.getClick() == ClickType.SHIFT_LEFT) {
-						if (PlayerHandler.isFakeCreativeMode(player)) {
-							String inventoryData = Creative.getHotbar(player, k);
+						if (PlayerHandler.isCreativeMode(player, true)) {
+							String inventoryData = PlayerHandler.getHotbarTab(player, k);
 							if (inventoryData != null) {
 								Inventory inventory = ItemHandler.deserializeInventory(inventoryData);
 								for (int j = 0; j < 9; j++) {
@@ -416,8 +419,8 @@ public class Menu {
 		Interface pagedPane = new Interface(false, 2, this.HotbarGUIName, player);
 		pagedPane.allowClick(true);
 		SchedulerUtils.runAsync(() -> {
-			if (PlayerHandler.isFakeCreativeMode(player)) {
-				String inventoryData = Creative.getHotbar(player, hotbar);
+			if (PlayerHandler.isCreativeMode(player, true)) {
+				String inventoryData = PlayerHandler.getHotbarTab(player, hotbar);
 				if (inventoryData != null) {
 					Inventory inventory = ItemHandler.deserializeInventory(inventoryData);
 					for (int j = 0; j < 9; j++) {
@@ -437,20 +440,157 @@ public class Menu {
 	}
 	
    /**
-    * Opens the MAIN CREATIVE PANE for the Player.
+    * Opens the USER PREFERENCES PANE for the Player.
     * 
     * @param sender - The Sender to have the Pane opened.
     */
-	public void userMenu(final CommandSender sender, final int selected, final String search) {
+	public void userMenu(final CommandSender sender) {
 		final Player player = (Player) sender;
-		Interface pagedPane = new Interface(false, 6, this.userGUIName, player);
+		Interface pagedPane = new Interface(false, 3, this.userGUIName, player);
 		SchedulerUtils.runAsync(() -> {
-			
+			pagedPane.addButton(new Button(this.fillerPaneGItem));
+			pagedPane.addButton(new Button(ItemHandler.getItem("FEATHER", 1, PlayerHandler.getCreativeStats(player).allowFlight(), true, "&fAllow Flight", "&7*If you should be allowed to fly", "&7using double-space to ascend.", 
+					"&7", "&a&lEnabled: &b&l" + PlayerHandler.getCreativeStats(player).allowFlight()), 
+					event -> {
+						PlayerHandler.getCreativeStats(player).setFlight(player, !PlayerHandler.getCreativeStats(player).allowFlight());
+						this.userMenu(player);
+					}));
+			pagedPane.addButton(new Button(ItemHandler.getItem("SUGAR", 1, false, true, "&fFlight Speed", "&7*The desired speed while flying.",
+					"&7", "&a&lSpeed: &b&l" + PlayerHandler.getCreativeStats(player).flySpeed()), event -> this.numericalPane(player, 0)));
+			pagedPane.addButton(new Button(ItemHandler.getItem("DIAMOND_PICKAXE", 1, false, true, "&fBreak Speed", "&7*The desired speed", "&7in-between each block-break.",
+					"&7", "&a&lSpeed: &b&l" + PlayerHandler.getCreativeStats(player).breakSpeed()), event -> this.numericalPane(player, 1)));
+			pagedPane.addButton(new Button(this.fillerPaneGItem));
+			pagedPane.addButton(new Button(ItemHandler.getItem("364", 1, false, true, "&fFood", "&7*The desired food/hunger level.",
+					"&7", "&a&lFood: &b&l" + PlayerHandler.getCreativeStats(player).foodLevel()), event -> this.numericalPane(player, 2)));
+			pagedPane.addButton(new Button(ItemHandler.getItem("APPLE", 1, false, true, "&fHealth", "&7*The desired health level.",
+					"&7", "&a&lHealth: &b&l" + PlayerHandler.getCreativeStats(player).health()), event -> this.numericalPane(player, 3)));
+			pagedPane.addButton(new Button(ItemHandler.getItem("REDSTONE", 1, false, true, "&fHeart Scale", "&7*The desired health scale.", "&7This is the number of hearts to", "&7be displayed in the user interface.",
+					"&7", "&a&lScale: &b&l" + PlayerHandler.getCreativeStats(player).heartScale()), event -> this.numericalPane(player, 4)));
+			pagedPane.addButton(new Button(this.fillerPaneGItem));
+			pagedPane.addButton(new Button(ItemHandler.getItem("367", 1, PlayerHandler.getCreativeStats(player).allowHunger(), true, "&fAllow Hunger", "&7*If your hunger should decrease.", 
+					"&7", "&a&lEnabled: &b&l" + PlayerHandler.getCreativeStats(player).allowHunger()), 
+					event -> {
+						PlayerHandler.getCreativeStats(player).setAllowHunger(player, !PlayerHandler.getCreativeStats(player).allowHunger());
+					this.userMenu(player);
+					}));
+			pagedPane.addButton(new Button(ItemHandler.getItem("LAVA_BUCKET", 1, PlayerHandler.getCreativeStats(player).allowBurn(), true, "&fAllow Burn", "&7*If lava or fire should do damage.", 
+					"&7", "&a&lEnabled: &b&l" + PlayerHandler.getCreativeStats(player).allowBurn()), 
+					event -> { 
+						PlayerHandler.getCreativeStats(player).setAllowBurn(player, !PlayerHandler.getCreativeStats(player).allowBurn());
+						this.userMenu(player);
+					}));
+			pagedPane.addButton(new Button(ItemHandler.getItem("BEDROCK", 1, PlayerHandler.getCreativeStats(player).unbreakableItems(), true, "&fUnbreakable Items", "&7*If items in creative should be unbreakable.", 
+					"&7This is only effective in creative", "&7unbreakable items will automatically", "&7become breakable when exiting creative.", 
+					"&7", "&a&lEnabled: &b&l" + PlayerHandler.getCreativeStats(player).unbreakableItems()), 
+					event -> {
+						PlayerHandler.getCreativeStats(player).setUnbreakableItems(player, !PlayerHandler.getCreativeStats(player).unbreakableItems());
+						this.userMenu(player);
+					}));
+			pagedPane.addButton(new Button(ItemHandler.getItem("2", 1, PlayerHandler.getCreativeStats(player).blockDrops(), true, "&fBlock Drops", "&7*If blocks should drop when you", "&7break them using your hand or an item.", 
+					"&7", "&a&lEnabled: &b&l" + PlayerHandler.getCreativeStats(player).blockDrops()), 
+					event -> {
+						PlayerHandler.getCreativeStats(player).setBlockDrops(player, !PlayerHandler.getCreativeStats(player).blockDrops());
+						this.userMenu(player);
+					}));
+			pagedPane.addButton(new Button(ItemHandler.getItem("DIAMOND_SWORD", 1, PlayerHandler.getCreativeStats(player).swordBlock(), true, "&fSword Block", "&7*When holding a sword you will not", "&7be able to break any blocks.", 
+					"&7", "&a&lEnabled: &b&l" + PlayerHandler.getCreativeStats(player).swordBlock()), 
+					event -> {
+						PlayerHandler.getCreativeStats(player).setSwordBlock(player, !PlayerHandler.getCreativeStats(player).swordBlock());
+						this.userMenu(player);
+					}));
+			pagedPane.addButton(new Button(ItemHandler.getItem("154", 1, PlayerHandler.getCreativeStats(player).autoRestore(), true, "&fAuto Restore", "&7*If you exit the server or the server", "&7restarts while you are in creative, you", "&7will automatically be set back to", "&7creative upon entering the server.", 
+					"&7", "&a&lEnabled: &b&l" + PlayerHandler.getCreativeStats(player).autoRestore()), 
+					event -> {
+						PlayerHandler.getCreativeStats(player).setRestore(player, !PlayerHandler.getCreativeStats(player).autoRestore());
+						this.userMenu(player);
+					}));
+			pagedPane.addButton(new Button(ItemHandler.getItem("322:1", 1, PlayerHandler.getCreativeStats(player).god(), true, "&fInvulnerable", "&7*If you should take damage.", 
+					"&7", "&a&lEnabled: &b&l" + PlayerHandler.getCreativeStats(player).god()), 
+					event -> {
+						PlayerHandler.getCreativeStats(player).setGod(player, !PlayerHandler.getCreativeStats(player).god());
+						this.userMenu(player);
+					}));
+			pagedPane.addButton(new Button(ItemHandler.getItem("347", 1, false, true, "&fInvulnerable Delay", "&7*How long to wait after exiting creative", "&7before you can take damage again.",
+					"&7", "&a&lDelay: &b&l" + PlayerHandler.getCreativeStats(player).godDelay()), event -> this.numericalPane(player, 5)));
+			pagedPane.addButton(new Button(ItemHandler.getItem("CHEST", 1, PlayerHandler.getCreativeStats(player).storeInventory(), true, "&fStore Inventory", "&7*If the previous gamemodes inventory", "&7should be saved when entering creative.", "&7This inventory will automatically", "&7be restored when exiting creative.", 
+					"&7", "&a&lEnabled: &b&l" + PlayerHandler.getCreativeStats(player).storeInventory()), 
+					event -> {
+						PlayerHandler.getCreativeStats(player).setStore(player, !PlayerHandler.getCreativeStats(player).storeInventory());
+						this.userMenu(player);
+					}));
 			pagedPane.addButton(new Button(this.exitItem, event -> player.closeInventory()));
 			pagedPane.addButton(new Button(this.fillerPaneBItem), 7);
 			pagedPane.addButton(new Button(this.exitItem, event -> player.closeInventory()));
 		});
 		pagedPane.open(player);
+	}
+	
+   /**
+    * Opens the Pane for the Player.
+    * This Pane is for setting an custom numerical value.
+    * 
+    * @param player - The Player to have the Pane opened.
+    * @param stage - The Custom Value being modified.
+    */
+	private void numericalPane(final Player player, final int stage) {
+		Interface cooldownPane = new Interface(true, 6, this.userGUIName, player);
+		SchedulerUtils.runAsync(() -> {
+			cooldownPane.setReturnButton(new Button(ItemHandler.getItem("BARRIER", 1, false, false, "&c&l&nReturn", "&7", "&7*Returns you to the perferences menu."), event -> {
+				this.userMenu(player);
+			}));
+			cooldownPane.addButton(new Button(ItemHandler.getItem("STAINED_GLASS_PANE:4", 1, false, false, "&e&lCustom Number", "&7", "&7*Click to set a custom number value."), event -> {
+				player.closeInventory();
+				String[] placeHolders = LanguageAPI.getLang(false).newString();
+				placeHolders[16] = "Custom Number";
+				placeHolders[15] = "10";
+				LanguageAPI.getLang(false).sendLangMessage("commands.menu.inputType", player, placeHolders);
+				LanguageAPI.getLang(false).sendLangMessage("commands.menu.inputExample", player, placeHolders);
+			}, event -> {
+				if (StringUtils.isInt(ChatColor.stripColor(event.getMessage()))) {
+					String[] placeHolders = LanguageAPI.getLang(false).newString();
+					placeHolders[16] = "COMMAND COOLDOWN";
+					LanguageAPI.getLang(false).sendLangMessage("commands.menu.inputSet", player, placeHolders);
+					if (stage == 0) {
+						PlayerHandler.getCreativeStats(player).setFlySpeed(player, Integer.parseInt(ChatColor.stripColor(event.getMessage())));
+					} else if (stage == 1) {
+						PlayerHandler.getCreativeStats(player).setBreakSpeed(player, Integer.parseInt(ChatColor.stripColor(event.getMessage())));
+					} else if (stage == 2) {
+						PlayerHandler.getCreativeStats(player).setFoodLevel(player, Integer.parseInt(ChatColor.stripColor(event.getMessage())));
+					} else if (stage == 3) {
+						PlayerHandler.getCreativeStats(player).setHealth(player, Integer.parseInt(ChatColor.stripColor(event.getMessage())));
+					} else if (stage == 4) {
+						PlayerHandler.getCreativeStats(player).setScale(player, Integer.parseInt(ChatColor.stripColor(event.getMessage())));
+					} else if (stage == 5) {
+						PlayerHandler.getCreativeStats(player).setGodDelay(player, Integer.parseInt(ChatColor.stripColor(event.getMessage())));
+					}
+					this.userMenu(player);
+				} else {
+					String[] placeHolders = LanguageAPI.getLang(false).newString();
+					placeHolders[16] = ChatColor.stripColor(event.getMessage());
+					LanguageAPI.getLang(false).sendLangMessage("commands.menu.noInteger", player, placeHolders);
+				}
+			}));
+			for (int i = 1; i <= 64; i++) {
+				final int k = i;
+				cooldownPane.addButton(new Button(ItemHandler.getItem("STAINED_GLASS_PANE:11", k, false, false, "&a&l" + k, "&7", "&7*Click to set the custom number value."), event -> {
+					if (stage == 0) {
+						PlayerHandler.getCreativeStats(player).setFlySpeed(player, k);
+					} else if (stage == 1) {
+						PlayerHandler.getCreativeStats(player).setBreakSpeed(player, k);
+					} else if (stage == 2) {
+						PlayerHandler.getCreativeStats(player).setFoodLevel(player, k);
+					} else if (stage == 3) {
+						PlayerHandler.getCreativeStats(player).setHealth(player, k);
+					} else if (stage == 4) {
+						PlayerHandler.getCreativeStats(player).setScale(player, k);
+					} else if (stage == 5) {
+						PlayerHandler.getCreativeStats(player).setGodDelay(player, k);
+					}
+					this.userMenu(player);
+				}));
+			}
+		});
+		cooldownPane.open(player);
 	}
 	
    /**
@@ -460,7 +600,7 @@ public class Menu {
     * @param item - The ItemStack to be checked.
     * @param inventoryCheck - The Inventory used for checking the ItemStack.
     */
-	private boolean safeMaterial(ItemStack item, Inventory inventoryCheck) {
+	private boolean safeMaterial(final ItemStack item, final Inventory inventoryCheck) {
 		inventoryCheck.setItem(0, item);
 		if (inventoryCheck.getItem(0) != null && inventoryCheck.getItem(0).getType().name() != "AIR") {
 			return true;
@@ -519,29 +659,28 @@ public class Menu {
 	private void addSections(final Interface pagedPane, final int currentCount, final int selected) {
 		if (currentCount != 0) { pagedPane.addButton(new Button(new ItemStack(Material.AIR)), currentCount); }
 		pagedPane.addButton(new Button(this.fillerPaneBItem), 9);
-		if (selected != 9) {
-			pagedPane.addButton(new Button(ItemHandler.getItem("COMPASS", 1, (selected == 0 ? true : false), true, (selected == 0 ? "&a"  : "&f") + "Search Items", "&7", "&8&oClick to view", "&8&oDouble-click to search."), event -> { 
-				this.creativeMenu(event.getWhoClicked(), 9, null); 
-			}));
-		} else if (selected == 9) {
-			pagedPane.addButton(new Button(ItemHandler.getItem("COMPASS", 1, (selected == 9 ? true : false), true, (selected == 9 ? "&a"  : "&f") + "Search Items", "&7", "&8&oClick to view", "&8&oDouble-click to search."), event -> {
+		pagedPane.addButton(new Button(ItemHandler.getItem("COMPASS", 1, (selected == 0 ? true : false), true, (selected == 0 ? "&a"  : "&f") + "Search Items", "&7", "&8&oClick to view", "&8&oShift+Left-click to search."), event -> { 
+			if (event.getClick() == ClickType.SHIFT_LEFT) {
 				event.getWhoClicked().closeInventory();
 				String[] placeHolders = LanguageAPI.getLang(false).newString();
 				placeHolders[3] = "&cDIAMOND&a or &cDIA";
-				LanguageAPI.getLang(false).sendLangMessage("commands.menu.searchType", event.getWhoClicked(), placeHolders);
-				LanguageAPI.getLang(false).sendLangMessage("commands.menu.searchExample", event.getWhoClicked(), placeHolders);
-			}, event -> {
-				this.creativeMenu(event.getPlayer(), 0, ChatColor.stripColor(event.getMessage())); 
-			}));
-		}
-		pagedPane.addButton(new Button(ItemHandler.getItem("LAVA_BUCKET", 1, (selected == 1 ? true : false), true, (selected == 1 ? "&a"  : "&f") + "Miscellaneous", "&7", "&8&oClick to view"), event -> this.miscellaneousMenu(event.getWhoClicked())));
-		pagedPane.addButton(new Button(ItemHandler.getItem("APPLE", 1, (selected == 2 ? true : false), true, (selected == 2 ? "&a"  : "&f") + "Foodstuffs", "&7", "&8&oClick to view"), event -> this.foodMenu(event.getWhoClicked())));
-		pagedPane.addButton(new Button(ItemHandler.getItem("IRON_AXE", 1, (selected == 3 ? true : false), true, (selected == 3 ? "&a"  : "&f") + "Tools", "&7", "&8&oClick to view"), event -> this.toolsMenu(event.getWhoClicked())));
-		pagedPane.addButton(new Button(ItemHandler.getItem("GOLDEN_SWORD", 1, (selected == 4 ? true : false), true, (selected == 4 ? "&a"  : "&f") + "Combat", "&7", "&8&oClick to view"), event -> this.combatMenu(event.getWhoClicked())));
-		pagedPane.addButton(new Button(ItemHandler.getItem("WATER_BOTTLE", 1, (selected == 5 ? true : false), true, (selected == 5 ? "&a"  : "&f") + "Brewing", "&7", "&8&oClick to view"), event -> this.brewingMenu(event.getWhoClicked())));
-		pagedPane.addButton(new Button(ItemHandler.getItem("BRICKS", 1, (selected == 6 ? true : false), true, (selected == 6 ? "&a"  : "&f") + "Building Blocks", "&7", "&8&oClick to view"), event -> this.buildingMenu(event.getWhoClicked())));
-		pagedPane.addButton(new Button(ItemHandler.getItem("PEONY", 1, (selected == 7 ? true : false), true, (selected == 7 ? "&a"  : "&f") + "Decoration Blocks", "&7", "&8&oClick to view"), event -> this.decorationMenu(event.getWhoClicked())));
-		pagedPane.addButton(new Button(ItemHandler.getItem("REDSTONE", 1, (selected == 8 ? true : false), true, (selected == 8 ? "&a"  : "&f") + "Redstone", "&7", "&8&oClick to view"), event -> this.redstoneMenu(event.getWhoClicked())));
+				LanguageAPI.getLang(false).sendLangMessage("commands.menu.searchType", (Player) event.getWhoClicked(), placeHolders);
+				LanguageAPI.getLang(false).sendLangMessage("commands.menu.searchExample", (Player) event.getWhoClicked(), placeHolders);
+			} else {
+				this.creativeMenu((Player) event.getWhoClicked(), 0, null); 
+				pagedPane.allowChat(true);
+			}
+		}, event -> {
+			this.creativeMenu(event.getPlayer(), 0, ChatColor.stripColor(event.getMessage())); 
+		}));
+		pagedPane.addButton(new Button(ItemHandler.getItem("LAVA_BUCKET", 1, (selected == 1 ? true : false), true, (selected == 1 ? "&a"  : "&f") + "Miscellaneous", "&7", "&8&oClick to view"), event -> this.miscellaneousMenu((Player) event.getWhoClicked())));
+		pagedPane.addButton(new Button(ItemHandler.getItem("APPLE", 1, (selected == 2 ? true : false), true, (selected == 2 ? "&a"  : "&f") + "Foodstuffs", "&7", "&8&oClick to view"), event -> this.foodMenu((Player) event.getWhoClicked())));
+		pagedPane.addButton(new Button(ItemHandler.getItem("IRON_AXE", 1, (selected == 3 ? true : false), true, (selected == 3 ? "&a"  : "&f") + "Tools", "&7", "&8&oClick to view"), event -> this.toolsMenu((Player) event.getWhoClicked())));
+		pagedPane.addButton(new Button(ItemHandler.getItem("283", 1, (selected == 4 ? true : false), true, (selected == 4 ? "&a"  : "&f") + "Combat", "&7", "&8&oClick to view"), event -> this.combatMenu((Player) event.getWhoClicked())));
+		pagedPane.addButton(new Button(ItemHandler.getItem("WATER_BOTTLE", 1, (selected == 5 ? true : false), true, (selected == 5 ? "&a"  : "&f") + "Brewing", "&7", "&8&oClick to view"), event -> this.brewingMenu((Player) event.getWhoClicked())));
+		pagedPane.addButton(new Button(ItemHandler.getItem("45", 1, (selected == 6 ? true : false), true, (selected == 6 ? "&a"  : "&f") + "Building Blocks", "&7", "&8&oClick to view"), event -> this.buildingMenu((Player) event.getWhoClicked())));
+		pagedPane.addButton(new Button(ItemHandler.getItem("175:5", 1, (selected == 7 ? true : false), true, (selected == 7 ? "&a"  : "&f") + "Decoration Blocks", "&7", "&8&oClick to view"), event -> this.decorationMenu((Player) event.getWhoClicked())));
+		pagedPane.addButton(new Button(ItemHandler.getItem("REDSTONE", 1, (selected == 8 ? true : false), true, (selected == 8 ? "&a"  : "&f") + "Redstone", "&7", "&8&oClick to view"), event -> this.redstoneMenu((Player) event.getWhoClicked())));
 	}
 	
    /**
@@ -565,7 +704,7 @@ public class Menu {
 					items.add(enc);
 				}
 			}
-		} if (material.name().contains("TIPPED_ARROW") || material.name().contains("POTION")) {
+		} else if (material.name().contains("TIPPED_ARROW") || material.name().contains("POTION")) {
 			custom = true;
 			for (PotionType potion : PotionType.values()) {
 				if ((!potion.name().equalsIgnoreCase("UNCRAFTABLE") && 
@@ -576,23 +715,37 @@ public class Menu {
 				 || (material.name().contains("POTION") && !potion.name().equalsIgnoreCase("UNCRAFTABLE"))) {
 					ItemStack pot = new ItemStack(material);
 					PotionMeta meta = (PotionMeta) pot.getItemMeta();
-					meta.setBasePotionData(new PotionData(potion));
-	        		pot.setItemMeta(meta);
-					items.add(pot.clone());
-					if (potion.isExtendable()) {
-						meta.setBasePotionData(new PotionData(potion, true, false));
-						pot.setItemMeta(meta);
+					if (ServerUtils.hasSpecificUpdate("1_9")) {
+						meta.setBasePotionData(new org.bukkit.potion.PotionData(potion));
+		        		pot.setItemMeta(meta);
 						items.add(pot.clone());
-					}
-					if (potion.isUpgradeable()) {
-						meta.setBasePotionData(new PotionData(potion, false, true));
-						pot.setItemMeta(meta);
-						items.add(pot.clone());
+						if (potion.isExtendable()) {
+							meta.setBasePotionData(new org.bukkit.potion.PotionData(potion, true, false));
+							pot.setItemMeta(meta);
+							items.add(pot.clone());
+						}
+						if (potion.isUpgradeable()) {
+							meta.setBasePotionData(new org.bukkit.potion.PotionData(potion, false, true));
+							pot.setItemMeta(meta);
+							items.add(pot.clone());
+						}
+					} else {
+						for (int data : Potion.getData(potion)) {
+							items.add(LegacyAPI.newItemStack(material, 1, (short) data).clone());
+						}
 					}
 				}
 			}
-		} 
-		if (!custom) { items.add(new ItemStack(material)); }
+		} else if (material.name().contains("MONSTER_EGG")) {
+			custom = true;
+			for (EntityType entity : EntityType.values()) {
+				final short entityId = (short) Monster.getId(entity);
+				if (entityId != 0) {
+					items.add(LegacyAPI.newItemStack(ItemHandler.getMaterial("MONSTER_EGG", null), 1, entityId));
+				}
+			}
+		}
+		if (!custom || !ServerUtils.hasSpecificUpdate("1_9")) { items.add(new ItemStack(material)); }
 		return items;
 	}
 
@@ -605,7 +758,7 @@ public class Menu {
     */
 	public void closeMenu() {
 		PlayerHandler.forOnlinePlayers(player -> { 
-			if (this.isOpen(player) || this.modifyMenu(player)) {
+			if (isOpen(player) || modifyMenu(player)) {
 				player.closeInventory();
 			}
 		});
@@ -618,8 +771,12 @@ public class Menu {
     * @param player - The Player to be set to the Modify Menu.
     */
 	public void setModifyMenu(final boolean bool, final Player player) {
-		if (bool) { this.modifyMenu.add(player); } 
-		else { this.modifyMenu.remove(player); }
+		try {
+			SchedulerUtils.runAsync(() -> {
+				if (bool) { modifyMenu.add(PlayerHandler.getPlayerID(player)); } 
+				else { modifyMenu.remove(PlayerHandler.getPlayerID(player)); }
+			});
+		} catch (ArrayIndexOutOfBoundsException e) { }
 	}
 	
    /**
@@ -629,7 +786,7 @@ public class Menu {
     * @return If the Player is in the Modify Menu.
     */
 	public boolean modifyMenu(final Player player) {
-		return this.modifyMenu.contains(player);
+		return modifyMenu.contains(PlayerHandler.getPlayerID(player));
 	}
 	
    /**
@@ -639,8 +796,14 @@ public class Menu {
     * @return If the GUI Menu is open.
     */
 	public boolean isOpen(final Player player) {
-		if (player != null) {
-			return (this.GUIName != null && player.getOpenInventory().getTitle().toString().equalsIgnoreCase(StringUtils.colorFormat(this.GUIName))) || this.HotbarGUIName != null && player.getOpenInventory().getTitle().toString().equalsIgnoreCase(StringUtils.colorFormat(this.HotbarGUIName));
+		if (this.GUIName == null) { this.GUIName = ServerUtils.hasSpecificUpdate("1_9") ? StringUtils.colorFormat("&7           &0&nCreative Menu") : StringUtils.colorFormat("&7           &0&n Creative Menu"); }
+		if (this.HotbarGUIName == null) { this.HotbarGUIName = ServerUtils.hasSpecificUpdate("1_9") ? StringUtils.colorFormat("&7            &0&nHotbar Menu") : StringUtils.colorFormat("&7            &0&n Hotbar Menu"); }
+		if (this.userGUIName == null) { this.userGUIName = ServerUtils.hasSpecificUpdate("1_9") ? StringUtils.colorFormat("&7               &0&nUser Menu") : StringUtils.colorFormat("&7              &0&n User Menu"); }
+		if (player != null && 
+				((this.GUIName != null && player.getOpenInventory().getTitle().toString().equalsIgnoreCase(StringUtils.colorFormat(this.GUIName)))
+			  || (this.HotbarGUIName != null && player.getOpenInventory().getTitle().toString().equalsIgnoreCase(StringUtils.colorFormat(this.HotbarGUIName)))
+			  || (this.userGUIName != null && player.getOpenInventory().getTitle().toString().equalsIgnoreCase(StringUtils.colorFormat(this.userGUIName))))) {
+			return true;
 		}
 		return false;
 	}

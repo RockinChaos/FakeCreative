@@ -17,15 +17,14 @@
  */
 package me.RockinChaos.fakecreative.listeners;
 
-import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.StringUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import me.RockinChaos.fakecreative.handlers.ItemHandler;
 import me.RockinChaos.fakecreative.handlers.PlayerHandler;
-import me.RockinChaos.fakecreative.handlers.modes.Creative;
 import me.RockinChaos.fakecreative.utils.SchedulerUtils;
+import me.RockinChaos.fakecreative.utils.StringUtils;
 
 public class PlayerClear implements Listener {
 
@@ -35,12 +34,12 @@ public class PlayerClear implements Listener {
 	* @param event - PlayerCommandPreprocessEvent
 	*/
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-	public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+	public void onPlayerCommand(final PlayerCommandPreprocessEvent event) {
 		final String command = event.getMessage();
-		if (PlayerHandler.isFakeCreativeMode(event.getPlayer()) && command != null && !command.isEmpty() && StringUtils.containsIgnoreCase(command, "clear")) {
+		if (PlayerHandler.isCreativeMode(event.getPlayer(), true) && command != null && !command.isEmpty() && StringUtils.containsIgnoreCase(command, "clear")) {
 			SchedulerUtils.runLater(2L, () -> { 
 				if (ItemHandler.isContentsEmpty(event.getPlayer().getOpenInventory().getTopInventory().getContents())) {
-					Creative.setTabs(event.getPlayer());
+					PlayerHandler.setCreativeTabs(event.getPlayer());
 				}
 			});
 		}

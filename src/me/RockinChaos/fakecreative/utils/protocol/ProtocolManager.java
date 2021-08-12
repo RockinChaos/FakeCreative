@@ -54,7 +54,7 @@ public class ProtocolManager {
   		    */
   			@Override
   			public Object onPacketInAsync(final Player player, final Channel channel, final Object packet) {
-  				String packetName = (packet != null ? packet.getClass().getSimpleName() : null);
+  				final String packetName = (packet != null ? packet.getClass().getSimpleName() : null);
 	  			if (manageEvents(player, packetName, packet)) { 
 	  				return null; 
 	  			}
@@ -86,18 +86,18 @@ public class ProtocolManager {
   		try {
    			if (packetName != null) {
   				if (packetName.equalsIgnoreCase("PacketPlayInWindowClick")) {
-  					PacketContainer container = protocol.getContainer(packet);
+  					final PacketContainer container = protocol.getContainer(packet);
   					if (container.read(5).getData().toString().equalsIgnoreCase("QUICK_CRAFT") && ((int)container.read(2).getData()) == 9 
   					&& (container.read(4).getData() == null || container.read(4).getData().toString().replaceAll("[0-9]", "").replaceAll(" ", "").equalsIgnoreCase("AIR"))) {
-	  					InventoryClickEvent clickEvent = new InventoryClickEvent(player.getOpenInventory(), null, (int)container.read(1).getData(), ClickType.MIDDLE, null); // replace with custom PlayerCloneItemEvent in the future.
+	  					final InventoryClickEvent clickEvent = new InventoryClickEvent(player.getOpenInventory(), null, (int)container.read(1).getData(), ClickType.MIDDLE, null); // replace with custom PlayerCloneItemEvent in the future.
 	  					callEvent(clickEvent);
   					}
   				} else if (packetName.equalsIgnoreCase("PacketPlayInAutoRecipe")) {
-		  			PlayerAutoCraftEvent AutoCraft = new PlayerAutoCraftEvent(player, player.getOpenInventory().getTopInventory());
+		  			final PlayerAutoCraftEvent AutoCraft = new PlayerAutoCraftEvent(player, player.getOpenInventory().getTopInventory());
 		  			callEvent(AutoCraft);
 				  	return AutoCraft.isCancelled();
 		  		} else if (packetName.equalsIgnoreCase("PacketPlayInCloseWindow")) {
-		  			InventoryCloseEvent CloseInventory = new InventoryCloseEvent(player.getOpenInventory());
+		  			final InventoryCloseEvent CloseInventory = new InventoryCloseEvent(player.getOpenInventory());
 		  			callEvent(CloseInventory);
 				  	return CloseInventory.isCancelled();
 		  		}
@@ -113,8 +113,8 @@ public class ProtocolManager {
     * @param event - The event to be triggered.
     */
     private static void callEvent(final Event event) {
-    	HandlerList handlers = event.getHandlers();
-    	RegisteredListener[] listeners = handlers.getRegisteredListeners();
+    	final HandlerList handlers = event.getHandlers();
+    	final RegisteredListener[] listeners = handlers.getRegisteredListeners();
     	for (RegisteredListener registration: listeners) {
     		if (!registration.getPlugin().isEnabled()) { continue; }
     		try {

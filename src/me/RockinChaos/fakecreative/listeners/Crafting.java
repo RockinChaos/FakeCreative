@@ -35,7 +35,6 @@ import org.bukkit.inventory.ItemStack;
 import me.RockinChaos.fakecreative.handlers.ItemHandler;
 import me.RockinChaos.fakecreative.handlers.PlayerHandler;
 import me.RockinChaos.fakecreative.handlers.events.PlayerAutoCraftEvent;
-import me.RockinChaos.fakecreative.handlers.modes.Creative;
 import me.RockinChaos.fakecreative.utils.SchedulerUtils;
 import me.RockinChaos.fakecreative.utils.ServerUtils;
 
@@ -47,10 +46,10 @@ public class Crafting implements Listener {
     * @param event - PlayerAutoCraftEvent
     */
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
-	private void onAutoCraft(PlayerAutoCraftEvent event) {
+	private void onAutoCraft(final PlayerAutoCraftEvent event) {
 		for (int i = 0; i <= 4; i++) {
   			final ItemStack[] craftingContents = event.getContents().clone();
-  			if (!event.isCancelled() && Creative.isItem(craftingContents[i])) {
+  			if (!event.isCancelled() && PlayerHandler.isCreativeItem(craftingContents[i])) {
   				event.setCancelled(true);
   			} else if (event.isCancelled()) { return; }
   		}
@@ -62,12 +61,12 @@ public class Crafting implements Listener {
 	* @param event - InventoryOpenEvent
 	*/
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
-    private void onCraftingOpen(InventoryOpenEvent event) {
+    private void onCraftingOpen(final InventoryOpenEvent event) {
     	final Player player = (Player) event.getPlayer();
-    	if (PlayerHandler.isFakeCreativeMode(player)) {
+    	if (PlayerHandler.isCreativeMode(player, true)) {
     		Inventory craftInventory = player.getOpenInventory().getTopInventory();
 	    	for (ItemStack item: craftInventory) {
-	    		if (Creative.isItem(item)) {
+	    		if (PlayerHandler.isCreativeItem(item)) {
 	    			craftInventory.remove(item);
 	    		}
 	    	}
@@ -80,7 +79,7 @@ public class Crafting implements Listener {
 	* @param event - InventoryCloseEvent
 	*/
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
-	private void onCraftingClose(org.bukkit.event.inventory.InventoryCloseEvent event) {
+	private void onCraftingClose(final org.bukkit.event.inventory.InventoryCloseEvent event) {
 		if (!ServerUtils.hasSpecificUpdate("1_8") || !PlayerHandler.isCraftingInv(event.getView())) {
 			ItemStack[] topContents = ItemHandler.cloneContents(event.getView().getTopInventory().getContents());
 	    	this.handleClose(slot -> { 
@@ -95,7 +94,7 @@ public class Crafting implements Listener {
 	* @param event - InventoryCloseEvent
 	*/
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
-    private void onCraftingClose(me.RockinChaos.fakecreative.handlers.events.InventoryCloseEvent event) {
+    private void onCraftingClose(final me.RockinChaos.fakecreative.handlers.events.InventoryCloseEvent event) {
 		if (ServerUtils.hasSpecificUpdate("1_8") && PlayerHandler.isCraftingInv(event.getView())) {
 	    	this.handleClose(slot -> { 
 	    		if (!event.isCancelled()) { event.setCancelled(true); }
@@ -110,12 +109,12 @@ public class Crafting implements Listener {
 	* @param event - PlayerChangedWorldEvent
 	*/
 	@EventHandler(ignoreCancelled = true)
-	private void onCraftingWorldSwitch(PlayerChangedWorldEvent event) {
+	private void onCraftingWorldSwitch(final PlayerChangedWorldEvent event) {
 		final Player player = event.getPlayer();
 		final ItemStack[] inventory = player.getInventory().getContents();
 		if (!ItemHandler.isContentsEmpty(inventory)) {
 			for (int i = 0; i < inventory.length; i++) {
-				if (PlayerHandler.isFakeCreativeMode(player) && Creative.isItem(inventory[i])) {
+				if (PlayerHandler.isCreativeMode(player, true) && PlayerHandler.isCreativeItem(inventory[i])) {
 					player.getInventory().setItem(i, new ItemStack(Material.AIR));
 				}
 			}
@@ -124,7 +123,7 @@ public class Crafting implements Listener {
 		    double health = 1;
 			try { health = (ServerUtils.hasSpecificUpdate("1_8") ? player.getHealth() : (double)player.getClass().getMethod("getHealth", double.class).invoke(player)); } catch (Exception e) { health = (player.isDead() ? 0 : 1);  }
 	    	if (health > 0 &&!event.getFrom().equals(player.getWorld())) {
-			    Creative.setTabs(player);
+			    PlayerHandler.setCreativeTabs(player);
 			}
 		});
 	}
@@ -136,18 +135,18 @@ public class Crafting implements Listener {
 	* @param event - PlayerDropItemEvent
 	*/
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
-    private void onCraftingDrop(PlayerDropItemEvent event) {
+    private void onCraftingDrop(final PlayerDropItemEvent event) {
     	final Player player = (Player) event.getPlayer();
     	final World world = player.getWorld();
     	final ItemStack item = event.getItemDrop().getItemStack().clone();
-    	if (PlayerHandler.isFakeCreativeMode(player) && Creative.isItem(item)) {
+    	if (PlayerHandler.isCreativeMode(player, true) && PlayerHandler.isCreativeItem(item)) {
 		    event.getItemDrop().getItemStack().setItemMeta(null);
 		    event.getItemDrop().remove();
 		    SchedulerUtils.runLater(2L, () -> { 
 		    double health = 1;
 			try { health = (ServerUtils.hasSpecificUpdate("1_8") ? player.getHealth() : (double)player.getClass().getMethod("getHealth", double.class).invoke(player)); } catch (Exception e) { health = (player.isDead() ? 0 : 1);  }
 	    		if (health > 0 && world.equals(player.getWorld())) {
-	    			Creative.setTabs(player);
+	    			PlayerHandler.setCreativeTabs(player);
 	    		}
 		    });
     	}
@@ -167,14 +166,14 @@ public class Crafting implements Listener {
 			if (!ItemHandler.isContentsEmpty(inventory)) {
 				boolean isCrafting = false;
 				for (int i = 0; i <= 4; i++) {
-					if (inventory[i] != null && Creative.isItem(inventory[i])) {
+					if (inventory[i] != null && PlayerHandler.isCreativeItem(inventory[i])) {
 						isCrafting = true;
 						input.accept(i);
 					}
 				}
 				for (int i = 0; i <= 4; i++) {
 					if (isCrafting && i != 0 && inventory[i] != null && inventory[i].getType() != Material.AIR) {
-						if (inventory[i] != null && !Creative.isItem(inventory[i])) {
+						if (inventory[i] != null && !PlayerHandler.isCreativeItem(inventory[i])) {
 							final int k = i;
 							ItemStack drop = inventory[i].clone();
 							SchedulerUtils.run(() -> { 
@@ -193,7 +192,7 @@ public class Crafting implements Listener {
 			SchedulerUtils.run(() -> { 
 				double health = 1;
 				try { health = (ServerUtils.hasSpecificUpdate("1_8") ? player.getHealth() : (double)player.getClass().getMethod("getHealth", double.class).invoke(player)); } catch (Exception e) { health = (player.isDead() ? 0 : 1);  }
-    			if (health > 0 && PlayerHandler.isCraftingInv(player.getOpenInventory()) && PlayerHandler.isFakeCreativeMode(player)) {
+    			if (health > 0 && PlayerHandler.isCraftingInv(player.getOpenInventory()) && PlayerHandler.isCreativeMode(player, true)) {
 					Inventory craftInventory = player.getOpenInventory().getTopInventory();
 					if (craftInventory.getItem(1) != null && craftInventory.getItem(1).getType() != Material.AIR) {
 						ItemStack drop = craftInventory.getItem(1).clone();
@@ -202,7 +201,7 @@ public class Crafting implements Listener {
 								player.getInventory().addItem(drop);
 						} else {  PlayerHandler.dropItem(player, drop); }
 					}
-					Creative.setTabs(player);
+					PlayerHandler.setCreativeTabs(player);
 				}
 			});
 		}
