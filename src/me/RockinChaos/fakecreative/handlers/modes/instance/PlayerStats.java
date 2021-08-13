@@ -184,7 +184,7 @@ public class PlayerStats {
     */
     public void setFlySpeed(final Player player, final double flySpeed) {
     	synchronized ("FK_SQL") {
-	    	this.flySpeed = flySpeed;
+	    	this.flySpeed = (flySpeed >= 0 ? flySpeed : 1);
 	    	final DataObject dataObject = SQL.getData().getData(new DataObject(Table.SPEED_FLIGHT, PlayerHandler.getPlayerID(player), flySpeed));
 	    	if (dataObject != null) { SQL.getData().removeData(dataObject); }
 	    	SQL.getData().saveData(new DataObject(Table.SPEED_FLIGHT, PlayerHandler.getPlayerID(player), flySpeed));
@@ -210,7 +210,7 @@ public class PlayerStats {
     */
     public void setBreakSpeed(final Player player, final double breakSpeed) {
     	synchronized ("FK_SQL") {
-	    	this.breakSpeed = breakSpeed;
+	    	this.breakSpeed = (breakSpeed >= 0 ? breakSpeed : 3);
 	    	final DataObject dataObject = SQL.getData().getData(new DataObject(Table.SPEED_BREAK, PlayerHandler.getPlayerID(player), breakSpeed));
 	    	if (dataObject != null) { SQL.getData().removeData(dataObject); }
 	    	SQL.getData().saveData(new DataObject(Table.SPEED_BREAK, PlayerHandler.getPlayerID(player), breakSpeed));
@@ -234,7 +234,7 @@ public class PlayerStats {
     */
     public void setFoodLevel(final Player player, final int foodLevel) {
     	synchronized ("FK_SQL") {
-	    	this.foodLevel = foodLevel;
+	    	this.foodLevel = (foodLevel >= 0 ? foodLevel : 20);
 	    	final DataObject dataObject = SQL.getData().getData(new DataObject(Table.SET_FOOD, PlayerHandler.getPlayerID(player), foodLevel));
 	    	if (dataObject != null) { SQL.getData().removeData(dataObject); }
 	    	SQL.getData().saveData(new DataObject(Table.SET_FOOD, PlayerHandler.getPlayerID(player), foodLevel));
@@ -259,7 +259,7 @@ public class PlayerStats {
     */
     public void setHealth(final Player player, final int health) {
     	synchronized ("FK_SQL") {
-	    	this.health = health;
+	    	this.health = (health >= 0 ? health : 20);
 	    	final DataObject dataObject = SQL.getData().getData(new DataObject(Table.SET_HEALTH, PlayerHandler.getPlayerID(player), health));
 	    	if (dataObject != null) { SQL.getData().removeData(dataObject); }
 	    	SQL.getData().saveData(new DataObject(Table.SET_HEALTH, PlayerHandler.getPlayerID(player), health));
@@ -284,7 +284,7 @@ public class PlayerStats {
     */
     public void setScale(final Player player, final double heartScale) {
     	synchronized ("FK_SQL") {
-	    	this.heartScale = heartScale;
+	    	this.heartScale = (heartScale >= 0 ? heartScale : 10);
 	    	final DataObject dataObject = SQL.getData().getData(new DataObject(Table.SET_SCALE, PlayerHandler.getPlayerID(player), heartScale));
 	    	if (dataObject != null) { SQL.getData().removeData(dataObject); }
 	    	SQL.getData().saveData(new DataObject(Table.SET_SCALE, PlayerHandler.getPlayerID(player), heartScale));
@@ -491,7 +491,7 @@ public class PlayerStats {
     */
     public void setGodDelay(final Player player, final int godDelay) {
     	synchronized ("FK_SQL") {
-	    	this.godDelay = godDelay;
+	    	this.godDelay = (godDelay >= 0 ? godDelay : 3);
 	    	final DataObject dataObject = SQL.getData().getData(new DataObject(Table.DELAY_GOD, PlayerHandler.getPlayerID(player), godDelay));
 	    	if (dataObject != null) { SQL.getData().removeData(dataObject); }
 	    	SQL.getData().saveData(new DataObject(Table.DELAY_GOD, PlayerHandler.getPlayerID(player), godDelay));
