@@ -46,6 +46,9 @@ import me.RockinChaos.fakecreative.listeners.legacy.Legacy_Invulnerable;
  */
 @SuppressWarnings("deprecation")
 public class LegacyAPI {
+	
+	private static boolean legacyMaterial = false;
+	
    /**
     * Updates the Players Inventory.
     * 
@@ -95,6 +98,7 @@ public class LegacyAPI {
     * @return The found Bukkit Material.
     */
     public static org.bukkit.Material getMaterial(final int typeID, final byte dataValue) {
+    	initializeLegacy();
 		return FakeCreative.getInstance().getServer().getUnsafe().fromLegacy(new org.bukkit.material.MaterialData(findMaterial(typeID), dataValue));
     }
     
@@ -106,6 +110,7 @@ public class LegacyAPI {
     * @return The found Bukkit Material.
     */
     public static org.bukkit.Material getMaterial(final Material material, final byte dataValue) {
+    	initializeLegacy();
   		return FakeCreative.getInstance().getServer().getUnsafe().fromLegacy(new org.bukkit.material.MaterialData(material, dataValue));
     }
     
@@ -117,8 +122,34 @@ public class LegacyAPI {
     */
     public static org.bukkit.Material findMaterial(final int typeID) {
         final Material[] foundMaterial = new Material[1];
-        EnumSet.allOf(Material.class).forEach(material -> { try { if (StringUtils.containsIgnoreCase(material.toString(), "LEGACY_") && material.getId() == typeID || !ServerUtils.hasSpecificUpdate("1_13") && material.getId() == typeID) { foundMaterial[0] = material; } } catch (Exception e) { }});
+        EnumSet.allOf(Material.class).forEach(material -> { 
+        	try { 
+        		if (StringUtils.containsIgnoreCase(material.toString(), "LEGACY_") && material.getId() == typeID || !ServerUtils.hasSpecificUpdate("1_13") && material.getId() == typeID) { 
+        			initializeLegacy();
+        			foundMaterial[0] = material;
+        		} 
+        	} catch (Exception e) { }
+        });
         return foundMaterial[0];
+    }
+    
+   /**
+    * Sends a info/debug message if the server is running Minecraft 1.13+ and is attempting to call a Legacy material.
+    * 
+    */
+    private static void initializeLegacy() {
+		if (ServerUtils.hasSpecificUpdate("1_13") && !legacyMaterial) {
+			legacyMaterial = true;
+			ServerUtils.logInfo("Initializing Legacy Material Support ..."); 
+			ServerUtils.logDebug("The plugin attempted to register one or more item(s) containing a numerical id and/or data values."); 
+			ServerUtils.logDebug("The plugin will continue to function but some things may not look as expected.");
+			ServerUtils.logDebug("This is likely a bug, please report it to the developer!"); 
+			try {
+				throw new Exception("Invalid usage of item id, this does not cause any severe issues!");
+			} catch (Exception e) {
+				ServerUtils.sendDebugTrace(e);
+			}
+		}
     }
     
    /**
@@ -217,7 +248,7 @@ public class LegacyAPI {
 	
    /**
     * Registers the Legacy Invulnerable Listener.
-    * Only called when the Server version is below 1.8.
+    * Only called when the Server version is below 1.9.
     * 
     */
 	public static void registerInvulnerable() {

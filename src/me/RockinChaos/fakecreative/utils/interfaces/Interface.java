@@ -219,7 +219,7 @@ public class Interface implements InventoryHolder {
     */
 	private void createControls(final Inventory inventory) {
 		if (this.isPaged) {
-			final ItemStack blackPane = ItemHandler.getItem("STAINED_GLASS_PANE:15", 1, false, false, "&f", "");
+			final ItemStack blackPane = ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "BLACK_STAINED_GLASS_PANE" : "STRAINED_GLASS_PANE:15"), 1, false, false, "&f", "");
 			if (this.getCurrentPage() > 1) {
 				ItemStack backItem;
 				backItem = ItemHandler.getItem("ARROW", 1, false, false, "&3&n&lPrevious Page", "&7", "&7*Previous page &a&l" + (this.getCurrentPage() - 1) + "&7 / &c&l" + this.getPageAmount());

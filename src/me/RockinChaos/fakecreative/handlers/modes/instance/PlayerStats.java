@@ -47,6 +47,7 @@ public class PlayerStats {
 	private boolean god = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.invulnerable");
 	private int godDelay = ConfigHandler.getConfig().getFile("config.yml").getInt("Preferences.invulnerable-delay");
 	private boolean storeInventory = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.store-inventory");
+	private boolean destroyPickups = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.destroy-pickups");
 	private HashMap<Integer, String> hotbars = new HashMap<Integer, String>();
 
    /**
@@ -129,6 +130,11 @@ public class PlayerStats {
 			final DataObject storeInventory = SQL.getData().getData(new DataObject(Table.STORE_INVENTORY, PlayerHandler.getPlayerID(player), true));
 			if (storeInventory != null) {
 				this.storeInventory = storeInventory.getBoolean();
+			}
+			
+			final DataObject destroyPickups = SQL.getData().getData(new DataObject(Table.DESTROY_PICKUPS, PlayerHandler.getPlayerID(player), true));
+			if (destroyPickups != null) {
+				this.destroyPickups = destroyPickups.getBoolean();
 			}
 		
 		}
@@ -526,6 +532,30 @@ public class PlayerStats {
 	    	} else {
 	    		PlayerHandler.getCreative(player).setInventory64(PlayerHandler.saveInventory(player));
 	    	}
+    	}
+    }
+    
+   /**
+    * Checks if the Player should have their pickup items destroyed if their inventory is full.
+    * 
+    * @return If the Player should have their pickup items destroyed.
+    */
+	public boolean destroyPickups() {
+		return this.destroyPickups;
+	}
+    
+   /**
+    * Sets the current state of Destroying Pickups.
+    * 
+    * @param player - The Player being referenced.
+    * @param storeInventory - If the Player should destroy pickups.
+    */
+    public void setPickups(final Player player, final boolean destroyPickups) {
+    	synchronized ("FK_SQL") {
+	    	this.destroyPickups = destroyPickups;
+	    	final DataObject dataObject = SQL.getData().getData(new DataObject(Table.DESTROY_PICKUPS, PlayerHandler.getPlayerID(player), destroyPickups));
+	    	if (dataObject != null) { SQL.getData().removeData(dataObject); }
+	    	SQL.getData().saveData(new DataObject(Table.DESTROY_PICKUPS, PlayerHandler.getPlayerID(player), destroyPickups));
     	}
     }
 	

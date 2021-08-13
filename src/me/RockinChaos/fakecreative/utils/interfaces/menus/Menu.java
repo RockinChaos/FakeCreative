@@ -64,8 +64,8 @@ public class Menu {
 	private String GUIName = ServerUtils.hasSpecificUpdate("1_9") ? StringUtils.colorFormat("&7           &0&nCreative Menu") : StringUtils.colorFormat("&7           &0&n Creative Menu");
 	private String HotbarGUIName = ServerUtils.hasSpecificUpdate("1_9") ? StringUtils.colorFormat("&7            &0&nHotbar Menu") : StringUtils.colorFormat("&7            &0&n Hotbar Menu");
 	private String userGUIName = ServerUtils.hasSpecificUpdate("1_9") ? StringUtils.colorFormat("&7               &0&nUser Menu") : StringUtils.colorFormat("&7              &0&n User Menu");
-	private ItemStack fillerPaneBItem = ItemHandler.getItem("STAINED_GLASS_PANE:15", 1, false, false, "&7", "");
-	private ItemStack fillerPaneGItem = ItemHandler.getItem("STAINED_GLASS_PANE:7", 1, false, false, "&7", "");
+	private ItemStack fillerPaneBItem = ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "BLACK_STAINED_GLASS_PANE" : "STAINED_GLASS_PANE:15"), 1, false, false, "&7", "");
+	private ItemStack fillerPaneGItem = ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "GRAY_STAINED_GLASS_PANE" : "STAINED_GLASS_PANE:7"), 1, false, false, "&7", "");
 	private ItemStack exitItem = ItemHandler.getItem("BARRIER", 1, false, false, "&c&l&nExit", "&7", "&7*Return to playing the game.");
 	private List<String> modifyMenu = new ArrayList<String>();
 	
@@ -92,7 +92,8 @@ public class Menu {
 			boolean failure = true;
 			Inventory inventoryCheck = FakeCreative.getInstance().getServer().createInventory(null, 9, this.GUIName);
 			for (Material material: Material.values()) {
-				if (!material.name().contains("LEGACY") && material.name() != "AIR" && ((search != null && !search.isEmpty() && StringUtils.containsIgnoreCase(material.name(), search)) || (search == null || search.isEmpty())) && this.safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
+				if (!material.name().contains("LEGACY") && material.name() != "AIR" && ((search != null && !search.isEmpty() && StringUtils.containsIgnoreCase(material.name(), search)) 
+						|| (search == null || search.isEmpty())) && this.safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
 					for (ItemStack item: this.spliceMaterial(material, 0)) {
 						pagedPane.addButton(new Button(item, event -> this.handleEvent(event)));
 						currentCount++;
@@ -124,7 +125,8 @@ public class Menu {
 			int currentCount = 0;
 			Inventory inventoryCheck = FakeCreative.getInstance().getServer().createInventory(null, 9, this.GUIName);
 			for (Material material: Material.values()) {
-				if (!material.name().contains("LEGACY") && material.name() != "AIR" && Miscellaneous.isMiscellaneous(material) && this.safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
+				if (!material.name().contains("LEGACY") && material.name() != "AIR" && Miscellaneous.isMiscellaneous(material) 
+						&& this.safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
 					for (ItemStack item: this.spliceMaterial(material, 0)) {
 						pagedPane.addButton(new Button(item, event -> this.handleEvent(event)));
 						currentCount++;
@@ -459,15 +461,20 @@ public class Menu {
 					"&7", "&a&lSpeed: &b&l" + PlayerHandler.getCreativeStats(player).flySpeed()), event -> this.numericalPane(player, 0)));
 			pagedPane.addButton(new Button(ItemHandler.getItem("DIAMOND_PICKAXE", 1, false, true, "&fBreak Speed", "&7*The desired speed", "&7in-between each block-break.",
 					"&7", "&a&lSpeed: &b&l" + PlayerHandler.getCreativeStats(player).breakSpeed()), event -> this.numericalPane(player, 1)));
-			pagedPane.addButton(new Button(this.fillerPaneGItem));
-			pagedPane.addButton(new Button(ItemHandler.getItem("364", 1, false, true, "&fFood", "&7*The desired food/hunger level.",
+			pagedPane.addButton(new Button(ItemHandler.getItem("DIAMOND_SWORD", 1, PlayerHandler.getCreativeStats(player).swordBlock(), true, "&fSword Block", "&7*When holding a sword you will not", "&7be able to break any blocks.", 
+					"&7", "&a&lEnabled: &b&l" + PlayerHandler.getCreativeStats(player).swordBlock()), 
+					event -> {
+						PlayerHandler.getCreativeStats(player).setSwordBlock(player, !PlayerHandler.getCreativeStats(player).swordBlock());
+						this.userMenu(player);
+					}));
+			pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "COOKED_BEEF" : "364"), 1, false, true, "&fFood", "&7*The desired food/hunger level.",
 					"&7", "&a&lFood: &b&l" + PlayerHandler.getCreativeStats(player).foodLevel()), event -> this.numericalPane(player, 2)));
 			pagedPane.addButton(new Button(ItemHandler.getItem("APPLE", 1, false, true, "&fHealth", "&7*The desired health level.",
 					"&7", "&a&lHealth: &b&l" + PlayerHandler.getCreativeStats(player).health()), event -> this.numericalPane(player, 3)));
 			pagedPane.addButton(new Button(ItemHandler.getItem("REDSTONE", 1, false, true, "&fHeart Scale", "&7*The desired health scale.", "&7This is the number of hearts to", "&7be displayed in the user interface.",
 					"&7", "&a&lScale: &b&l" + PlayerHandler.getCreativeStats(player).heartScale()), event -> this.numericalPane(player, 4)));
 			pagedPane.addButton(new Button(this.fillerPaneGItem));
-			pagedPane.addButton(new Button(ItemHandler.getItem("367", 1, PlayerHandler.getCreativeStats(player).allowHunger(), true, "&fAllow Hunger", "&7*If your hunger should decrease.", 
+			pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "ROTTEN_FLESH" : "367"), 1, PlayerHandler.getCreativeStats(player).allowHunger(), true, "&fAllow Hunger", "&7*If your hunger should decrease.", 
 					"&7", "&a&lEnabled: &b&l" + PlayerHandler.getCreativeStats(player).allowHunger()), 
 					event -> {
 						PlayerHandler.getCreativeStats(player).setAllowHunger(player, !PlayerHandler.getCreativeStats(player).allowHunger());
@@ -486,31 +493,31 @@ public class Menu {
 						PlayerHandler.getCreativeStats(player).setUnbreakableItems(player, !PlayerHandler.getCreativeStats(player).unbreakableItems());
 						this.userMenu(player);
 					}));
-			pagedPane.addButton(new Button(ItemHandler.getItem("2", 1, PlayerHandler.getCreativeStats(player).blockDrops(), true, "&fBlock Drops", "&7*If blocks should drop when you", "&7break them using your hand or an item.", 
+			pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "GRASS_BLOCK" : "2"), 1, PlayerHandler.getCreativeStats(player).blockDrops(), true, "&fBlock Drops", "&7*If blocks should drop when you", "&7break them using your hand or an item.", 
 					"&7", "&a&lEnabled: &b&l" + PlayerHandler.getCreativeStats(player).blockDrops()), 
 					event -> {
 						PlayerHandler.getCreativeStats(player).setBlockDrops(player, !PlayerHandler.getCreativeStats(player).blockDrops());
 						this.userMenu(player);
 					}));
-			pagedPane.addButton(new Button(ItemHandler.getItem("DIAMOND_SWORD", 1, PlayerHandler.getCreativeStats(player).swordBlock(), true, "&fSword Block", "&7*When holding a sword you will not", "&7be able to break any blocks.", 
-					"&7", "&a&lEnabled: &b&l" + PlayerHandler.getCreativeStats(player).swordBlock()), 
+			pagedPane.addButton(new Button(ItemHandler.getItem("DISPENSER", 1, PlayerHandler.getCreativeStats(player).destroyPickups(), true, "&fDestroy Pickups", "&7*If items should be destroyed when", "&7the your inventory is full and", "&7you try to pick up items on the ground.", 
+					"&7", "&a&lEnabled: &b&l" + PlayerHandler.getCreativeStats(player).destroyPickups()), 
 					event -> {
-						PlayerHandler.getCreativeStats(player).setSwordBlock(player, !PlayerHandler.getCreativeStats(player).swordBlock());
+						PlayerHandler.getCreativeStats(player).setPickups(player, !PlayerHandler.getCreativeStats(player).destroyPickups());
 						this.userMenu(player);
 					}));
-			pagedPane.addButton(new Button(ItemHandler.getItem("154", 1, PlayerHandler.getCreativeStats(player).autoRestore(), true, "&fAuto Restore", "&7*If you exit the server or the server", "&7restarts while you are in creative, you", "&7will automatically be set back to", "&7creative upon entering the server.", 
+			pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "HOPPER" : "154"), 1, PlayerHandler.getCreativeStats(player).autoRestore(), true, "&fAuto Restore", "&7*If you exit the server or the server", "&7restarts while you are in creative, you", "&7will automatically be set back to", "&7creative upon entering the server.", 
 					"&7", "&a&lEnabled: &b&l" + PlayerHandler.getCreativeStats(player).autoRestore()), 
 					event -> {
 						PlayerHandler.getCreativeStats(player).setRestore(player, !PlayerHandler.getCreativeStats(player).autoRestore());
 						this.userMenu(player);
 					}));
-			pagedPane.addButton(new Button(ItemHandler.getItem("322:1", 1, PlayerHandler.getCreativeStats(player).god(), true, "&fInvulnerable", "&7*If you should take damage.", 
+			pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "ENCHANTED_GOLDEN_APPLE" : "322:1"), 1, PlayerHandler.getCreativeStats(player).god(), true, "&fInvulnerable", "&7*If you should take damage.", 
 					"&7", "&a&lEnabled: &b&l" + PlayerHandler.getCreativeStats(player).god()), 
 					event -> {
 						PlayerHandler.getCreativeStats(player).setGod(player, !PlayerHandler.getCreativeStats(player).god());
 						this.userMenu(player);
 					}));
-			pagedPane.addButton(new Button(ItemHandler.getItem("347", 1, false, true, "&fInvulnerable Delay", "&7*How long to wait after exiting creative", "&7before you can take damage again.",
+			pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "CLOCK" : "347"), 1, false, true, "&fInvulnerable Delay", "&7*How long to wait after exiting creative", "&7before you can take damage again.",
 					"&7", "&a&lDelay: &b&l" + PlayerHandler.getCreativeStats(player).godDelay()), event -> this.numericalPane(player, 5)));
 			pagedPane.addButton(new Button(ItemHandler.getItem("CHEST", 1, PlayerHandler.getCreativeStats(player).storeInventory(), true, "&fStore Inventory", "&7*If the previous gamemodes inventory", "&7should be saved when entering creative.", "&7This inventory will automatically", "&7be restored when exiting creative.", 
 					"&7", "&a&lEnabled: &b&l" + PlayerHandler.getCreativeStats(player).storeInventory()), 
@@ -538,7 +545,7 @@ public class Menu {
 			cooldownPane.setReturnButton(new Button(ItemHandler.getItem("BARRIER", 1, false, false, "&c&l&nReturn", "&7", "&7*Returns you to the perferences menu."), event -> {
 				this.userMenu(player);
 			}));
-			cooldownPane.addButton(new Button(ItemHandler.getItem("STAINED_GLASS_PANE:4", 1, false, false, "&e&lCustom Number", "&7", "&7*Click to set a custom number value."), event -> {
+			cooldownPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "YELLOW_STAINED_GLASS_PANE" : "STRAINED_GLASS_PANE:4"), 1, false, false, "&e&lCustom Number", "&7", "&7*Click to set a custom number value."), event -> {
 				player.closeInventory();
 				String[] placeHolders = LanguageAPI.getLang(false).newString();
 				placeHolders[16] = "Custom Number";
@@ -572,7 +579,7 @@ public class Menu {
 			}));
 			for (int i = 1; i <= 64; i++) {
 				final int k = i;
-				cooldownPane.addButton(new Button(ItemHandler.getItem("STAINED_GLASS_PANE:11", k, false, false, "&a&l" + k, "&7", "&7*Click to set the custom number value."), event -> {
+				cooldownPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "BLUE_STAINED_GLASS_PANE" : "STRAINED_GLASS_PANE:11"), k, false, false, "&a&l" + k, "&7", "&7*Click to set the custom number value."), event -> {
 					if (stage == 0) {
 						PlayerHandler.getCreativeStats(player).setFlySpeed(player, k);
 					} else if (stage == 1) {
@@ -676,10 +683,10 @@ public class Menu {
 		pagedPane.addButton(new Button(ItemHandler.getItem("LAVA_BUCKET", 1, (selected == 1 ? true : false), true, (selected == 1 ? "&a"  : "&f") + "Miscellaneous", "&7", "&8&oClick to view"), event -> this.miscellaneousMenu((Player) event.getWhoClicked())));
 		pagedPane.addButton(new Button(ItemHandler.getItem("APPLE", 1, (selected == 2 ? true : false), true, (selected == 2 ? "&a"  : "&f") + "Foodstuffs", "&7", "&8&oClick to view"), event -> this.foodMenu((Player) event.getWhoClicked())));
 		pagedPane.addButton(new Button(ItemHandler.getItem("IRON_AXE", 1, (selected == 3 ? true : false), true, (selected == 3 ? "&a"  : "&f") + "Tools", "&7", "&8&oClick to view"), event -> this.toolsMenu((Player) event.getWhoClicked())));
-		pagedPane.addButton(new Button(ItemHandler.getItem("283", 1, (selected == 4 ? true : false), true, (selected == 4 ? "&a"  : "&f") + "Combat", "&7", "&8&oClick to view"), event -> this.combatMenu((Player) event.getWhoClicked())));
+		pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "GOLDEN_SWORD" : "283"), 1, (selected == 4 ? true : false), true, (selected == 4 ? "&a"  : "&f") + "Combat", "&7", "&8&oClick to view"), event -> this.combatMenu((Player) event.getWhoClicked())));
 		pagedPane.addButton(new Button(ItemHandler.getItem("WATER_BOTTLE", 1, (selected == 5 ? true : false), true, (selected == 5 ? "&a"  : "&f") + "Brewing", "&7", "&8&oClick to view"), event -> this.brewingMenu((Player) event.getWhoClicked())));
-		pagedPane.addButton(new Button(ItemHandler.getItem("45", 1, (selected == 6 ? true : false), true, (selected == 6 ? "&a"  : "&f") + "Building Blocks", "&7", "&8&oClick to view"), event -> this.buildingMenu((Player) event.getWhoClicked())));
-		pagedPane.addButton(new Button(ItemHandler.getItem("175:5", 1, (selected == 7 ? true : false), true, (selected == 7 ? "&a"  : "&f") + "Decoration Blocks", "&7", "&8&oClick to view"), event -> this.decorationMenu((Player) event.getWhoClicked())));
+		pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "BRICKS" : "45"), 1, (selected == 6 ? true : false), true, (selected == 6 ? "&a"  : "&f") + "Building Blocks", "&7", "&8&oClick to view"), event -> this.buildingMenu((Player) event.getWhoClicked())));
+		pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "PEONY" : "175:5"), 1, (selected == 7 ? true : false), true, (selected == 7 ? "&a"  : "&f") + "Decoration Blocks", "&7", "&8&oClick to view"), event -> this.decorationMenu((Player) event.getWhoClicked())));
 		pagedPane.addButton(new Button(ItemHandler.getItem("REDSTONE", 1, (selected == 8 ? true : false), true, (selected == 8 ? "&a"  : "&f") + "Redstone", "&7", "&8&oClick to view"), event -> this.redstoneMenu((Player) event.getWhoClicked())));
 	}
 	

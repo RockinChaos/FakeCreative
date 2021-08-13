@@ -268,7 +268,7 @@ public class DataObject {
 		} else if (object1.getTable().equals(Table.ALLOW_FLIGHT) || object1.getTable().equals(Table.SPEED_FLIGHT) || object1.getTable().equals(Table.SPEED_BREAK) || object1.getTable().equals(Table.SET_FOOD) || 
 				object1.getTable().equals(Table.SET_HEALTH) || object1.getTable().equals(Table.SET_SCALE) || object1.getTable().equals(Table.ALLOW_HUNGER) || object1.getTable().equals(Table.ALLOW_BURN) || 
 				object1.getTable().equals(Table.UNBREAKABLE_ITEMS) || object1.getTable().equals(Table.DROPS_BLOCK) || object1.getTable().equals(Table.SWORD_BLOCK) || object1.getTable().equals(Table.AUTO_RESTORE) || 
-				object1.getTable().equals(Table.SET_GOD) || object1.getTable().equals(Table.DELAY_GOD) || object1.getTable().equals(Table.STORE_INVENTORY) || object1.getTable().equals(Table.PLAYERSTATS)) {
+				object1.getTable().equals(Table.SET_GOD) || object1.getTable().equals(Table.DELAY_GOD) || object1.getTable().equals(Table.STORE_INVENTORY) || object1.getTable().equals(Table.DESTROY_PICKUPS) || object1.getTable().equals(Table.PLAYERSTATS)) {
 			if (object1.getPlayerId().equalsIgnoreCase(object2.getPlayerId())) {
 				return true;
 			}
@@ -330,6 +330,7 @@ public class DataObject {
         SET_GOD("`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
         DELAY_GOD("`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
         STORE_INVENTORY("`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        DESTROY_PICKUPS("`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
         HOTBAR("`Player_UUID`, `Position`, `Inventory64`, `Time_Stamp`", "Player_UUID, Position"),
         PLAYERSTATS("`Player_UUID`, `Health`, `Scale`, `Food`, `Fire_Ticks`, `Inventory64`, `Time_Stamp`", "Player_UUID");
     	

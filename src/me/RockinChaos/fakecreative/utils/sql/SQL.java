@@ -180,7 +180,7 @@ public class SQL {
 				for (HashMap<String, String> sl1 : selectTable) {
 					DataObject dataObject = null;
 					if (tableEnum.equals(Table.ALLOW_FLIGHT) || tableEnum.equals(Table.ALLOW_HUNGER) || tableEnum.equals(Table.ALLOW_BURN) || tableEnum.equals(Table.UNBREAKABLE_ITEMS) || tableEnum.equals(Table.DROPS_BLOCK)
-					 || tableEnum.equals(Table.SWORD_BLOCK) || tableEnum.equals(Table.AUTO_RESTORE) || tableEnum.equals(Table.SET_GOD) || tableEnum.equals(Table.STORE_INVENTORY)) {
+					 || tableEnum.equals(Table.SWORD_BLOCK) || tableEnum.equals(Table.AUTO_RESTORE) || tableEnum.equals(Table.SET_GOD) || tableEnum.equals(Table.STORE_INVENTORY) || tableEnum.equals(Table.DESTROY_PICKUPS)) {
 						dataObject = new DataObject(tableEnum, sl1.get("Player_UUID"), Boolean.valueOf(sl1.get("Value")));
 					} else if (tableEnum.equals(Table.SPEED_FLIGHT) || tableEnum.equals(Table.SPEED_BREAK) || tableEnum.equals(Table.SET_SCALE)) {
 						dataObject = new DataObject(tableEnum, sl1.get("Player_UUID"), Double.valueOf(sl1.get("Value")));
@@ -238,6 +238,7 @@ public class SQL {
 		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "set_god (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
 		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "delay_god (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
 		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "store_inventory (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
+		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "destroy_pickups (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
 		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "hotbar (`Player_UUID` varchar(1000), `Position` varchar(1000), `Inventory64` varchar(1000), `Time_Stamp` varchar(1000));");
 		Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + ConfigHandler.getConfig().getTable() + "playerstats (`Player_UUID` varchar(1000), `Health` varchar(1000), `Scale` varchar(1000), `Food` varchar(1000), `Fire_Ticks` varchar(1000), `Inventory64` varchar(1000), `Time_Stamp` varchar(1000));");
 	}
