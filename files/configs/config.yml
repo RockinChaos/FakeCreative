@@ -47,3 +47,4 @@ Preferences:
   invulnerable: true # if the creative player is damagable.
   invulnerable-delay: 5 # how long the player should be invulnerable after EXITING creative. (in seconds)
   store-inventory: true # acts like Multiverse-Inventories so that once you enter creative your items are cleared and once you exit creative your items get restored.
+  destroy-pickups: true # if the player should have any items they attempt to pickup deleted automatically when in creative (if their inventory is full!).
