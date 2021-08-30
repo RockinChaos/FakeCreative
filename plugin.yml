@@ -1,11 +1,11 @@
 main: me.RockinChaos.fakecreative.FakeCreative
 #${project.version}-b${env.BUILD_NUMBER}
-version: 0.0.1-ALPHA
+version: 0.0.1-BETA
 name: FakeCreative
 author: RockinChaos
 load: POSTWORLD
 api-version: 1.13
-description: A better creative mode plugin.
+description: A creative mode emulation.
 website: https://www.spigotmc.org/resources/fakecreative/
 softdepend: [BetterNick, PlaceholderAPI, ProtocolLib, SkinsRestorer]
 
