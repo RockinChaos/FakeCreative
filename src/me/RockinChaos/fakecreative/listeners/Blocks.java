@@ -78,7 +78,7 @@ public class Blocks implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
 	public void onInstantBreak(final PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
-		if (PlayerHandler.isCreativeMode(player, true)) {
+		if (PlayerHandler.isCreativeMode(player, true) && !PlayerHandler.isMenuClick(((Player) event.getPlayer()).getOpenInventory(), event.getAction())) {
 			handMap.put(PlayerHandler.getPlayerID(player), event.getAction());
 		}
 	}

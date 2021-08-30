@@ -81,7 +81,9 @@ public class Interface implements InventoryHolder {
     * @param event - InventoryClickEvent
     */
 	public void onClick(final InventoryClickEvent event) {
-		if (this.panePlayer.equals(event.getWhoClicked()) && !(this.pendingClick && event.getSlot() <= event.getWhoClicked().getInventory().getSize() && event.getSlot() >= 0 && this.clickInventory(event))) {
+		ServerUtils.logDev("SLOT " + event.getSlot());
+		if (this.panePlayer.equals(event.getWhoClicked()) && !(this.pendingClick && event.getSlot() <= event.getWhoClicked().getInventory().getSize() && this.clickInventory(event))) {
+			ServerUtils.logDev("REEEEE " + this.pendingClick + (event.getSlot() <= event.getWhoClicked().getInventory().getSize()) + this.clickInventory(event));
 			if (this.isPaged && event.getSlot() == this.inventory.getSize() - 8 && this.getCurrentPage() > 1) {
 				if (this.controlBack != null) {
 					this.controlBack.onClick(event);
@@ -306,11 +308,11 @@ public class Interface implements InventoryHolder {
     */
 	public boolean clickInventory(final InventoryClickEvent event) {
 		if (ServerUtils.hasSpecificUpdate("1_14")) {
-			return (event.getClickedInventory() == event.getWhoClicked().getInventory());
+			return (event.getSlot() == -999 || event.getClickedInventory() == event.getWhoClicked().getInventory());
 		} else {
 			final ItemStack clickItem = event.getCurrentItem();
 			final int slot = event.getSlot();
-			return clickItem.equals(event.getWhoClicked().getInventory().getItem(slot)) || clickItem.getType() == org.bukkit.Material.AIR;
+			return (slot == -999 || (clickItem.equals(event.getWhoClicked().getInventory().getItem(slot)) || clickItem.getType() == org.bukkit.Material.AIR));
 		}
 	}
 	
