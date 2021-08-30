@@ -4,7 +4,7 @@
 [releaseImg]: https://img.shields.io/github/release/RockinChaos/FakeCreative.svg?label=github%20release
 [release]: https://github.com/RockinChaos/FakeCreative/releases/latest
 
-[APIversionImg]: https://img.shields.io/nexus/craftationgaming/me.RockinChaos/itemjoin?server=https%3A%2F%2Frepo.craftationgaming.com&label=API%20Version
+[APIversionImg]: https://img.shields.io/nexus/craftationgaming/me.RockinChaos/fakecreative?server=https%3A%2F%2Frepo.craftationgaming.com&label=API%20Version
 
 [issues]: https://github.com/RockinChaos/FakeCreative/issues
 [licenseImg]: https://img.shields.io/github/license/RockinChaos/FakeCreative.svg
@@ -23,7 +23,7 @@
 ### Description
 -----
 ```
-Coming Soon...
+FakeCreative is a comprehensive creative mode emulation plugin designed to replace the default Minecraft creative mode with all included features and additional preferences! This plugin allows a high degree of admin and per-user customization and resolves known issues with exploits in the default creative mode. Creative mode was never designed by the Minecraft developers to be used on such a mass-scale that it is currently being used, rather it was mean't to be a single player use-case. The goal of this plugin is to completely work-around the broken, buggy, and easily exploitable default creative mode by giving players a creative experience in survival mode!
 ```
 -----
 ### Installation
