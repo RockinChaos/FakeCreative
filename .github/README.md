@@ -23,12 +23,13 @@
 ### Description
 -----
 ```
-FakeCreative is a comprehensive creative mode emulation plugin designed to replace the default Minecraft creative mode 
-with all included features and additional preferences! This plugin allows a high degree of admin and per-user customization 
-and resolves known issues with exploits in the default creative mode. Creative mode was never designed by the Minecraft 
-developers to be used on such a mass-scale that it is currently being used, rather it was mean't to be a single player use-case. 
-The goal of this plugin is to completely work-around the broken, buggy, and easily exploitable default creative mode by 
-giving players a creative experience in survival mode!
+FakeCreative is a comprehensive creative mode emulation plugin designed to replace the default Minecraft 
+creative mode with all included features and additional preferences! This plugin allows a high degree of 
+admin and per-user customization and resolves known issues with exploits in the default creative mode. 
+Creative mode was never designed by the Minecraft developers to be used on such a mass-scale that it is 
+currently being used, rather it was mean't to be a single player use-case. The goal of this plugin is to 
+completely work-around the broken, buggy, and easily exploitable default creative mode by giving players 
+a creative experience in survival mode!
 ```
 -----
 ### Installation
