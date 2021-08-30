@@ -1,10 +1,23 @@
+[ci]: http://ci.craftationgaming.com/job/FakeCreative/
+[ciImg]: http://ci.craftationgaming.com/buildStatus/icon?job=FakeCreative
+
+[releaseImg]: https://img.shields.io/github/release/RockinChaos/FakeCreative.svg?label=github%20release
+[release]: https://github.com/RockinChaos/FakeCreative/releases/latest
+
+[APIversionImg]: https://img.shields.io/nexus/craftationgaming/me.RockinChaos/itemjoin?server=https%3A%2F%2Frepo.craftationgaming.com&label=API%20Version
+
+[issues]: https://github.com/RockinChaos/FakeCreative/issues
+[licenseImg]: https://img.shields.io/github/license/RockinChaos/FakeCreative.svg
+[license]: https://github.com/RockinChaos/FakeCreative/blob/master/LICENSE
+
 ![](Image coming soon)
+[![ciImg]][ci] [![releaseImg]][release] ![APIversionImg] [![licenseImg]][license]
 
 <p align="center">
  See <a href="https://github.com/RockinChaos/FakeCreative/wiki">FakeCreative's Wiki</a> for the full detailed documentation on the plugin.<br>
 </p>
 
-## FakeCreative - A Fake Creative Mode plugin.
+## FakeCreative - Creative Mode Emulation.
 -----
 
 ### Description
@@ -30,6 +43,10 @@ This plugin has taken up many countless hours and has had continued support, ple
 Required Libraries when compiling (there are no required dependencies, only softDepends):
 ```
 * Bukkit/Spigot (Latest Official)
+* BetterNick (Latest Official)
+* PlaceholderAPI (Latest Official)
+* ProtocolLib (Latest Official)
+* SkinsRestorer (Latest Official)
 ```
 
-![](https://i.imgur.com/vFllc29.png)![](https://i.imgur.com/vFllc29.png)[<img src="https://i.imgur.com/WR5dVKN.png">](https://discord.gg/D5FnJ7C)[<img src="https://i.imgur.com/2YBE4mr.png">](http://ci.craftationgaming.com/)
+![](https://i.imgur.com/vFllc29.png)![](https://i.imgur.com/vFllc29.png)[<img src="https://i.imgur.com/WR5dVKN.png">](https://discord.gg/D5FnJ7C)[<img src="https://i.imgur.com/LJsmwSd.png">](http://ci.craftationgaming.com/)
