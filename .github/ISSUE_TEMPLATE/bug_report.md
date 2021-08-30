@@ -29,8 +29,8 @@ If applicable, add screenshots to help explain your problem.
 Even if it is not related to the problem, please include ALL configuration files in separate Pastebin.com links as well as any related error codes from the console window.
 
 **Please complete the following information:**
- - Resource Version and Build Number: [e.g. 5.0.6-b364]
- - Server Version [e.g. Spigot-1.15.2]
+ - Resource Version and Build Number: [e.g. 1.0.3-b54]
+ - Server Version [e.g. Spigot-1.17.1]
 
 **Additional context**
 Add any other context about the problem here.
