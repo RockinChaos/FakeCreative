@@ -219,7 +219,7 @@ public class Interface implements InventoryHolder {
     */
 	private void createControls(final Inventory inventory) {
 		if (this.isPaged) {
-			final ItemStack blackPane = ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "BLACK_STAINED_GLASS_PANE" : "STRAINED_GLASS_PANE:15"), 1, false, false, "&f", "");
+			final ItemStack blackPane = ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "BLACK_STAINED_GLASS_PANE" : "STAINED_GLASS_PANE:15"), 1, false, false, "&f", "");
 			if (this.getCurrentPage() > 1) {
 				ItemStack backItem;
 				backItem = ItemHandler.getItem("ARROW", 1, false, false, "&3&n&lPrevious Page", "&7", "&7*Previous page &a&l" + (this.getCurrentPage() - 1) + "&7 / &c&l" + this.getPageAmount());
@@ -306,11 +306,11 @@ public class Interface implements InventoryHolder {
     */
 	public boolean clickInventory(final InventoryClickEvent event) {
 		if (ServerUtils.hasSpecificUpdate("1_14")) {
-			return (event.getSlot() == -999 || event.getClickedInventory() == event.getWhoClicked().getInventory());
+			return (event.getSlot() == -999 || event.getSlot() == -1 || event.getClickedInventory() == event.getWhoClicked().getInventory());
 		} else {
 			final ItemStack clickItem = event.getCurrentItem();
 			final int slot = event.getSlot();
-			return (slot == -999 || (clickItem.equals(event.getWhoClicked().getInventory().getItem(slot)) || clickItem.getType() == org.bukkit.Material.AIR));
+			return (slot == -999 || slot == -1 || (clickItem.equals(event.getWhoClicked().getInventory().getItem(slot)) || clickItem.getType() == org.bukkit.Material.AIR));
 		}
 	}
 	

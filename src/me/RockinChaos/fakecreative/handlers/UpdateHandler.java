@@ -27,13 +27,9 @@ import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collection;
@@ -47,7 +43,6 @@ public class UpdateHandler {
     private boolean devVersion = this.localeVersion.equals("${project.version}");
     
     private File jarRef;
-    private int BYTE_SIZE = 2048;
     
     private boolean updatesAllowed = ConfigHandler.getConfig().getFile("config.yml").getBoolean("General.CheckforUpdates");
     
@@ -71,35 +66,7 @@ public class UpdateHandler {
     public void forceUpdates(final CommandSender sender) {
     	if (this.updateNeeded(sender, false)) {
     		ServerUtils.messageSender(sender, "&aAn update has been found!");
-    		ServerUtils.messageSender(sender, "&aAttempting to update from " + "&ev" + this.localeVersion + " &ato the new "  + "&ev" + this.latestVersion);
-    		try {
-    			String uri = this.HOST.replace("repos/", "").replace("api.", "").replace("latest", "download/" + "v" + this.latestVersion + "/" + FakeCreative.getInstance().getName().toLowerCase() + ".jar") + "?_=" + System.currentTimeMillis();
-    			HttpURLConnection httpConnection = (HttpURLConnection) new URL(uri).openConnection();
-    			httpConnection.setRequestProperty("User-Agent", "Mozilla/5.0...");
-    			BufferedInputStream in = new BufferedInputStream(httpConnection.getInputStream());
-    			FileOutputStream fos = new FileOutputStream(this.jarRef);
-    			BufferedOutputStream bout = new BufferedOutputStream(fos, this.BYTE_SIZE);
-    			String progressBar = "&a::::::::::::::::::::::::::::::";
-    			byte[] data = new byte[this.BYTE_SIZE];
-    			long cloudFileSize = httpConnection.getContentLength();
-    			long fetchedSize = 0;
-    			int bytesRead;
-    			while ((bytesRead = in .read(data, 0, this.BYTE_SIZE)) >= 0) {
-    				bout.write(data, 0, bytesRead);
-    				fetchedSize += bytesRead;
-    				final int currentProgress = (int)(((double) fetchedSize / (double) cloudFileSize) * 30);
-    				if ((((fetchedSize * 100) / cloudFileSize) % 25) == 0 && currentProgress > 10) {
-    					ServerUtils.messageSender(sender, progressBar.substring(0, currentProgress + 2) + "&c" + progressBar.substring(currentProgress + 2));
-    				}
-    			}
-    			bout.close(); in.close(); fos.close();
-    			ServerUtils.messageSender(sender, "&aSuccessfully updated to v" + this.latestVersion + "!");
-    			ServerUtils.messageSender(sender, "&aYou must restart your server for this to take affect.");
-    		} catch (Exception e) {
-    			ServerUtils.messageSender(sender, "&cAn error has occurred while trying to update the plugin " + FakeCreative.getInstance().getName() + ".");
-    			ServerUtils.messageSender(sender, "&cPlease try again later, if you continue to see this please contact the plugin developer.");
-    			ServerUtils.sendDebugTrace(e);
-    		}
+    		ServerUtils.messageSender(sender, "&aUpgrading has been temporarily disabled due to Cloudflare, please manually download from spigot.");
     	} else {
     		if (this.betaVersion) {
     			ServerUtils.messageSender(sender, "&aYou are running a SNAPSHOT!");

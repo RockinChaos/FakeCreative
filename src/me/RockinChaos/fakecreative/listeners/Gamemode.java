@@ -23,9 +23,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 
+import me.RockinChaos.fakecreative.api.events.PlayerEnterCreativeEvent;
+import me.RockinChaos.fakecreative.api.events.PlayerExitCreativeEvent;
 import me.RockinChaos.fakecreative.handlers.PlayerHandler;
-import me.RockinChaos.fakecreative.handlers.events.PlayerEnterCreativeEvent;
-import me.RockinChaos.fakecreative.handlers.events.PlayerExitCreativeEvent;
 import me.RockinChaos.fakecreative.handlers.modes.Creative;
 import me.RockinChaos.fakecreative.utils.ServerUtils;
 

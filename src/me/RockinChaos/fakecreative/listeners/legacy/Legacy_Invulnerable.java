@@ -29,7 +29,7 @@ import me.RockinChaos.fakecreative.handlers.PlayerHandler;
 /**
 * Handles the Damage for Creative Players.
 * 
-* @deprecated This is a LEGACY listener, only use on Minecraft versions below 1.8.
+* @deprecated This is a LEGACY listener, only use on Minecraft versions below 1.9.
 */
 public class Legacy_Invulnerable implements Listener {
 
@@ -37,7 +37,7 @@ public class Legacy_Invulnerable implements Listener {
 	* Prevents the Player from taking damage.
 	* 
 	* @param event - EntityDamageByEntity
-	* @deprecated This is a LEGACY event, only use on Minecraft versions below 1.8.
+	* @deprecated This is a LEGACY event, only use on Minecraft versions below 1.9.
 	*/
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onEntityDamagePlayer(final EntityDamageByEntityEvent event) {
@@ -50,7 +50,7 @@ public class Legacy_Invulnerable implements Listener {
 	* Prevents the Player from taking damage.
 	* 
 	* @param event - EntityDamageByBlockEvent
-	* @deprecated This is a LEGACY event, only use on Minecraft versions below 1.8.
+	* @deprecated This is a LEGACY event, only use on Minecraft versions below 1.9.
 	*/
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onBlockDamagePlayer(final EntityDamageByBlockEvent event) {
@@ -63,7 +63,7 @@ public class Legacy_Invulnerable implements Listener {
 	* Prevents the Player from taking damage.
 	* 
 	* @param event - EntityDamageEvent
-	* @deprecated This is a LEGACY event, only use on Minecraft versions below 1.8.
+	* @deprecated This is a LEGACY event, only use on Minecraft versions below 1.9.
 	*/
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onPlayerDamage(final EntityDamageEvent event) {

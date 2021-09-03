@@ -33,9 +33,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import me.RockinChaos.fakecreative.api.events.PlayerEnterCreativeEvent;
 import me.RockinChaos.fakecreative.handlers.ItemHandler;
 import me.RockinChaos.fakecreative.handlers.PlayerHandler;
-import me.RockinChaos.fakecreative.handlers.events.PlayerEnterCreativeEvent;
 import me.RockinChaos.fakecreative.handlers.modes.instance.PlayerObject;
 import me.RockinChaos.fakecreative.utils.SchedulerUtils;
 import me.RockinChaos.fakecreative.utils.ServerUtils;
@@ -55,6 +55,7 @@ public class Creative {
 	private static final ItemStack userTab = ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "PLAYER_HEAD" : "SKULL_ITEM:3"), 1, false, true, "&a&1&c&2&d&6&l&nPreferences", "&7", "&7*Creative mode settings", "&7that are specific to you.");
 	private static final ItemStack destroyTab = ItemHandler.getItem("LAVA_BUCKET", 1, false, true, "&a&1&c&2&d&c&l&nDestroy Item", "&7", "&7*Permanently destroy your items.", "&7", "&8&oDrop an item to delete it.", "&8&oShift-click to clear inventory.");
 	private static List<PlayerObject> creativePlayers = new ArrayList<PlayerObject>();
+	private static List<String> activePickItem = new ArrayList<String>();
 	
    /**
     * Puts the Player in Fake Creative Mode if they have an existing DataObject.
@@ -230,26 +231,42 @@ public class Creative {
     * @param player - The Player having their crafting items set.
     */
     public static void setTabs(final Player player) {
-		final Inventory craftInventory = player.getOpenInventory().getTopInventory();
-		for (int i = 0; i <= 4; i++) {
-			if (craftInventory.getItem(i) != null && craftInventory.getItem(i).getType() != Material.AIR) {
-				final ItemStack drop = craftInventory.getItem(i).clone();
-				craftInventory.setItem(i, new ItemStack(Material.AIR));
-				if (!isItem(drop) && player.getInventory().firstEmpty() != -1) {
-					player.getInventory().addItem(drop);
-				} else if (!isItem(drop)) { PlayerHandler.dropItem(player, drop); }
+		if (PlayerHandler.isCraftingInv(player.getOpenInventory())) {
+			final Inventory craftInventory = player.getOpenInventory().getTopInventory();
+			for (int i = 0; i <= 4; i++) {
+				if (craftInventory.getItem(i) != null && craftInventory.getItem(i).getType() != Material.AIR) {
+					final ItemStack drop = craftInventory.getItem(i).clone();
+					craftInventory.setItem(i, new ItemStack(Material.AIR));
+					if (!isItem(drop) && player.getInventory().firstEmpty() != -1) {
+						player.getInventory().addItem(drop);
+					} else if (!isItem(drop)) { PlayerHandler.dropItem(player, drop); }
+				}
 			}
+			final ItemStack userClone = userTab.clone();
+			userClone.setItemMeta(ItemHandler.setSkullOwner(userClone.getItemMeta(), player.getName()));
+			if (activePickItem.contains(PlayerHandler.getPlayerID(player))) {
+				if (player.getInventory().getItem(8) != null && player.getInventory().getItem(8).getType() != Material.AIR) {
+					ItemStack drop = player.getInventory().getItem(8).clone();
+					player.getInventory().setItem(8, new ItemStack(Material.AIR));
+					player.getInventory().setItem(8, pickItem);
+					if (player.getInventory().firstEmpty() != -1) {
+						player.getInventory().addItem(drop);
+					} else {
+						PlayerHandler.dropItem(player, drop);
+					}
+				} else {
+					player.getInventory().setItem(8, pickItem);
+				}
+			}
+			craftInventory.setItem(1, creativeTab);
+			craftInventory.setItem(2, pickTab);
+			craftInventory.setItem(3, saveTab);
+			craftInventory.setItem(4, userClone);
+			SchedulerUtils.run(() -> { 
+				craftInventory.setItem(0, destroyTab);
+				player.updateInventory();
+			});
 		}
-		final ItemStack userClone = userTab.clone();
-		userClone.setItemMeta(ItemHandler.setSkullOwner(userClone.getItemMeta(), player.getName()));
-		craftInventory.setItem(1, creativeTab);
-		craftInventory.setItem(2, pickTab);
-		craftInventory.setItem(3, saveTab);
-		craftInventory.setItem(4, userClone);
-		SchedulerUtils.run(() -> { 
-			craftInventory.setItem(0, destroyTab);
-			player.updateInventory();
-		});
     }
     
    /**
@@ -271,6 +288,7 @@ public class Creative {
     			player.getOpenInventory().getTopInventory().remove(item);
     		}
     	}
+    	removePick(player);
     }
     
    /**
@@ -395,6 +413,28 @@ public class Creative {
     public static ItemStack getItem(final String item) {
 		return (item.equalsIgnoreCase("pickItem") ? pickItem : (item.equalsIgnoreCase("pickTab") ? pickTab : (item.equalsIgnoreCase("creativeTab") ? creativeTab : (item.equalsIgnoreCase("saveTab") ? saveTab 
 				: (item.equalsIgnoreCase("userTab") ? userTab : (item.equalsIgnoreCase("destroyTab") ? destroyTab : null))))));
+    }
+    
+   /**
+    * Adds the current Player as a Pick Item user.
+    * 
+    * @param player - The Player being referenced.
+    */
+    public static void addPick(final Player player) {
+    	if (!activePickItem.contains(PlayerHandler.getPlayerID(player))) {
+    		activePickItem.add(PlayerHandler.getPlayerID(player));
+    	}
+    }
+    
+   /**
+    * Removes the current Player as a Pick Item user.
+    * 
+    * @param player - The Player being referenced.
+    */
+    public static void removePick(final Player player) {
+    	if (activePickItem.contains(PlayerHandler.getPlayerID(player))) {
+    		activePickItem.remove(PlayerHandler.getPlayerID(player));
+    	}
     }
     
    /**

@@ -32,9 +32,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
+import me.RockinChaos.fakecreative.api.events.PlayerAutoCraftEvent;
 import me.RockinChaos.fakecreative.handlers.ItemHandler;
 import me.RockinChaos.fakecreative.handlers.PlayerHandler;
-import me.RockinChaos.fakecreative.handlers.events.PlayerAutoCraftEvent;
 import me.RockinChaos.fakecreative.utils.SchedulerUtils;
 import me.RockinChaos.fakecreative.utils.ServerUtils;
 
@@ -94,7 +94,7 @@ public class Crafting implements Listener {
 	* @param event - InventoryCloseEvent
 	*/
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
-    private void onCraftingClose(final me.RockinChaos.fakecreative.handlers.events.InventoryCloseEvent event) {
+    private void onCraftingClose(final me.RockinChaos.fakecreative.api.events.InventoryCloseEvent event) {
 		if (ServerUtils.hasSpecificUpdate("1_8") && PlayerHandler.isCraftingInv(event.getView())) {
 	    	this.handleClose(slot -> { 
 	    		if (!event.isCancelled()) { event.setCancelled(true); }

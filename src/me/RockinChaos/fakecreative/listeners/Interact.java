@@ -17,11 +17,9 @@
  */
 package me.RockinChaos.fakecreative.listeners;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,14 +29,17 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
 
 import me.RockinChaos.fakecreative.handlers.PlayerHandler;
 import me.RockinChaos.fakecreative.utils.SchedulerUtils;
 import me.RockinChaos.fakecreative.utils.ServerUtils;
+import me.RockinChaos.fakecreative.utils.StringUtils;
 import me.RockinChaos.fakecreative.utils.api.LegacyAPI;
+import me.RockinChaos.fakecreative.utils.types.Altered;
 
 public class Interact implements Listener {
-	
+    
    /**
     * Refills the custom item to its original stack size when placing the item.
     * 
@@ -49,7 +50,7 @@ public class Interact implements Listener {
     	final Player player = event.getPlayer();
     	final ItemStack item = (event.getItem() != null ? event.getItem().clone() : event.getItem());
     	final int slot = player.getInventory().getHeldItemSlot();
-    	if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) && item != null && item.getType() != Material.AIR && PlayerHandler.isCreativeMode((Player) event.getPlayer(), true)) {
+    	if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) && item != null && item.getType() != Material.AIR && PlayerHandler.isCreativeMode(player, true)) {
     		SchedulerUtils.run(() -> {
     			if (player.getInventory().getHeldItemSlot() == slot) {
     				PlayerHandler.setMainHandItem(player, item);
@@ -59,6 +60,7 @@ public class Interact implements Listener {
     		});
     	}
     }
+    
    /**
     * Refills the custom item to its original stack size when placing the item into a itemframe.
     * 
@@ -103,24 +105,25 @@ public class Interact implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	private void onPickItem(final PlayerInteractEvent event) {
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getItem() != null && PlayerHandler.isCreativeMode((Player) event.getPlayer(), true) && PlayerHandler.isCreativeItem(event.getItem(), "pickItem")) {
-			Block block = null;
-			try {
-				block = event.getPlayer().getTargetBlock((Set < Material > ) null, 6);
-			} catch (final Throwable t) {
-				try {
-					block = (Block) event.getPlayer().getClass().getMethod("getTargetBlock", HashSet.class, int.class).invoke(event.getPlayer(), (HashSet < Byte > ) null, 6);
-				} catch (Exception e) {
-					ServerUtils.sendSevereTrace(e);
-				}
-			}
+			final Block block = PlayerHandler.getTargetBlock(event.getPlayer(), 6);
 			if (block != null && block.getType() != Material.AIR) {
 				ItemStack item = null;
 				if (ServerUtils.hasSpecificUpdate("1_13")) { 
-					item = new ItemStack(block.getType());
+					item = new ItemStack(Altered.getAlter(block.getType()));
 				} else {
 					item = LegacyAPI.newItemStack(block.getType(), 1, LegacyAPI.getBlockData(block));
 				}
-				item.setData(block.getState().getData());
+				try {
+					item.setData(block.getState().getData());
+				} catch (Exception e) { }
+				
+				try {
+					if (StringUtils.containsIgnoreCase(item.getType().name(), "SHULKER")) {
+						final BlockStateMeta tempMeta = (BlockStateMeta) item.getItemMeta();
+						tempMeta.setBlockState((ShulkerBox) block.getState());
+						item.setItemMeta(tempMeta);
+					}
+				} catch (Exception e) { }
 				event.getPlayer().getInventory().addItem(item);
 				PlayerHandler.updateInventory(event.getPlayer(), 0);
 				event.setCancelled(true);

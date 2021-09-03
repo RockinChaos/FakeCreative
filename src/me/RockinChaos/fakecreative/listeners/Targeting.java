@@ -66,16 +66,16 @@ public class Targeting implements Listener {
 	*/
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onPlayerTargetEntity(final PlayerInteractEntityEvent event) {
-    	Entity entity = event.getRightClicked();
+    	final Entity entity = event.getRightClicked();
     	if (entity != null && !(entity instanceof Player) && PlayerHandler.isCreativeMode((Player)event.getPlayer(), true) && PlayerHandler.isCreativeItem(PlayerHandler.getMainHandItem((Player)event.getPlayer()), "pickItem") 
-    		&& ((ServerUtils.hasSpecificUpdate("1_9") && event.getHand() != null && event.getHand().toString().equalsIgnoreCase("OFF_HAND")) || !ServerUtils.hasSpecificUpdate("1_9"))) {
+    		&& ((ServerUtils.hasSpecificUpdate("1_9") && event.getHand() != null && event.getHand().toString().equalsIgnoreCase("HAND")) || !ServerUtils.hasSpecificUpdate("1_9"))) {
+    		event.setCancelled(true);
     		try { 
     			event.getPlayer().getInventory().addItem(new ItemStack(ItemHandler.getMaterial(entity.getType().name().toUpperCase() + "_SPAWN_EGG", null)));
     		} catch (Exception e) {
     			event.getPlayer().getInventory().addItem(LegacyAPI.newItemStack(ItemHandler.getMaterial("MONSTER_EGG", null), 1, (short) Monster.getId(entity)));
     		}
     		PlayerHandler.updateInventory(event.getPlayer(), 0);
-	    	event.setCancelled(true);
     	}
     }
 }

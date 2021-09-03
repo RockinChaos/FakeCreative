@@ -23,14 +23,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.plugin.AuthorNagException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
 import io.netty.channel.Channel;
 import me.RockinChaos.fakecreative.FakeCreative;
-import me.RockinChaos.fakecreative.handlers.events.InventoryCloseEvent;
-import me.RockinChaos.fakecreative.handlers.events.PlayerAutoCraftEvent;
+import me.RockinChaos.fakecreative.api.events.InventoryCloseEvent;
+import me.RockinChaos.fakecreative.api.events.PlayerAutoCraftEvent;
+import me.RockinChaos.fakecreative.api.events.PlayerCloneItemEvent;
+import me.RockinChaos.fakecreative.utils.ServerUtils;
 import me.RockinChaos.fakecreative.utils.protocol.packet.PacketContainer;
 
 public class ProtocolManager {
@@ -87,10 +88,12 @@ public class ProtocolManager {
    			if (packetName != null) {
   				if (packetName.equalsIgnoreCase("PacketPlayInWindowClick")) {
   					final PacketContainer container = protocol.getContainer(packet);
-  					if (container.read(5).getData().toString().equalsIgnoreCase("QUICK_CRAFT") && ((int)container.read(2).getData()) == 9 
-  					&& (container.read(4).getData() == null || container.read(4).getData().toString().replaceAll("[0-9]", "").replaceAll(" ", "").equalsIgnoreCase("AIR"))) {
-	  					final InventoryClickEvent clickEvent = new InventoryClickEvent(player.getOpenInventory(), null, (int)container.read(1).getData(), ClickType.MIDDLE, null); // replace with custom PlayerCloneItemEvent in the future.
-	  					callEvent(clickEvent);
+  					if (container.read(5).getData().toString().equalsIgnoreCase("QUICK_CRAFT")) {
+  						final int slot = (ServerUtils.hasSpecificUpdate("1_17") ? (int)container.read(3).getData() : (int)container.read(1).getData());
+  						if (slot >= 0) {
+		  					final PlayerCloneItemEvent clickEvent = new PlayerCloneItemEvent(player, slot, ClickType.MIDDLE);
+		  					callEvent(clickEvent);
+  						}
   					}
   				} else if (packetName.equalsIgnoreCase("PacketPlayInAutoRecipe")) {
 		  			final PlayerAutoCraftEvent AutoCraft = new PlayerAutoCraftEvent(player, player.getOpenInventory().getTopInventory());

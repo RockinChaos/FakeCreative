@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package me.RockinChaos.fakecreative.handlers.events;
+package me.RockinChaos.fakecreative.api.events;
 
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;

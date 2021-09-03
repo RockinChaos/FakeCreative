@@ -84,7 +84,7 @@ public class ChatTab implements TabCompleter {
 			if (!isGamemode && PermissionsHandler.hasPermission(sender, "fakecreative.purge")) { 		 	commands.add("purge"); }
 			if (!isGamemode && PermissionsHandler.hasPermission(sender, "fakecreative.reload")) { 		    commands.add("reload"); }
 			if (!isGamemode && PermissionsHandler.hasPermission(sender, "fakecreative.updates")) { 		commands.add("updates"); }
-			if (!isGamemode && PermissionsHandler.hasPermission(sender, "fakecreative.autoupdate")) { 	    commands.add("autoupdate"); }
+			if (!isGamemode && PermissionsHandler.hasPermission(sender, "fakecreative.upgrade")) { 	    commands.add("upgrade"); }
 		}
 		StringUtil.copyPartialMatches(args[(args.length - 1)], commands, completions);
 		Collections.sort(completions);

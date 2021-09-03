@@ -28,9 +28,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import me.RockinChaos.fakecreative.api.events.PlayerCloneItemEvent;
 import me.RockinChaos.fakecreative.handlers.PlayerHandler;
 import me.RockinChaos.fakecreative.utils.SchedulerUtils;
-import me.RockinChaos.fakecreative.utils.ServerUtils;
 import me.RockinChaos.fakecreative.utils.interfaces.menus.Menu;
 
 public class Clicking implements Listener {
@@ -44,23 +44,25 @@ public class Clicking implements Listener {
 	private void onCopy(final InventoryClickEvent event) {
 		final Player player = (Player) event.getWhoClicked();
 		final int slot = event.getSlot();
-		final Inventory inventory = (ServerUtils.hasSpecificUpdate("1_14") ? event.getClickedInventory() : event.getInventory());
+		final Inventory inventory = ((!PlayerHandler.isCraftingInv(event.getView()) && event.getRawSlot() > event.getView().getTopInventory().getSize()) ? event.getView().getBottomInventory() : ((!PlayerHandler.isCraftingInv(event.getView()) ? event.getView().getTopInventory() : event.getView().getBottomInventory())));
 		if (event.getClick() == ClickType.MIDDLE && PlayerHandler.isCreativeMode(player, true) && inventory != null && ((Menu.getCreator().isOpen(player)
 				&& inventory != player.getOpenInventory().getTopInventory()) || !Menu.getCreator().isOpen(player))) {
-			if (inventory.getItem(slot) != null && inventory.getItem(slot).getType() != Material.AIR && !PlayerHandler.isCreativeItem(inventory.getItem(slot))) {
-				final ItemStack item = inventory.getItem(slot).clone();
+			if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR && !PlayerHandler.isCreativeItem(inventory.getItem(slot))) {
+				final ItemStack item = event.getCurrentItem().clone();
 				item.setAmount(item.getMaxStackSize());
 				player.setItemOnCursor(item);
-			} else if (player.getItemOnCursor() != null && player.getItemOnCursor().getType() != Material.AIR&& !PlayerHandler.isCreativeItem(player.getItemOnCursor())) {
-				inventory.setItem(slot, player.getItemOnCursor());
+			} else if (player.getItemOnCursor() != null && player.getItemOnCursor().getType() != Material.AIR && !PlayerHandler.isCreativeItem(player.getItemOnCursor())) {
+				if (inventory.getSize() >= slot) {
+					inventory.setItem(slot, player.getItemOnCursor().clone());
+				}
 			}
 			PlayerHandler.updateInventory(player, 1L);
-		} else if (inventory != event.getWhoClicked().getOpenInventory().getTopInventory() && Menu.getCreator().isOpen(player) && (event.getClick() == ClickType.SHIFT_LEFT 
+		} else if (event.getRawSlot() >= event.getWhoClicked().getOpenInventory().getTopInventory().getSize() && Menu.getCreator().isOpen(player) && (event.getClick() == ClickType.SHIFT_LEFT 
 				|| event.getClick() == ClickType.SHIFT_RIGHT) && PlayerHandler.isCreativeMode(player, true)) {
 			event.setCancelled(true);
-			inventory.setItem(event.getSlot(), new ItemStack(Material.AIR));
+			event.getWhoClicked().getOpenInventory().getBottomInventory().setItem(event.getSlot(), new ItemStack(Material.AIR));
 			PlayerHandler.updateInventory(player, 1L);
-		} else if (inventory == event.getWhoClicked().getOpenInventory().getTopInventory() && Menu.getCreator().isOpen(player) && (event.getClick() == ClickType.SHIFT_LEFT 
+		} else if (event.getRawSlot() <= event.getWhoClicked().getOpenInventory().getTopInventory().getSize() && Menu.getCreator().isOpen(player) && (event.getClick() == ClickType.SHIFT_LEFT 
 				|| event.getClick() == ClickType.SHIFT_RIGHT || event.getClick() == ClickType.LEFT || event.getClick() == ClickType.RIGHT) && PlayerHandler.isCreativeMode(player, true)
 			   && (event.getWhoClicked().getOpenInventory().getTopInventory().getSize() >= event.getSlot() && event.getSlot() >= 0 && (event.getWhoClicked().getOpenInventory().getTopInventory().getItem(event.getSlot()) == null 
 			   || event.getWhoClicked().getOpenInventory().getTopInventory().getItem(event.getSlot()).getType() == Material.AIR))) {
@@ -68,6 +70,47 @@ public class Clicking implements Listener {
 			player.setItemOnCursor(new ItemStack(Material.AIR));
 			PlayerHandler.updateInventory(player, 1L);
 		}
+	}
+	
+   /**
+	* Copies any item the Player selects from their inventory or creative tab using their creative actions.
+	* 
+	* @param event - PlayerCloneItemEvent
+	*/
+	@EventHandler(priority = EventPriority.HIGHEST)
+	private void onClone(final PlayerCloneItemEvent event) {
+		int tempSlot = 0;
+		Inventory tempInventory = null;
+		if (!PlayerHandler.isCraftingInv(event.getView()) && event.getSlot() > event.getView().getTopInventory().getSize()) {
+			tempInventory = event.getView().getBottomInventory();
+			tempSlot = event.getSlot() - event.getView().getTopInventory().getSize() + 9;
+			tempSlot = (tempSlot <= 35 ? tempSlot : (tempSlot >= 45 ? (tempSlot - 5) : (tempSlot - 36)));
+		} else if (!PlayerHandler.isCraftingInv(event.getView())) {
+			tempInventory = event.getView().getTopInventory();
+			tempSlot = event.getSlot();
+		} else {
+			tempInventory = event.getView().getBottomInventory();
+			tempSlot = (event.getSlot() <= 35 ? event.getSlot() : (event.getSlot() >= 45 ? (event.getSlot() - 5) : (event.getSlot() - 36)));
+		}
+		final int slot = tempSlot;
+		final Inventory inventory = tempInventory;
+		final Player player = event.getPlayer();
+		final ItemStack cursorItem = (player.getItemOnCursor() != null ? player.getItemOnCursor().clone() : player.getItemOnCursor());
+		final ItemStack slotItem = (inventory.getItem(slot) != null && inventory.getItem(slot).getType() != Material.AIR ? inventory.getItem(slot).clone() : inventory.getItem(slot));
+		SchedulerUtils.run(() -> { 
+			if (event.getClick() == ClickType.MIDDLE && PlayerHandler.isCreativeMode(player, true) && inventory != null && ((Menu.getCreator().isOpen(player)
+					&& inventory != player.getOpenInventory().getTopInventory()) || !Menu.getCreator().isOpen(player))) {
+				if (cursorItem != null && cursorItem.getType() != Material.AIR && !PlayerHandler.isCreativeItem(cursorItem) && (inventory.getItem(slot) == null || inventory.getItem(slot).getType() == Material.AIR 
+						|| (slotItem != null && slotItem.getType() != Material.AIR && cursorItem != null && cursorItem.getType() != Material.AIR && slotItem.isSimilar(cursorItem)))) {
+					cursorItem.setAmount(cursorItem.getMaxStackSize());
+					inventory.setItem(slot, cursorItem);
+					SchedulerUtils.run(() -> { 
+						player.setItemOnCursor(new ItemStack(Material.AIR));
+					});
+					PlayerHandler.updateInventory(player, 1L);
+				}
+			} 
+		});
 	}
 	
    /**
@@ -89,6 +132,7 @@ public class Clicking implements Listener {
 					for (ItemStack item: player.getInventory()) {
 						if (item != null && item.isSimilar(PlayerHandler.getCreativeItem("pickItem"))) {
 							player.getInventory().remove(item);
+							PlayerHandler.removePick(player);
 							removed = true;
 						}
 					}
@@ -96,13 +140,17 @@ public class Clicking implements Listener {
 						if (player.getInventory().getItem(8) != null && player.getInventory().getItem(8).getType() != Material.AIR) {
 							ItemStack drop = player.getInventory().getItem(8).clone();
 							player.getInventory().setItem(8, new ItemStack(Material.AIR));
+							player.getInventory().setItem(8, PlayerHandler.getCreativeItem("pickItem"));
+							PlayerHandler.addPick(player);
 							if (player.getInventory().firstEmpty() != -1) {
 								player.getInventory().addItem(drop);
 							} else {
 								PlayerHandler.dropItem(player, drop);
 							}
+						} else {
+							player.getInventory().setItem(8, PlayerHandler.getCreativeItem("pickItem"));
+							PlayerHandler.addPick(player);
 						}
-						player.getInventory().setItem(8, PlayerHandler.getCreativeItem("pickItem"));
 					}
 				});
 			} else if (PlayerHandler.isCreativeItem(event.getCurrentItem(), "saveTab")) {

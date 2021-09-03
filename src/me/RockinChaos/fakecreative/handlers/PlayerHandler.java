@@ -17,7 +17,10 @@
  */
 package me.RockinChaos.fakecreative.handlers;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -26,6 +29,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -36,8 +40,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import de.domedd.betternick.BetterNick;
-import me.RockinChaos.fakecreative.handlers.events.PlayerEnterCreativeEvent;
-import me.RockinChaos.fakecreative.handlers.events.PlayerExitCreativeEvent;
+import me.RockinChaos.fakecreative.api.events.PlayerEnterCreativeEvent;
+import me.RockinChaos.fakecreative.api.events.PlayerExitCreativeEvent;
 import me.RockinChaos.fakecreative.handlers.modes.Creative;
 import me.RockinChaos.fakecreative.handlers.modes.instance.PlayerObject;
 import me.RockinChaos.fakecreative.handlers.modes.instance.PlayerStats;
@@ -147,6 +151,23 @@ public class PlayerHandler {
     	return Creative.getItem(item);
     }
     
+   /**
+    * Adds the current Player as a Pick Item user.
+    * 
+    * @param player - The Player being referenced.
+    */
+    public static void addPick(final Player player) {
+    	Creative.addPick(player);
+    }
+    
+   /**
+    * Removes the current Player as a Pick Item user.
+    * 
+    * @param player - The Player being referenced.
+    */
+    public static void removePick(final Player player) {
+    	Creative.removePick(player);
+    }
     
    /**
     * Sets the Creative Tabs to the crafting items slots.
@@ -264,7 +285,7 @@ public class PlayerHandler {
     * Checks if the player is has an open menu while left clicking.
     * 
     * @param view - The InventoryView being compared.
-    * @param view - The action being checked.
+    * @param action - The action being checked.
     * @return If the player is currently interacting with an open menu.
     */
 	public static boolean isMenuClick(final InventoryView view, final Action action) {
@@ -272,6 +293,37 @@ public class PlayerHandler {
 			return true;
 		}
 		return false;
+	}
+	
+   /**
+    * Attempts to get the Block that the Player is targeting.
+    * Excludes transparents.
+    * 
+    * @param player - The Player targeting the block.
+    * @param range - How far the block is allowed to be.
+    * @return If the targeted block (if any).
+    */
+	public static Block getTargetBlock(final Player player, final int range) {
+		Block block = null;
+		try {
+			Set < Material > ignore = new HashSet < Material >();
+			if (ServerUtils.hasSpecificUpdate("1_13")) { 
+				ignore.addAll(Arrays.asList(Material.AIR, Material.WATER, Material.LAVA));
+			} else {
+				ignore.addAll(Arrays.asList(Material.AIR, ItemHandler.getMaterial("STATIONARY_WATER", null), ItemHandler.getMaterial("FLOWING_WATER", null), Material.WATER, 
+					                         ItemHandler.getMaterial("STATIONARY_LAVA", null), ItemHandler.getMaterial("FLOWING_LAVA", null), Material.LAVA));
+			}
+			block = player.getTargetBlock(ignore, range);
+		} catch (final Throwable t1) {
+			try {
+				HashSet < Byte > ignore = new HashSet < Byte >();
+				ignore.addAll(Arrays.asList((byte)0, (byte)8, (byte)9, (byte)10, (byte)11));
+				block = (Block) player.getClass().getMethod("getTargetBlock", HashSet.class, int.class).invoke(player, ignore, range);
+			} catch (Exception e) {
+				ServerUtils.sendSevereTrace(e);
+			}
+		}
+		return block;
 	}
 	
    /**

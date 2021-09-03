@@ -17,19 +17,22 @@
  */
 package me.RockinChaos.fakecreative.listeners.legacy;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.inventory.ItemStack;
+
 import me.RockinChaos.fakecreative.handlers.PlayerHandler;
 import me.RockinChaos.fakecreative.utils.SchedulerUtils;
 
 /**
 * Handles the Stat Depletion for Creative Players.
 * 
-* @deprecated This is a LEGACY listener, only use on Minecraft versions below 1.8.
+* @deprecated This is a LEGACY listener, only use on Minecraft versions below 1.14.
 */
 public class Legacy_Depletion implements Listener {
 
@@ -37,7 +40,7 @@ public class Legacy_Depletion implements Listener {
 	* Protects the Player from hunger depletion.
 	* 
 	* @param event - FoodLevelChangeEvent
-	* @deprecated This is a LEGACY event, only use on Minecraft versions below 1.8.
+	* @deprecated This is a LEGACY event, only use on Minecraft versions below 1.14.
 	*/
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onHunger(final FoodLevelChangeEvent event) {
@@ -50,12 +53,17 @@ public class Legacy_Depletion implements Listener {
 	* Prevents the Player from damaging any items.
 	* 
 	* @param event - PlayerItemDamageEvent
-	* @deprecated This is a LEGACY event, only use on Minecraft versions below 1.8.
+	* @deprecated This is a LEGACY event, only use on Minecraft versions below 1.14.
 	*/
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onDurability(final PlayerAnimationEvent event) {
     	if (PlayerHandler.isCreativeMode((Player)event.getPlayer(), true) && PlayerHandler.getCreativeStats((Player)event.getPlayer()).unbreakableItems()) {
-    		SchedulerUtils.runAsync(() -> PlayerHandler.getHandItem(event.getPlayer()).setDurability((short)0));
+    		SchedulerUtils.runAsync(() -> {
+    			final ItemStack item = PlayerHandler.getHandItem(event.getPlayer());
+    			if (item != null && item.getType() != Material.AIR) {
+    				PlayerHandler.getHandItem(event.getPlayer()).setDurability((short)0);
+    			}
+    		});
     		PlayerHandler.updateInventory(event.getPlayer(), 0);
     	}
     }

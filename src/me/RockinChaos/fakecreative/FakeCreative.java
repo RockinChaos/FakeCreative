@@ -23,7 +23,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import me.RockinChaos.fakecreative.handlers.ConfigHandler;
 import me.RockinChaos.fakecreative.handlers.PlayerHandler;
+import me.RockinChaos.fakecreative.handlers.UpdateHandler;
 import me.RockinChaos.fakecreative.handlers.modes.Creative;
+import me.RockinChaos.fakecreative.utils.SchedulerUtils;
 import me.RockinChaos.fakecreative.utils.ServerUtils;
 import me.RockinChaos.fakecreative.utils.interfaces.menus.Menu;
 import me.RockinChaos.fakecreative.utils.protocol.ProtocolManager;
@@ -51,6 +53,11 @@ public class FakeCreative extends JavaPlugin {
   		ConfigHandler.getConfig().registerEvents(); {
   			PlayerHandler.restartCreative(true);
   		}
+        SchedulerUtils.runAsync(() -> {
+        	UpdateHandler.getUpdater(true); {
+        		ServerUtils.logDebug("has been Enabled.");
+        	}
+        });
         ServerUtils.logInfo("has been Enabled.");
   	}
   	

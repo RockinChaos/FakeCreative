@@ -35,6 +35,7 @@ import me.RockinChaos.fakecreative.listeners.Crafting;
 import me.RockinChaos.fakecreative.listeners.Gamemode;
 import me.RockinChaos.fakecreative.listeners.Interact;
 import me.RockinChaos.fakecreative.listeners.Interfaces;
+import me.RockinChaos.fakecreative.listeners.Movement;
 import me.RockinChaos.fakecreative.listeners.Pickups;
 import me.RockinChaos.fakecreative.listeners.PlayerClear;
 import me.RockinChaos.fakecreative.listeners.PlayerJoin;
@@ -81,6 +82,7 @@ public class ConfigHandler {
   		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new PlayerClear(), FakeCreative.getInstance());
   		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new PlayerRespawn(), FakeCreative.getInstance());
   		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new Interfaces(), FakeCreative.getInstance());
+  		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new Movement(), FakeCreative.getInstance());
   		FakeCreative.getInstance().getServer().getPluginManager().registerEvents(new Pickups(), FakeCreative.getInstance());
   		LegacyAPI.registerDepletion();
   		LegacyAPI.registerInvulnerable();
