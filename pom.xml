@@ -128,6 +128,11 @@
 			<id>placeholderapi</id>
 			<url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
 		</repository>
+		<!--Mojang Repository-->
+		<repository>
+			<id>mojang</id>
+			<url>https://libraries.minecraft.net/</url>
+		</repository>
 		<!--bStats Repository-->
 		<repository>
 			<id>CodeMC</id>
@@ -179,6 +184,13 @@
             <version>4.6.0</version>
        	    <scope>provided</scope>
         </dependency>
+		<!--Mojang AuthLib API-->
+		<dependency>
+			<groupId>com.mojang</groupId>
+			<artifactId>authlib</artifactId>
+			<version>1.5.21</version>
+			<scope>provided</scope>
+		</dependency>
 		<!--bStats API-->
 		<dependency>
 			<groupId>org.bstats</groupId>
