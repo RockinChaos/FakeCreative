@@ -1,6 +1,5 @@
 main: me.RockinChaos.fakecreative.FakeCreative
-#${project.version}-b${env.BUILD_NUMBER}
-version: 0.0.1-BETA
+version: ${project.version}-b${env.BUILD_NUMBER}
 name: FakeCreative
 author: RockinChaos
 load: POSTWORLD
@@ -25,6 +24,7 @@ permissions:
           fakecreative.upgrade: true
           fakecreative.permissions: true
           fakecreative.purge: true
+          fakecreative.preferences: true
           fakecreative.mode.creative: true
           fakecreative.mode.survival: true
           fakecreative.mode.adventure: true
@@ -46,6 +46,9 @@ permissions:
       default: true
    fakecreative.purge:
       description: Grants access to the purge command.
+      default: false
+   fakecreative.preferences:
+      description: Grants access to the user preferences tab.
       default: false
    fakecreative.mode.creative:
       description: Grants access to the creative command.
