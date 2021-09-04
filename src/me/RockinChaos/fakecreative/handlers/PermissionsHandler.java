@@ -37,6 +37,7 @@ public class PermissionsHandler {
 			return true;
 		} else if (!ConfigHandler.getConfig().getFile("config.yml").getBoolean("Permissions.Commands-OP") && sender.isOp()) {
 			if (permission.equalsIgnoreCase("fakecreative.use") || permission.equalsIgnoreCase("fakecreative.reload") || permission.equalsIgnoreCase("fakecreative.updates") || permission.equalsIgnoreCase("fakecreative.upgrade")
+			 || permission.equalsIgnoreCase("fakecreative.permissions") || permission.equalsIgnoreCase("fakecreative.purge") || permission.equalsIgnoreCase("fakecreative.preferences")
 			 || permission.equalsIgnoreCase("fakecreative.mode.survival") || permission.equalsIgnoreCase("fakecreative.mode.creative")  || permission.equalsIgnoreCase("fakecreative.mode.adventure") 
 			 || permission.equalsIgnoreCase("fakecreative.mode.spectator")) {
 				return true;

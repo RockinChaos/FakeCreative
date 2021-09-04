@@ -32,22 +32,22 @@ import me.RockinChaos.fakecreative.utils.sql.SQL;
 
 public class PlayerStats {
 	
-	private boolean allowFlight = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.allow-flight");
-	private double flySpeed = ConfigHandler.getConfig().getFile("config.yml").getDouble("Preferences.fly-speed");
-	private double breakSpeed = ConfigHandler.getConfig().getFile("config.yml").getDouble("Preferences.break-speed");
-	private int foodLevel = ConfigHandler.getConfig().getFile("config.yml").getInt("Preferences.food-level");
-	private int health = ConfigHandler.getConfig().getFile("config.yml").getInt("Preferences.health");
-	private double heartScale = ConfigHandler.getConfig().getFile("config.yml").getDouble("Preferences.heart-scale");
-	private boolean allowHunger = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.allow-hunger");
-	private boolean allowBurn = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.allow-burn");
-	private boolean unbreakableItems = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.unbreakable-items");
-	private boolean blockDrops = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.block-drops");
-	private boolean swordBlock = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.sword-block");
-	private boolean autoRestore = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.auto-restore");
-	private boolean god = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.invulnerable");
-	private int godDelay = ConfigHandler.getConfig().getFile("config.yml").getInt("Preferences.invulnerable-delay");
-	private boolean storeInventory = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.store-inventory");
-	private boolean destroyPickups = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.destroy-pickups");
+	private boolean allowFlight = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.Allow-Flight");
+	private double flySpeed = ConfigHandler.getConfig().getFile("config.yml").getDouble("Preferences.Fly-Speed");
+	private double breakSpeed = ConfigHandler.getConfig().getFile("config.yml").getDouble("Preferences.Break-Speed");
+	private int foodLevel = ConfigHandler.getConfig().getFile("config.yml").getInt("Preferences.Food-Level");
+	private int health = ConfigHandler.getConfig().getFile("config.yml").getInt("Preferences.Health");
+	private double heartScale = ConfigHandler.getConfig().getFile("config.yml").getDouble("Preferences.Heart-Scale");
+	private boolean allowHunger = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.Allow-Hunger");
+	private boolean allowBurn = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.Allow-Burn");
+	private boolean unbreakableItems = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.Unbreakable-Items");
+	private boolean blockDrops = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.Block-Drops");
+	private boolean swordBlock = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.Sword-Block");
+	private boolean autoRestore = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.Auto-Restore");
+	private boolean god = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.Invulnerable");
+	private int godDelay = ConfigHandler.getConfig().getFile("config.yml").getInt("Preferences.Invulnerable-Delay");
+	private boolean storeInventory = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.Store-Inventory");
+	private boolean destroyPickups = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Preferences.Destroy-Pickups");
 	private HashMap<Integer, String> hotbars = new HashMap<Integer, String>();
 
    /**
@@ -590,10 +590,13 @@ public class PlayerStats {
     * @param player - The Player being referenced.
     * @return If the Player is allowed to have custom FakeCreative Preferences.
     */
-	private boolean isLocalePreferences(final Player player) {
+	public boolean isLocalePreferences(final Player player) {
 		final boolean PermissionNeeded = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Permissions.Preferences");
 		final boolean OPPermissionNeeded = ConfigHandler.getConfig().getFile("config.yml").getBoolean("Permissions.Preferences-OP");
-		return ((OPPermissionNeeded && player.isOp()) || ((!PermissionNeeded && !player.isOp()) || (!OPPermissionNeeded && player.isOp())) || (!PermissionNeeded && !player.isOp()) 
-			|| (!OPPermissionNeeded && player.isOp()) || (player.isPermissionSet("fakecreative.preferences") && player.hasPermission("fakecreative.preferences")));
+		if (player.isOp()) {
+			return (!OPPermissionNeeded || (player.isPermissionSet("fakecreative.preferences") && player.hasPermission("fakecreative.preferences")));
+		} else {
+			return (!PermissionNeeded || (player.isPermissionSet("fakecreative.preferences") && player.hasPermission("fakecreative.preferences")));
+		}
 	}
 }

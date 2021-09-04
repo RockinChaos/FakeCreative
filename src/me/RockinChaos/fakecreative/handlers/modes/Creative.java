@@ -32,6 +32,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import me.RockinChaos.fakecreative.api.events.PlayerEnterCreativeEvent;
 import me.RockinChaos.fakecreative.handlers.ItemHandler;
@@ -39,6 +40,7 @@ import me.RockinChaos.fakecreative.handlers.PlayerHandler;
 import me.RockinChaos.fakecreative.handlers.modes.instance.PlayerObject;
 import me.RockinChaos.fakecreative.utils.SchedulerUtils;
 import me.RockinChaos.fakecreative.utils.ServerUtils;
+import me.RockinChaos.fakecreative.utils.StringUtils;
 import me.RockinChaos.fakecreative.utils.api.LanguageAPI;
 import me.RockinChaos.fakecreative.utils.api.LegacyAPI;
 import me.RockinChaos.fakecreative.utils.interfaces.menus.Menu;
@@ -244,6 +246,17 @@ public class Creative {
 			}
 			final ItemStack userClone = userTab.clone();
 			userClone.setItemMeta(ItemHandler.setSkullOwner(userClone.getItemMeta(), player.getName()));
+			if (!get(player).getStats().isLocalePreferences(player)) {
+				final ItemMeta userMeta = userClone.getItemMeta();
+				List<String> userLore = new ArrayList<String>();
+				userLore.add(StringUtils.colorFormat("&7"));
+				userLore.add(StringUtils.colorFormat("&7*Creative mode settings"));
+				userLore.add(StringUtils.colorFormat("&7that are specific to you."));
+				userLore.add(StringUtils.colorFormat("&7"));
+				userLore.add(StringUtils.colorFormat("&c[\u2718] You do not have permission."));
+				userMeta.setLore(userLore);
+				userClone.setItemMeta(userMeta);
+			}
 			if (activePickItem.contains(PlayerHandler.getPlayerID(player))) {
 				if (player.getInventory().getItem(8) != null && player.getInventory().getItem(8).getType() != Material.AIR) {
 					ItemStack drop = player.getInventory().getItem(8).clone();

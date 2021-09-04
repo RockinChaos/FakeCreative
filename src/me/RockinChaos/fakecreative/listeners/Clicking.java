@@ -44,7 +44,7 @@ public class Clicking implements Listener {
 	private void onCopy(final InventoryClickEvent event) {
 		final Player player = (Player) event.getWhoClicked();
 		final int slot = event.getSlot();
-		final Inventory inventory = ((!PlayerHandler.isCraftingInv(event.getView()) && event.getRawSlot() > event.getView().getTopInventory().getSize()) ? event.getView().getBottomInventory() : ((!PlayerHandler.isCraftingInv(event.getView()) ? event.getView().getTopInventory() : event.getView().getBottomInventory())));
+		final Inventory inventory = ((!PlayerHandler.isCraftingInv(event.getView()) && event.getRawSlot() >= event.getView().getTopInventory().getSize()) ? event.getView().getBottomInventory() : ((!PlayerHandler.isCraftingInv(event.getView()) ? event.getView().getTopInventory() : event.getView().getBottomInventory())));
 		if (event.getClick() == ClickType.MIDDLE && PlayerHandler.isCreativeMode(player, true) && inventory != null && ((Menu.getCreator().isOpen(player)
 				&& inventory != player.getOpenInventory().getTopInventory()) || !Menu.getCreator().isOpen(player))) {
 			if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR && !PlayerHandler.isCreativeItem(inventory.getItem(slot))) {
@@ -52,7 +52,7 @@ public class Clicking implements Listener {
 				item.setAmount(item.getMaxStackSize());
 				player.setItemOnCursor(item);
 			} else if (player.getItemOnCursor() != null && player.getItemOnCursor().getType() != Material.AIR && !PlayerHandler.isCreativeItem(player.getItemOnCursor())) {
-				if (inventory.getSize() >= slot) {
+				if (inventory.getSize() >= slot && slot >= 0) {
 					inventory.setItem(slot, player.getItemOnCursor().clone());
 				}
 			}
@@ -81,7 +81,7 @@ public class Clicking implements Listener {
 	private void onClone(final PlayerCloneItemEvent event) {
 		int tempSlot = 0;
 		Inventory tempInventory = null;
-		if (!PlayerHandler.isCraftingInv(event.getView()) && event.getSlot() > event.getView().getTopInventory().getSize()) {
+		if (!PlayerHandler.isCraftingInv(event.getView()) && event.getSlot() >= event.getView().getTopInventory().getSize()) {
 			tempInventory = event.getView().getBottomInventory();
 			tempSlot = event.getSlot() - event.getView().getTopInventory().getSize() + 9;
 			tempSlot = (tempSlot <= 35 ? tempSlot : (tempSlot >= 45 ? (tempSlot - 5) : (tempSlot - 36)));
@@ -158,7 +158,11 @@ public class Clicking implements Listener {
 				SchedulerUtils.run(() -> Menu.getCreator().hotbarMenu(player));
 			} else if (PlayerHandler.isCreativeItem(event.getCurrentItem(), "userTab")) {
 				event.setCancelled(true);
-				SchedulerUtils.run(() -> Menu.getCreator().userMenu(player));
+				SchedulerUtils.run(() -> {
+					if (PlayerHandler.getCreative(player).getStats().isLocalePreferences(player)) {
+						Menu.getCreator().userMenu(player);
+					}
+				});
 			} else if (PlayerHandler.isCreativeItem(event.getCurrentItem(), "destroyTab")) {
 				event.setCancelled(true);
 				if (event.getCursor() != null && event.getCursor().getType() != Material.AIR) {

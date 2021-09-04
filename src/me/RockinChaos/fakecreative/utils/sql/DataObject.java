@@ -315,31 +315,35 @@ public class DataObject {
 	* 
 	*/ 
     public enum Table {
-    	ALLOW_FLIGHT("`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
-        SPEED_FLIGHT("`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
-        SPEED_BREAK("`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
-        SET_FOOD("`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
-        SET_HEALTH("`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
-        SET_SCALE("`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
-        ALLOW_HUNGER("`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
-        ALLOW_BURN("`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
-        UNBREAKABLE_ITEMS("`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
-        DROPS_BLOCK("`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
-        SWORD_BLOCK("`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
-        AUTO_RESTORE("`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
-        SET_GOD("`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
-        DELAY_GOD("`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
-        STORE_INVENTORY("`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
-        DESTROY_PICKUPS("`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
-        HOTBAR("`Player_UUID`, `Position`, `Inventory64`, `Time_Stamp`", "Player_UUID, Position"),
-        PLAYERSTATS("`Player_UUID`, `Health`, `Scale`, `Food`, `Fire_Ticks`, `Inventory64`, `Time_Stamp`", "Player_UUID");
+    	ALLOW_FLIGHT("allow_flight", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        SPEED_FLIGHT("speed_flight", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        SPEED_BREAK("speed_break", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        SET_FOOD("set_food", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        SET_HEALTH("set_health", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        SET_SCALE("set_scale", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        ALLOW_HUNGER("allow_hunger", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        ALLOW_BURN("allow_burn", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        UNBREAKABLE_ITEMS("unbreakable_items", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        DROPS_BLOCK("drops_block", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        SWORD_BLOCK("sword_block", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        AUTO_RESTORE("auto_restore", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        SET_GOD("set_god", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        DELAY_GOD("delay_god", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        STORE_INVENTORY("store_inventory", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        DESTROY_PICKUPS("destroy_pickups", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        HOTBAR("hotbar", "`Player_UUID`, `Position`, `Inventory64`, `Time_Stamp`", "Player_UUID, Position"),
+        PLAYERSTATS("playerstats", "`Player_UUID`, `Health`, `Scale`, `Food`, `Fire_Ticks`, `Inventory64`, `Time_Stamp`", "Player_UUID");
     	
+    	private String tableName;
     	private String header;
     	private String removal;
-    	private Table(String header, String removal) {
+    	private Table(final String tableName, final String header, final String removal) {
+    		this.tableName = tableName;
     		this.header = header;
     		this.removal = removal;
     	}
+    	
+    	public String tableName() { return this.tableName; }
     	public String headers() { return this.header; }
     	public String removal() { return this.removal; }
     }

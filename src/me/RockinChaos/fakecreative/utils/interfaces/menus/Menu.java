@@ -555,7 +555,7 @@ public class Menu {
 			}, event -> {
 				if (StringUtils.isInt(ChatColor.stripColor(event.getMessage()))) {
 					String[] placeHolders = LanguageAPI.getLang(false).newString();
-					placeHolders[16] = "COMMAND COOLDOWN";
+					placeHolders[16] = "Custom Number";
 					LanguageAPI.getLang(false).sendLangMessage("commands.menu.inputSet", player, placeHolders);
 					if (stage == 0) {
 						PlayerHandler.getCreativeStats(player).setFlySpeed(player, Integer.parseInt(ChatColor.stripColor(event.getMessage())));

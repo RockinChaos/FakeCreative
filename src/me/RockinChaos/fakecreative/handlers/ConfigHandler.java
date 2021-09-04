@@ -247,9 +247,6 @@ public class ConfigHandler {
 		SchedulerUtils.runAsync(() -> {
 			if (!silent) { 
 				DependAPI.getDepends(false).sendUtilityDepends();
-				if (ServerUtils.hasSpecificUpdate("1_13")) {
-					ServerUtils.logInfo("Initializing Legacy Material Support ..."); 
-				}
 			}
 			SQL.newData(reload); {
 				SchedulerUtils.runAsyncLater(2L, () -> {

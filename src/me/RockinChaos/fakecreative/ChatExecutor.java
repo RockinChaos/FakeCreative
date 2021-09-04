@@ -106,6 +106,8 @@ public class ChatExecutor implements CommandExecutor {
 			LanguageAPI.getLang(false).dispatchMessage(sender, (PermissionsHandler.hasPermission(sender, "fakecreative.updates") ? "&a[\u2714]" : "&c[\u2718]") + " FakeCreative.Updates");
 			LanguageAPI.getLang(false).dispatchMessage(sender, (PermissionsHandler.hasPermission(sender, "fakecreative.upgrade") ? "&a[\u2714]" : "&c[\u2718]") + " FakeCreative.Upgrade");
 			LanguageAPI.getLang(false).dispatchMessage(sender, (PermissionsHandler.hasPermission(sender, "fakecreative.permissions") ? "&a[\u2714]" : "&c[\u2718]") + " FakeCreative.Permissions");
+			LanguageAPI.getLang(false).dispatchMessage(sender, (PermissionsHandler.hasPermission(sender, "fakecreative.purge") ? "&a[\u2714]" : "&c[\u2718]") + " FakeCreative.Purge");
+			LanguageAPI.getLang(false).dispatchMessage(sender, (PermissionsHandler.hasPermission(sender, "fakecreative.preferences") ? "&a[\u2714]" : "&c[\u2718]") + " FakeCreative.Preferences");
 			LanguageAPI.getLang(false).dispatchMessage(sender, (PermissionsHandler.hasPermission(sender, "fakecreative.mode.creative") ? "&a[\u2714]" : "&c[\u2718]") + " FakeCreative.Mode.Creative");
 			LanguageAPI.getLang(false).dispatchMessage(sender, (PermissionsHandler.hasPermission(sender, "fakecreative.mode.survival") ? "&a[\u2714]" : "&c[\u2718]") + " FakeCreative.Mode.Survival");
 			LanguageAPI.getLang(false).dispatchMessage(sender, (PermissionsHandler.hasPermission(sender, "fakecreative.mode.adventure") ? "&a[\u2714]" : "&c[\u2718]") + " FakeCreative.Mode.Adventure");
@@ -230,7 +232,7 @@ public class ChatExecutor implements CommandExecutor {
 			LanguageAPI.getLang(false).sendLangMessage("commands.database.purgeConfirm", sender, placeHolders);
 			SchedulerUtils.runLater(100L, () -> {
 				if (this.confirmationRequests.get(data + sender.getName()) != null && this.confirmationRequests.get(data + sender.getName()).equals(true)) {
-					LanguageAPI.getLang(false).sendLangMessage("commands.database.purgeTimeOut", sender);
+					LanguageAPI.getLang(false).sendLangMessage("commands.database.purgeTimeout", sender);
 					this.confirmationRequests.remove(data + sender.getName());
 				} 
 			});

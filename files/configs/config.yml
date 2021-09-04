@@ -31,20 +31,21 @@ Permissions:
   Preferences-OP: true
   Commands-OP: false
 
+# These preferences are limited to creative mode and will affect all players if they do not have any per-user preferences set.
 Preferences:
-  allow-flight: true # if the creative player can fly.
-  fly-speed: 1.0 # the creative flight speed.
-  break-speed: 4.0 # total number of ticks to wait before allowing the player to break the next block. Tweaking this changes the speed at which you can destroy items (via left-click) in creative.
-  food-level: 20 # food level of a creative player.
-  health: 20 # health points of a player relative to heart-scale.
-  heart-scale: 1.0 # number of hearts of a creative player.
-  allow-hunger: false # if the player should use their hunger bar while in creative, setting to false maintains the defined food-level until creative is exited.
-  allow-burn: false # if the player should catch fire. If you have invulnerable set to true and you set this to false it essentially prevents a very lengthy fire animation on the screen. (Prevents the annoying animation when using a notch apple or fire resistance potion and jumping into the lava.)
-  unbreakable-items: true # if items should take durability damage in creative.
-  block-drops: false # if blocks should drop when breaking blocks.
-  sword-block: true # if sword items should be BLOCKED from breaking blocks.
-  auto-restore: true # if creative mode should automatically be restored on server restart or HARD reload... This will also restore the inventory if the player quits the server while in creative.
-  invulnerable: true # if the creative player is damagable.
-  invulnerable-delay: 5 # how long the player should be invulnerable after EXITING creative. (in seconds)
-  store-inventory: true # acts like Multiverse-Inventories so that once you enter creative your items are cleared and once you exit creative your items get restored.
-  destroy-pickups: true # if the player should have any items they attempt to pickup deleted automatically when in creative (if their inventory is full!).
+  Allow-Flight: true
+  Fly-Speed: 1.0
+  Break-Speed: 4.0
+  Food-Level: 20
+  Health: 20
+  Heart-Scale: 1.0
+  Allow-Hunger: false
+  Allow-Burn: false
+  Unbreakable-Items: true
+  Block-Drops: false
+  Sword-Block: true
+  Auto-Restore: true
+  Invulnerable: true
+  Invulnerable-Delay: 5
+  Store-Inventory: true
+  Destroy-Pickups: true
