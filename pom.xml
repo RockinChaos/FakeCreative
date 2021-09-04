@@ -128,6 +128,11 @@
 			<id>placeholderapi</id>
 			<url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
 		</repository>
+		<!--bStats Repository-->
+		<repository>
+			<id>CodeMC</id>
+			<url>https://repo.codemc.org/repository/maven-public</url>
+		</repository>
 		<!--SkinsRestorer Repository-->
 		<repository>
 			<id>codemc-snapshots</id>
