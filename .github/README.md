@@ -1,7 +1,7 @@
 [ci]: http://ci.craftationgaming.com/job/FakeCreative/
 [ciImg]: http://ci.craftationgaming.com/buildStatus/icon?job=FakeCreative
 
-[releaseImg]: https://img.shields.io/github/release/RockinChaos/FakeCreative.svg?label=github%20release
+[releaseImg]: https://img.shields.io/github/release/RockinChaos/FakeCreative.svg?label=spigot%20release
 [release]: https://github.com/RockinChaos/FakeCreative/releases/latest
 
 [APIversionImg]: https://img.shields.io/nexus/craftationgaming/me.RockinChaos/fakecreative?server=https%3A%2F%2Frepo.craftationgaming.com&label=API%20Version
