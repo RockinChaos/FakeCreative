@@ -258,7 +258,7 @@ public class Creative {
 				userClone.setItemMeta(userMeta);
 			}
 			if (activePickItem.contains(PlayerHandler.getPlayerID(player))) {
-				if (player.getInventory().getItem(8) != null && player.getInventory().getItem(8).getType() != Material.AIR) {
+				if (player.getInventory().getItem(8) != null && player.getInventory().getItem(8).getType() != Material.AIR && !player.getInventory().getItem(8).isSimilar(pickItem)) {
 					ItemStack drop = player.getInventory().getItem(8).clone();
 					player.getInventory().setItem(8, new ItemStack(Material.AIR));
 					player.getInventory().setItem(8, pickItem);

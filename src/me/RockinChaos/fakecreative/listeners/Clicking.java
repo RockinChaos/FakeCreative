@@ -47,7 +47,7 @@ public class Clicking implements Listener {
 		final Inventory inventory = ((!PlayerHandler.isCraftingInv(event.getView()) && event.getRawSlot() >= event.getView().getTopInventory().getSize()) ? event.getView().getBottomInventory() : ((!PlayerHandler.isCraftingInv(event.getView()) ? event.getView().getTopInventory() : event.getView().getBottomInventory())));
 		if (event.getClick() == ClickType.MIDDLE && PlayerHandler.isCreativeMode(player, true) && inventory != null && ((Menu.getCreator().isOpen(player)
 				&& inventory != player.getOpenInventory().getTopInventory()) || !Menu.getCreator().isOpen(player))) {
-			if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR && !PlayerHandler.isCreativeItem(inventory.getItem(slot))) {
+			if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR && !PlayerHandler.isCreativeItem(event.getCurrentItem())) {
 				final ItemStack item = event.getCurrentItem().clone();
 				item.setAmount(item.getMaxStackSize());
 				player.setItemOnCursor(item);
