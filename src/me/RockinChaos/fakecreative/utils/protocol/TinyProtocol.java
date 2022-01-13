@@ -28,6 +28,7 @@ import io.netty.channel.ChannelPromise;
 import me.RockinChaos.fakecreative.utils.ReflectionUtils;
 import me.RockinChaos.fakecreative.utils.ReflectionUtils.FieldAccessor;
 import me.RockinChaos.fakecreative.utils.ReflectionUtils.MethodInvoker;
+import me.RockinChaos.fakecreative.utils.ReflectionUtils.MinecraftField;
 import me.RockinChaos.fakecreative.utils.SchedulerUtils;
 import me.RockinChaos.fakecreative.utils.ServerUtils;
 import me.RockinChaos.fakecreative.utils.protocol.packet.PacketContainer;
@@ -66,8 +67,8 @@ public abstract class TinyProtocol {
 	private final AtomicInteger ID = new AtomicInteger(0);
 
 	private final MethodInvoker getPlayerHandle = ReflectionUtils.getMethod("{obc}.entity.CraftPlayer", "getHandle");
-	private final FieldAccessor<Object> getConnection = ReflectionUtils.getField(ReflectionUtils.getMinecraftClass("EntityPlayer").getCanonicalName(), (ReflectionUtils.remapped() ? "b" : "playerConnection"), Object.class);
-	private final FieldAccessor<Object> getManager = ReflectionUtils.getField(ReflectionUtils.getMinecraftClass("PlayerConnection").getCanonicalName(), (ReflectionUtils.remapped() ? "a" : "networkManager"), Object.class);
+	private final FieldAccessor<Object> getConnection = ReflectionUtils.getField(ReflectionUtils.getMinecraftClass("EntityPlayer").getCanonicalName(), (MinecraftField.PlayerConnection.getField(ReflectionUtils.getMinecraftClass("EntityPlayer"))), Object.class);
+	private final FieldAccessor<Object> getManager = ReflectionUtils.getField(ReflectionUtils.getMinecraftClass("PlayerConnection").getCanonicalName(), (MinecraftField.NetworkManager.getField(ReflectionUtils.getMinecraftClass("PlayerConnection"))), Object.class);
 	private final FieldAccessor<Channel> getChannel = ReflectionUtils.getField(ReflectionUtils.getMinecraftClass("NetworkManager").getCanonicalName(), Channel.class, 0);
 
 	private final Class<Object> minecraftServerClass = ReflectionUtils.getUntypedClass(ReflectionUtils.getMinecraftClass("MinecraftServer").getCanonicalName());
@@ -200,6 +201,7 @@ public abstract class TinyProtocol {
 				this.serverChannels.add(serverChannel);
 				serverChannel.pipeline().addFirst(this.serverChannelHandler);
 				looking = false;
+				break;
 			}
 		}
 	}
