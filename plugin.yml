@@ -5,7 +5,7 @@ author: RockinChaos
 load: POSTWORLD
 api-version: 1.13
 description: A creative mode emulation.
-website: https://www.spigotmc.org/resources/fakecreative/
+website: https://www.spigotmc.org/resources/fakecreative.95959/
 softdepend: [BetterNick, PlaceholderAPI, ProtocolLib, SkinsRestorer]
 
 permissions:

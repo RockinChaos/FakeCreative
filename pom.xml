@@ -10,7 +10,7 @@
 	<name>FakeCreative</name>
 	<version>1.0.1-SNAPSHOT</version>
 	<description>A creative gamemode plugin.</description>
-	<url>https://www.spigotmc.org/resources/fakecreative/</url>
+	<url>https://www.spigotmc.org/resources/fakecreative.95959/</url>
 	
 	<build>
 		<sourceDirectory>${project.basedir}</sourceDirectory>
