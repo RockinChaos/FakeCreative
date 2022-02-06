@@ -119,7 +119,16 @@ public class Creative {
 			if (ServerUtils.hasSpecificUpdate("1_9")) {
 				argsPlayer.setInvulnerable(playerObject.getStats().god());
 			}
-			if (!refresh) { argsPlayer.setHealth(playerObject.getStats().health()); }
+			if (!refresh) { 
+				try {
+					argsPlayer.setHealth(playerObject.getStats().health()); 
+				} catch (IllegalArgumentException e) {
+					LegacyAPI.setMaxHealth(argsPlayer, playerObject.getStats().health());
+					SchedulerUtils.run(() -> { 
+						argsPlayer.setHealth(playerObject.getStats().health()); 
+					});
+				}
+			}
 			SchedulerUtils.run(() -> { 
 				if (!refresh) { 
 					if (ServerUtils.hasSpecificUpdate("1_9")) {
