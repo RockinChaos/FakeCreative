@@ -25,6 +25,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 
 import me.RockinChaos.fakecreative.FakeCreative;
+import me.RockinChaos.fakecreative.utils.ServerUtils;
 
 public class ProtocolAPI {
 	
@@ -37,8 +38,20 @@ public class ProtocolAPI {
     */
 	public static void handleProtocols() {
 		if (protocolManager == null) { protocolManager = ProtocolLibrary.getProtocolManager(); }
-		protocolManager.addPacketListener(new PacketAdapter(FakeCreative.getInstance(), ListenerPriority.LOWEST, PacketType.Play.Client.AUTO_RECIPE, PacketType.Play.Client.CLOSE_WINDOW, 
-				PacketType.Play.Client.PICK_ITEM) {
+		
+		PacketType[] packetType = null;
+		if (ServerUtils.hasSpecificUpdate("1_13")) {
+			packetType = new PacketType[3];
+			packetType[0] = PacketType.Play.Client.CLOSE_WINDOW;
+			packetType[1] = PacketType.Play.Client.WINDOW_CLICK;
+			packetType[2] = PacketType.Play.Client.AUTO_RECIPE;
+		} else {
+			packetType = new PacketType[2];
+			packetType[1] = PacketType.Play.Client.WINDOW_CLICK;
+			packetType[0] = PacketType.Play.Client.CLOSE_WINDOW;
+		}
+		
+		protocolManager.addPacketListener(new PacketAdapter(FakeCreative.getInstance(), ListenerPriority.LOWEST, packetType) {
   		   /**
   		    * Handles incomming client packets.
   		    * 
@@ -46,9 +59,9 @@ public class ProtocolAPI {
   		    */
 		    @Override
 		    public void onPacketReceiving(final PacketEvent event) {
-		    	String packetName = (event.getPacket() != null && event.getPacketType() == PacketType.Play.Client.AUTO_RECIPE ? "PacketPlayInAutoRecipe" : 
+		    	String packetName = (event.getPacket() != null && ServerUtils.hasSpecificUpdate("1_13") && event.getPacketType() == PacketType.Play.Client.AUTO_RECIPE ? "PacketPlayInAutoRecipe" : 
 		    						(event.getPacket() != null && event.getPacketType() == PacketType.Play.Client.CLOSE_WINDOW ? "PacketPlayInCloseWindow" : 
-		    						(event.getPacket() != null && event.getPacketType() == PacketType.Play.Client.PICK_ITEM ? "PacketPlayInPickItem" : null)));
+		    						(event.getPacket() != null && event.getPacketType() == PacketType.Play.Client.WINDOW_CLICK ? "PacketPlayInWindowClick" : null)));
 		        if (me.RockinChaos.fakecreative.utils.protocol.ProtocolManager.manageEvents(event.getPlayer(), packetName, event.getPacket())) {
 		        	event.setCancelled(true);
 		        }
