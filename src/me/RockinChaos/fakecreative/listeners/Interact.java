@@ -105,7 +105,10 @@ public class Interact implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	private void onPickItem(final PlayerInteractEvent event) {
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getItem() != null && PlayerHandler.isCreativeMode((Player) event.getPlayer(), true) && PlayerHandler.isCreativeItem(event.getItem(), "pickItem")) {
-			final Block block = PlayerHandler.getTargetBlock(event.getPlayer(), 6);
+			Block block = event.getClickedBlock();
+			if (block == null || block.getType().name().toUpperCase().contains("LAVA") || block.getType().name().toUpperCase().contains("WATER")) {
+				block = PlayerHandler.getTargetBlock(event.getPlayer(), 6);
+			}
 			if (block != null && block.getType() != Material.AIR) {
 				ItemStack item = null;
 				if (ServerUtils.hasSpecificUpdate("1_13")) { 
@@ -113,10 +116,6 @@ public class Interact implements Listener {
 				} else {
 					item = LegacyAPI.newItemStack(block.getType(), 1, LegacyAPI.getBlockData(block));
 				}
-				try {
-					item.setData(block.getState().getData());
-				} catch (Exception e) { }
-				
 				try {
 					if (StringUtils.containsIgnoreCase(item.getType().name(), "SHULKER")) {
 						final BlockStateMeta tempMeta = (BlockStateMeta) item.getItemMeta();
