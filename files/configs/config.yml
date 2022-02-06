@@ -28,7 +28,7 @@ Database:
 # These permissions if enabled, determine whether the permission(s) is/are applied to certain players.
 Permissions:
   Preferences: true
-  Preferences-OP: true
+  Preferences-OP: false
   Commands-OP: false
 
 # These preferences are limited to creative mode and will affect all players if they do not have any per-user preferences set.
