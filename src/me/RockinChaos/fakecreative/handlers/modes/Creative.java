@@ -112,8 +112,8 @@ public class Creative {
 			try { maxHealth = (ServerUtils.hasSpecificUpdate("1_9") ? argsPlayer.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH).getBaseValue() : (double)argsPlayer.getClass().getMethod("getMaxHealth", double.class).invoke(argsPlayer)); } catch (Exception e) { }
 			if (!refresh && !restore) { 
 				creativePlayers.add(new PlayerObject(PlayerHandler.getPlayerID(argsPlayer), health, maxHealth, argsPlayer.getFoodLevel(), argsPlayer.getFireTicks())); 
-				get(argsPlayer).setInventory64(saveInventory(argsPlayer));
 			}
+			get(argsPlayer).setInventory64(saveInventory(argsPlayer));
 			final PlayerObject playerObject = get(argsPlayer);
 			setFlight(argsPlayer, true);
 			if (ServerUtils.hasSpecificUpdate("1_9")) {
