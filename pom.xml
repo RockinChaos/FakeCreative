@@ -8,7 +8,7 @@
 	<groupId>me.RockinChaos.fakecreative</groupId>
 	<artifactId>FakeCreative</artifactId>
 	<name>FakeCreative</name>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.1-RELEASE</version>
 	<description>A creative gamemode plugin.</description>
 	<url>https://www.spigotmc.org/resources/fakecreative.95959/</url>
 	
