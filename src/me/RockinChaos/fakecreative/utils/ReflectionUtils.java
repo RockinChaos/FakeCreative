@@ -484,7 +484,7 @@ public final class ReflectionUtils {
 		set("set", "a"),
 		setInt("setInt", "a"),
 		getPage("a", "a"),
-		getTag("getTag", "s"),
+		getTag("getTag", (ServerUtils.hasSpecificUpdate("1_19") ? "v" : ServerUtils.hasPreciseUpdate("1_18_2") ? "t" : "s")),
 		setTag("setTag", "c"),
 		setString("setString", "a"),
 		getString("getString", "l"),
@@ -516,7 +516,7 @@ public final class ReflectionUtils {
 	*/
 	public enum MinecraftField {
 		PlayerConnection("playerConnection", "b"),
-		NetworkManager("networkManager", "a");
+		NetworkManager("networkManager", (ServerUtils.hasSpecificUpdate("1_19") ? "b" : "a"));
 		public String original;
 		public String remapped;
 		private MinecraftField(final String original, final String remapped) {
