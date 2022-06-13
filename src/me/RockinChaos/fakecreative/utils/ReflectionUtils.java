@@ -557,6 +557,7 @@ public final class ReflectionUtils {
 		IChatBaseComponent(".network.chat"),
 		IChatBaseComponent$ChatSerializer(".network.chat"),
 		PacketPlayOutChat(".network.protocol.game"),
+		ClientboundSystemChatPacket(".network.protocol.game"),
 		ChatMessageType(".network.chat");
 		public String tag;
 		private MinecraftTags(final String tag) {
