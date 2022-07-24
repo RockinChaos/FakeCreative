@@ -41,9 +41,8 @@ public class SQL {
     */
 	public SQL() {
 		Database.kill(); {
-			this.createTables(); {
-				this.loadData();
-			}
+			this.createTables();
+			this.loadData();
 			ServerUtils.logDebug("{SQL} Database Connected."); 
 		}
 	}

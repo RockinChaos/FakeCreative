@@ -119,7 +119,8 @@ public final class ReflectionUtils {
 	* @return The field accessor.
 	*/
 	public static <T> FieldAccessor<T> getField(final String className, final String name, final Class<T> fieldType) {
-		return getField(getClass(className), name, fieldType, 0);
+		FieldAccessor<T> fail = getField(getClass(className), name, fieldType, 0);
+		return fail;
 	}
 
    /**
@@ -385,7 +386,7 @@ public final class ReflectionUtils {
     * @param canonicalName - the canonical name.
 	* @return The class.
 	*/
-	private static Class<?> getCanonicalClass(final String canonicalName) {
+	public static Class<?> getCanonicalClass(final String canonicalName) {
 		try {
 			return Class.forName(canonicalName);
 		} catch (ClassNotFoundException e) {
@@ -474,7 +475,6 @@ public final class ReflectionUtils {
 		return output.toString();
 	}
 	
-	
    /**
 	* Searchable methods that no longer require NBT Reflections.
 	* 
@@ -496,7 +496,6 @@ public final class ReflectionUtils {
 			this.original = original;
 			this.remapped = remapped;
 		}
-		
 		public String getMethod(final Object objClass, Class<?>...arguments) {
 			try {
 				Class<?> canonicalClass = (!(objClass instanceof Class<?>) ? objClass.getClass() : (Class<?>)objClass);
