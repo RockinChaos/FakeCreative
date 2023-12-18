@@ -1,258 +1,202 @@
 <!-- FakeCreative build file -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	
-	<packaging>jar</packaging>
-	<groupId>me.RockinChaos.fakecreative</groupId>
-	<artifactId>FakeCreative</artifactId>
-	<name>FakeCreative</name>
-	<version>1.0.3-SNAPSHOT</version>
-	<description>A creative gamemode plugin.</description>
-	<url>https://www.spigotmc.org/resources/fakecreative.95959/</url>
-	
-	<build>
-		<sourceDirectory>${project.basedir}</sourceDirectory>
-		
-		<resources>
-		
-			<resource>
-				<targetPath>.</targetPath>
-				<filtering>true</filtering>
-				<directory>.</directory>
-				<includes>
-					<include>*.yml</include>
-					<include>LICENSE</include>
-				</includes>
-			</resource>
-			
-			<resource>
-				<targetPath>./files</targetPath>
-				<filtering>true</filtering>
-				<directory>./files</directory>
-				<includes>
-					<include>**/*.yml</include>
-					<include>**/*.jpg</include>
-				</includes>
-			</resource>
-			
-		</resources>
-		
-		<plugins>
-			
-			<plugin>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.8.2</version>
-				<configuration>
-					<altDeploymentRepository>internal.repo::default::file://${env.JENKINS_HOME}/maven-public</altDeploymentRepository>
-				</configuration>
-			</plugin>
-		
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
-				<configuration>
-					<encoding>Cp1252</encoding>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-				</configuration>
-			</plugin>
-			
-			<plugin>
-				<groupId>com.github.github</groupId>
-				<artifactId>site-maven-plugin</artifactId>
-				<version>0.11</version>
-				<configuration>
-					<message>Published artifacts me.RockinChaos.fakecreative.FakeCreative:${project.version}</message>
-					<outputDirectory>${env.JENKINS_HOME}/maven-public</outputDirectory>
-					<branch>refs/heads/maven-public</branch>
-					<includes>
-						<include>**/*</include>
-					</includes>
-					<repositoryName>Repository</repositoryName>
-					<repositoryOwner>RockinChaos</repositoryOwner>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>site</goal>
-						</goals>
-						<phase>deploy</phase>
-					</execution>
-				</executions>
-			</plugin>
-			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.2.1</version>
-				<configuration>
-					<finalName>FakeCreative-${project.version}-b${env.BUILD_NUMBER}</finalName>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<filters>
-								<filter>
-									<artifact>*</artifact>
-									<excludes>
-										<exclude>META-INF/*.SF</exclude>
-										<exclude>META-INF/*.RSA</exclude>
-										<exclude>META-INF/*.INF</exclude>
-										<exclude>META-INF/*.MF</exclude>
-									</excludes>
-								</filter>
-							</filters>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			
-		</plugins>
-		
-	</build>
-	
-	<repositories>
-		<!--Spigot Repository-->
-		<repository>
-			<id>spigot-repo</id>
-			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-		</repository>
-		<!--PlaceholderAPI Repository-->
-		<repository>
-			<id>placeholderapi</id>
-			<url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-		</repository>
-		<!--Mojang Repository-->
-		<repository>
-			<id>mojang</id>
-			<url>https://libraries.minecraft.net/</url>
-		</repository>
-		<!--bStats Repository-->
-		<repository>
-			<id>CodeMC</id>
-			<url>https://repo.codemc.org/repository/maven-public</url>
-		</repository>
-		<!--SkinsRestorer Repository-->
-		<repository>
-			<id>codemc-snapshots</id>
-			<url>https://repo.codemc.org/repository/maven-snapshots/</url>
-		</repository>
-		<!--ProtocolLib Repository-->
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <packaging>jar</packaging>
+    <groupId>me.RockinChaos.fakecreative</groupId>
+    <artifactId>FakeCreative</artifactId>
+    <name>FakeCreative</name>
+    <description>A creative gamemode plugin.</description>
+    <url>https://www.spigotmc.org/resources/fakecreative.95959/</url>
+
+    <version>1.0.3-SNAPSHOT</version>
+
+    <properties>
+        <chaoscore.version>1.0.4-SNAPSHOT</chaoscore.version>
+        <spigot.version>1.20.4-R0.1-SNAPSHOT</spigot.version>
+
+        <build.version>${env.BUILD_NUMBER}</build.version>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.8</java.version>
+        <github.global.server>github</github.global.server>
+    </properties>
+
+    <build>
+        <sourceDirectory>${project.basedir}</sourceDirectory>
+
+        <resources>
+
+            <resource>
+                <targetPath>.</targetPath>
+                <filtering>true</filtering>
+                <directory>.</directory>
+                <includes>
+                    <include>LICENSE</include>
+                </includes>
+            </resource>
+
+            <resource>
+                <targetPath>.</targetPath>
+                <filtering>true</filtering>
+                <directory>./src/main/resources</directory>
+                <includes>
+                    <include>**/*.yml</include>
+                </includes>
+            </resource>
+
+        </resources>
+
+        <plugins>
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <encoding>Cp1252</encoding>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <configuration>
+                    <finalName>FakeCreative-${project.version}-b${env.BUILD_NUMBER}</finalName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <filters>
+                                <filter>
+                                    <artifact>*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>META-INF/*.INF</exclude>
+                                        <exclude>META-INF/*.MF</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+
+    </build>
+
+    <repositories>
+        <!--Spigot Repository-->
         <repository>
-            <id>dmulloy2-repo</id>
-            <url>https://repo.dmulloy2.net/repository/public/</url>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
-		<!--CraftationGaming Repository-->
-		<repository>
-			<id>CraftationGaming</id>
-			<url>https://raw.githubusercontent.com/RockinChaos/repository/maven-public/</url>
-		</repository>
-	</repositories>
-	
-	<dependencies>
-		<!--Netty API-->
-		<dependency>
-			<groupId>io.netty</groupId>
-			<artifactId>netty-all</artifactId>
-			<version>4.1.65.Final</version>
-			<scope>provided</scope>
-		</dependency>
-		<!--Spigot API-->
-		<dependency>
-			<groupId>org.spigotmc</groupId>
-			<artifactId>spigot-api</artifactId>
-			<version>1.19-R0.1-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-		<!--PlaceholderAPI API-->
-		<dependency>
-			<groupId>me.clip</groupId>
-			<artifactId>placeholderapi</artifactId>
-			<version>2.10.9</version>
-			<scope>provided</scope>
-		</dependency>
-		<!--SkinsRestorer API-->
-		<dependency>
-			<groupId>net.skinsrestorer</groupId>
-			<artifactId>skinsrestorer</artifactId>
-			<version>14.1.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<!--ProtocolLib API-->
+        <!--Mojang Repository-->
+        <repository>
+            <id>mojang</id>
+            <url>https://libraries.minecraft.net/</url>
+        </repository>
+        <!--bStats Repository-->
+        <repository>
+            <id>CodeMC</id>
+            <url>https://repo.codemc.org/repository/maven-public</url>
+        </repository>
+        <!--CraftationGaming Repository-->
+        <repository>
+            <id>CraftationGaming</id>
+            <url>https://labs.craftationgaming.com/api/v4/projects/3/packages/maven</url>
+        </repository>
+        <repository>
+            <id>CraftationGaming-snapshots</id>
+            <name>CraftationGaming Repository</name>
+            <url>https://repo.craftationgaming.com/snapshots</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!--ChaosCore Integration-->
         <dependency>
-            <groupId>com.comphenix.protocol</groupId>
-            <artifactId>ProtocolLib</artifactId>
-            <version>4.6.0</version>
-       	    <scope>provided</scope>
+            <groupId>me.RockinChaos.core</groupId>
+            <artifactId>ChaosCore</artifactId>
+            <version>${chaoscore.version}</version>
+            <scope>compile</scope>
         </dependency>
-		<!--Mojang AuthLib API-->
-		<dependency>
-			<groupId>com.mojang</groupId>
-			<artifactId>authlib</artifactId>
-			<version>1.5.21</version>
-			<scope>provided</scope>
-		</dependency>
-		<!--bStats API-->
-		<dependency>
-			<groupId>org.bstats</groupId>
-			<artifactId>bstats-bukkit</artifactId>
-			<version>1.4</version>
-			<scope>provided</scope>
-		</dependency>
-		<!--Google API-->
-		<dependency>
-			<groupId>com.googlecode.json-simple</groupId>
-			<artifactId>json-simple</artifactId>
-			<version>1.1.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<!--BetterNick API-->
-		<dependency>
-			<groupId>de.domedd.betternick</groupId>
-			<artifactId>BetterNick</artifactId>
-			<version>7.4-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-	</dependencies>
-	
-	<scm>
-		<url>https://github.com/RockinChaos/FakeCreative</url>
-		<connection>scm:git:ssh://git@github.com/RockinChaos/FakeCreative</connection>
-		<developerConnection>scm:git:ssh://git@github.com/RockinChaos/FakeCreative.git</developerConnection>
-	</scm>
-	
-	<organization>
-		<name>FakeCreative</name>
-		<url>https://github.com/RockinChaos/FakeCreative</url>
-	</organization>
-	
-	<issueManagement>
-		<url>https://github.com/RockinChaos/FakeCreative/issues</url>
-		<system>Github</system>
-	</issueManagement>
-	
-	<ciManagement>
-		<system>Jenkins</system>
-		<url>https://ci.craftationgaming.com/job/FakeCreative/</url>
-	</ciManagement>
-	
-	<distributionManagement>
-		<repository>
-			<id>internal.repo</id>
-			<name>staging-repository</name>
-			<url>file://${env.JENKINS_HOME}/maven-public</url>
-		</repository>
-	</distributionManagement>
-	
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
-		<github.global.server>github</github.global.server>
-	</properties>
+        <!--Spigot API-->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>${spigot.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--Netty API-->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.65.Final</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--Mojang AuthLib API-->
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>authlib</artifactId>
+            <version>${authlib.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--bStats API-->
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>1.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--Google API-->
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>1.1.1</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <scm>
+        <url>https://github.com/RockinChaos/FakeCreative</url>
+        <connection>scm:git:ssh://git@github.com/RockinChaos/FakeCreative</connection>
+        <developerConnection>scm:git:ssh://git@github.com/RockinChaos/FakeCreative.git</developerConnection>
+    </scm>
+
+    <organization>
+        <name>FakeCreative</name>
+        <url>https://github.com/RockinChaos/FakeCreative</url>
+    </organization>
+
+    <issueManagement>
+        <url>https://github.com/RockinChaos/FakeCreative/issues</url>
+        <system>Github</system>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Jenkins</system>
+        <url>https://ci.craftationgaming.com/job/FakeCreative/</url>
+    </ciManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>CraftationGaming</id>
+            <url>https://repo.craftationgaming.com/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>CraftationGaming</id>
+            <url>https://repo.craftationgaming.com/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
