@@ -48,4 +48,9 @@ Temporary Items
 *.class
 *.prefs
 /bin/
+.idea
+*.iml
+/target/
+/out/
+.gitignore
 .gitattributes
