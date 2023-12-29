@@ -29,7 +29,6 @@ import me.RockinChaos.core.utils.api.PasteAPI;
 import me.RockinChaos.fakecreative.modes.creative.Creative;
 import me.RockinChaos.fakecreative.utils.sql.DataObject;
 import me.RockinChaos.fakecreative.utils.sql.DataObject.Table;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -37,12 +36,13 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ChatExecutor implements CommandExecutor {
 
@@ -187,29 +187,11 @@ public class ChatExecutor implements CommandExecutor {
      */
     private void dump(final CommandSender sender) {
         try {
-            final String pluginVersion = "FakeCreative v" + FakeCreative.getCore().getPlugin().getDescription().getVersion() + " by RockinChaos";
-            final String serverVersion = Bukkit.getServer().getClass().getPackage().getName();
-            final String config = Files.asCharSource(new File(FakeCreative.getCore().getPlugin().getDataFolder() + "/config.yml"), StandardCharsets.UTF_8).read();
-            final String lang = Files.asCharSource(new File(FakeCreative.getCore().getPlugin().getDataFolder() + "/" + FakeCreative.getCore().getLang().getFile()), StandardCharsets.UTF_8).read();
-            final String latest = Files.asCharSource(new File("logs/latest.log"), StandardCharsets.UTF_8).read();
-            final StringBuilder plugins = new StringBuilder();
-            for (Plugin plugin : FakeCreative.getCore().getPlugin().getServer().getPluginManager().getPlugins()) {
-                plugins.append(!StringUtils.isEmpty(plugins) ? ", " : "").append(plugin.getName());
-            }
-            final PasteAPI pasteURI = new PasteAPI(
-                    "# +---------------------------------------------------------------------------------------------+ #\n" +
-                            "# | Plugin Version: " + pluginVersion + "\n" +
-                            "# | Server Version: " + serverVersion + "\n" +
-                            "# | Plugins: " + plugins + "\n" +
-                            "# +---------------------------------------------------------------------------------------------+ #\n" +
-                            "# +-------------------------------------- CONFIG.YML FILE --------------------------------------+ #\n" +
-                            "# +---------------------------------------------------------------------------------------------+ #\n" + config +
-                            " \n\n\n\n\n# +---------------------------------------------------------------------------------------------+ #\n" +
-                            "# +---------------------------------- LANG.YML FILE (LANGUAGE) ---------------------------------+ #\n" +
-                            "# +---------------------------------------------------------------------------------------------+ #\n" + lang +
-                            " \n\n\n\n\n# +---------------------------------------------------------------------------------------------+ #\n" +
-                            "# +------------------------------------ SERVER LOG (LATEST) ------------------------------------+ #\n" +
-                            "# +---------------------------------------------------------------------------------------------+ #\n" + latest);
+            final Map<String, String> files = new HashMap<>();
+            files.put("latest.log", Files.asCharSource(new File("logs/latest.log"), StandardCharsets.UTF_8).read());
+            files.put("config.yml", Files.asCharSource(new File(FakeCreative.getCore().getPlugin().getDataFolder() + "/config.yml"), StandardCharsets.UTF_8).read());
+            files.put("lang.yml", Files.asCharSource(new File(FakeCreative.getCore().getPlugin().getDataFolder() + "/" + FakeCreative.getCore().getLang().getFile()), StandardCharsets.UTF_8).read());
+            final PasteAPI pasteURI = new PasteAPI(sender, Collections.singletonList("ExploitFixer"), files);
             final String pasteURL = pasteURI.getPaste();
             ServerUtils.logInfo(sender.getName() + " has generated a debug paste at " + pasteURL);
             if (!(sender instanceof ConsoleCommandSender)) {
