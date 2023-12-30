@@ -113,16 +113,10 @@
             <id>CodeMC</id>
             <url>https://repo.codemc.org/repository/maven-public</url>
         </repository>
-        <!--CraftationGaming Repositories-->
+        <!--ChaosCore Repository-->
         <repository>
-            <id>CraftationGaming-releases</id>
-            <name>CraftationGaming Repository</name>
-            <url>https://repo.craftationgaming.com/releases</url>
-        </repository>
-        <repository>
-            <id>CraftationGaming-snapshots</id>
-            <name>CraftationGaming Repository</name>
-            <url>https://repo.craftationgaming.com/snapshots</url>
+            <id>CraftationGaming-chaos</id>
+            <url>https://repo.craftationgaming.com/chaos</url>
         </repository>
     </repositories>
 
@@ -195,11 +189,11 @@
     <distributionManagement>
         <repository>
             <id>CraftationGaming</id>
-            <url>https://repo.craftationgaming.com/releases</url>
+            <url>https://repo.craftationgaming.com/chaos</url>
         </repository>
         <snapshotRepository>
             <id>CraftationGaming</id>
-            <url>https://repo.craftationgaming.com/snapshots</url>
+            <url>https://repo.craftationgaming.com/chaos</url>
         </snapshotRepository>
     </distributionManagement>
 </project>
