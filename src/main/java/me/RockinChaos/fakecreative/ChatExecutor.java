@@ -29,6 +29,7 @@ import me.RockinChaos.core.utils.api.PasteAPI;
 import me.RockinChaos.fakecreative.modes.creative.Creative;
 import me.RockinChaos.fakecreative.utils.sql.DataObject;
 import me.RockinChaos.fakecreative.utils.sql.DataObject.Table;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -68,7 +69,7 @@ public class ChatExecutor implements CommandExecutor {
             FakeCreative.getCore().getLang().dispatchMessage(sender, "&6&l&m]----------------&6&l[&c FakeCreative &6&l]&6&l&m---------------[");
             FakeCreative.getCore().getLang().dispatchMessage(sender, ("&6FakeCreative v" + FakeCreative.getCore().getPlugin().getDescription().getVersion() + "&c by RockinChaos"), "&bThis should be the version submitted to the developer \n&bwhen submitting a bug or feature request.", "https://github.com/RockinChaos/FakeCreative/issues", ClickAction.OPEN_URL);
             FakeCreative.getCore().getLang().dispatchMessage(sender, "&6&l/FakeCreative Help &7- &cThis help menu.", "&aExecuting this command shows this help menu!", "/fakecreative help", ClickAction.SUGGEST_COMMAND);
-            FakeCreative.getCore().getLang().dispatchMessage(sender, "&a&l/FakeCreative Dump &7- &eGets a debug link for support.", "&aSends a pastebin link of their configuration files. \n&cThis should be sent to the plugin developer and NOT SHARED PUBLICLY.", "/fakecreative dump", ClickAction.SUGGEST_COMMAND);
+            FakeCreative.getCore().getLang().dispatchMessage(sender, "&6&l/FakeCreative Dump &7- &cGets a debug link for support.", "&aSends a pastebin link of their configuration files. \n&cThis should be sent to the plugin developer and NOT SHARED PUBLICLY.", "/fakecreative dump", ClickAction.SUGGEST_COMMAND);
             FakeCreative.getCore().getLang().dispatchMessage(sender, "&6&l/FakeCreative Reload &7- &cReloads the .yml files.", "&aFully reloads the plugin, fetching \n&aany changes made to the .yml files. \n\n&aBe sure to save changes made to your .yml files!", "/fakecreative reload", ClickAction.SUGGEST_COMMAND);
             FakeCreative.getCore().getLang().dispatchMessage(sender, "&6&l/FakeCreative Updates &7- &cChecks for plugin updates.", "&aChecks to see if there are any updates available for this plugin.", "/fakecreative updates", ClickAction.SUGGEST_COMMAND);
             FakeCreative.getCore().getLang().dispatchMessage(sender, "&6&l/FakeCreative Upgrade &7- &cUpdates to latest version.", "&aAttempts to Upgrade this plugin to the latest version. \n&aYou will need to restart the server for this process to complete.", "/fakecreative upgrade", ClickAction.SUGGEST_COMMAND);
@@ -146,10 +147,14 @@ public class ChatExecutor implements CommandExecutor {
             final Player argsPlayer = (args.length > 1 ? PlayerHandler.getPlayerString(args[1]) : null);
             PlayerHandler.setMode(sender, argsPlayer, GameMode.SPECTATOR, false, false);
         } else if (Execute.UPDATE.accept(sender, args, 0)) {
-            FakeCreative.getCore().getLang().sendLangMessage("commands.updates.checkRequest", sender);
-            SchedulerUtils.runAsync(() -> FakeCreative.getCore().getUpdater().checkUpdates(sender, false));
+            String[] placeHolders = FakeCreative.getCore().getLang().newString();
+            placeHolders[21] = sender.getName();
+            FakeCreative.getCore().getLang().sendLangMessage("commands.updates.checkRequest", Bukkit.getServer().getConsoleSender(), placeHolders);
+            SchedulerUtils.runAsync(() -> FakeCreative.getCore().getUpdater().checkUpdates(sender, true));
         } else if (Execute.UPGRADE.accept(sender, args, 0)) {
-            FakeCreative.getCore().getLang().sendLangMessage("commands.updates.updateRequest", sender);
+            String[] placeHolders = FakeCreative.getCore().getLang().newString();
+            placeHolders[21] = sender.getName();
+            FakeCreative.getCore().getLang().sendLangMessage("commands.updates.updateRequest", Bukkit.getServer().getConsoleSender(), placeHolders);
             SchedulerUtils.runAsync(() -> FakeCreative.getCore().getUpdater().forceUpdates(sender));
         } else if (executor == null) {
             FakeCreative.getCore().getLang().sendLangMessage("commands.default.unknownCommand", sender);
@@ -351,7 +356,7 @@ public class ChatExecutor implements CommandExecutor {
          * @param args - Passed command arguments.
          */
         public boolean acceptArgs(final String[] args) {
-            return StringUtils.splitIgnoreCase(this.command, args[0], ",");
+            return (args.length == 0 || StringUtils.splitIgnoreCase(this.command, args[0], ","));
         }
 
         /**

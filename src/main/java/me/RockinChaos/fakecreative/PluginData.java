@@ -97,6 +97,7 @@ public class PluginData {
         // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //
         FakeCreative.getCore().getConfiguration().reloadFiles(); // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //
         // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //
+        FakeCreative.getCore().getData().setCheckforUpdates(FakeCreative.getCore().getConfig("config.yml").getBoolean("General.CheckforUpdates"));
         FakeCreative.getCore().getData().setDebug(FakeCreative.getCore().getConfig("config.yml").getBoolean("General.Debugging"));
         FakeCreative.getCore().getData().setIgnoreErrors(FakeCreative.getCore().getConfig("config.yml").getBoolean("General.ignoreErrors"));
         FakeCreative.getCore().getData().setSQL(FakeCreative.getCore().getConfig("config.yml").getString("Database.MySQL") != null && FakeCreative.getCore().getConfig("config.yml").getBoolean("Database.MySQL"));
@@ -239,8 +240,7 @@ public class PluginData {
     }
 
     /**
-     * Harshly reloads the configuration files and re-registers events
-     * Usefully when reloading the plugin or deleting items.
+     * Harshly reloads the configuration files and re-registers events.
      *
      * @param silent - If any messages should be sent.
      */
