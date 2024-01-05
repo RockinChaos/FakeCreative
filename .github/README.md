@@ -55,4 +55,30 @@ Required Libraries when compiling (there are no required dependencies, only soft
 * SkinsRestorer (Latest Official)
 ```
 
+### Import with Maven
+-----
+If you are using FakeCreative's API, you first have to import it into your project.
+
+To import FakeCreative, simply add the following code to your pom.xml
+Replace {VERSION} with the version with the current release or snapshot version.
+This should look like `1.0.2-RELEASE` or `1.0.3-SNAPSHOT` as an example.
+```
+    <repositories>
+    <!--CraftationGaming Repository-->
+        <repository>
+            <id>CraftationGaming-chaos</id>
+            <url>https://repo.craftationgaming.com/chaos</url>
+        </repository>
+    </repositories>
+    <dependencies>
+    <!--FakeCreative API-->
+        <dependency>
+            <groupId>me.RockinChaos.fakecreative</groupId>
+            <artifactId>FakeCreative</artifactId>
+            <version>{VERSION}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+```
+
 ![](https://i.imgur.com/vFllc29.png)![](https://i.imgur.com/vFllc29.png)[<img src="https://i.imgur.com/WR5dVKN.png">](https://discord.gg/D5FnJ7C)[<img src="https://i.imgur.com/LJsmwSd.png">](http://ci.craftationgaming.com/)
