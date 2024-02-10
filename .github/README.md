@@ -1,5 +1,5 @@
-[ci]: http://ci.craftationgaming.com/job/FakeCreative/
-[ciImg]: http://ci.craftationgaming.com/buildStatus/icon?job=FakeCreative
+[ci]: https://jenkins.craftationgaming.com/job/FakeCreative/
+[ciImg]: https://jenkins.craftationgaming.com/buildStatus/icon?job=FakeCreative
 
 [releaseImg]: https://img.shields.io/github/release/RockinChaos/FakeCreative.svg?label=spigot%20release
 [release]: https://github.com/RockinChaos/FakeCreative/releases/latest
