@@ -20,8 +20,6 @@ package me.RockinChaos.fakecreative.utils.api;
 import me.RockinChaos.core.utils.ServerUtils;
 import me.RockinChaos.fakecreative.FakeCreative;
 import me.RockinChaos.fakecreative.listeners.Depletion;
-import me.RockinChaos.fakecreative.listeners.legacy.Legacy_Depletion;
-import me.RockinChaos.fakecreative.listeners.legacy.Legacy_Invulnerable;
 
 /**
  * Welcome to the magical land of make-believe.
@@ -39,7 +37,7 @@ public class LegacyAPI {
         if (ServerUtils.hasSpecificUpdate("1_14")) {
             FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Depletion(), FakeCreative.getCore().getPlugin());
         } else {
-            FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Legacy_Depletion(), FakeCreative.getCore().getPlugin());
+            FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new me.RockinChaos.fakecreative.listeners.legacy.Legacy_Depletion(), FakeCreative.getCore().getPlugin());
         }
     }
 
@@ -49,7 +47,7 @@ public class LegacyAPI {
      */
     public static void registerInvulnerable() {
         if (!ServerUtils.hasSpecificUpdate("1_9")) {
-            FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Legacy_Invulnerable(), FakeCreative.getCore().getPlugin());
+            FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new me.RockinChaos.fakecreative.listeners.legacy.Legacy_Invulnerable(), FakeCreative.getCore().getPlugin());
         }
     }
 }
