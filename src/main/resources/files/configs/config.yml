@@ -32,6 +32,12 @@ Permissions:
   Preferences-OP: false
   Commands-OP: false
 
+# These settings will take effect globally throughout the plugins' system.
+Settings:
+  Creative-Blacklist:
+    - BEDROCK
+    - BARRIER
+
 # These preferences are limited to creative mode and will affect all players if they do not have any per-user preferences set.
 Preferences:
   Allow-Flight: true
@@ -50,3 +56,5 @@ Preferences:
   Invulnerable-Delay: 5
   Store-Inventory: true
   Destroy-Pickups: true
+  Self-Drops: true
+  Item-Store: true

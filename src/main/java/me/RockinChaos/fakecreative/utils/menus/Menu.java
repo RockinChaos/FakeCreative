@@ -505,7 +505,6 @@ public class Menu {
         final Player player = (Player) sender;
         Interface pagedPane = new Interface(false, 3, exitButton, userGUIName, player);
         SchedulerUtils.runAsync(() -> {
-            pagedPane.addButton(new Button(fillerPaneGItem));
             pagedPane.addButton(new Button(ItemHandler.getItem("FEATHER", 1, Creative.get(player).getStats().allowFlight(), true, "&fAllow Flight", "&7*If you should be allowed to fly", "&7using double-space to ascend.",
                     "&7", "&a&lEnabled: &b&l" + Creative.get(player).getStats().allowFlight()),
                     event -> {
@@ -655,7 +654,6 @@ public class Menu {
                     .itemRight(ItemHandler.getItem("GOLD_NUGGET", 1, true, true, "&c&n&lTips", FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputType").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"), FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputExample").replace("%input_example%", "BOAT").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number")))
                     .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, "&bStart typing...", "&8Preview of what", "&8you have entered.'"))
                     .title("Heart Scale:"), 0));
-            pagedPane.addButton(new Button(fillerPaneGItem));
             pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "ROTTEN_FLESH" : "367"), 1, Creative.get(player).getStats().allowHunger(), true, "&fAllow Hunger", "&7*If your hunger should decrease.",
                     "&7", "&a&lEnabled: &b&l" + Creative.get(player).getStats().allowHunger()),
                     event -> {
@@ -687,7 +685,19 @@ public class Menu {
                         Creative.get(player).getStats().setPickups(player, !Creative.get(player).getStats().destroyPickups());
                         userMenu(player);
                     }));
-            pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "HOPPER" : "154"), 1, Creative.get(player).getStats().autoRestore(), true, "&fAuto Restore", "&7*If you exit the server or the server", "&7restarts while you are in creative, you", "&7will automatically be set back to", "&7creative upon entering the server.",
+            pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "HOPPER" : "154"), 1, Creative.get(player).getStats().selfDrops(), true, "&fSelf Drops", "&7*If items should be allowed to be", "&7dropped manually and on player death.",
+                    "&7", "&a&lEnabled: &b&l" + Creative.get(player).getStats().selfDrops()),
+                    event -> {
+                        Creative.get(player).getStats().setSelfDrops(player, !Creative.get(player).getStats().selfDrops());
+                        userMenu(player);
+                    }));
+            pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "CHEST_MINECART" : "342"), 1, Creative.get(player).getStats().itemStore(), true, "&fItem Store", "&7*If items should be allowed to be", "&7placed or stored in storage related", "&7items like chests and hoppers.",
+                    "&7", "&a&lEnabled: &b&l" + Creative.get(player).getStats().itemStore()),
+                    event -> {
+                        Creative.get(player).getStats().setItemStore(player, !Creative.get(player).getStats().itemStore());
+                        userMenu(player);
+                    }));
+            pagedPane.addButton(new Button(ItemHandler.getItem("BEACON", 1, Creative.get(player).getStats().autoRestore(), true, "&fAuto Restore", "&7*If you exit the server or the server", "&7restarts while you are in creative, you", "&7will automatically be set back to", "&7creative upon entering the server.",
                     "&7", "&a&lEnabled: &b&l" + Creative.get(player).getStats().autoRestore()),
                     event -> {
                         Creative.get(player).getStats().setRestore(player, !Creative.get(player).getStats().autoRestore());
@@ -748,7 +758,7 @@ public class Menu {
     private static boolean safeMaterial(final ItemStack item, final Inventory inventoryCheck) {
         inventoryCheck.setItem(0, item);
         final ItemStack itemStack = inventoryCheck.getItem(0);
-        return itemStack != null && !itemStack.getType().name().equalsIgnoreCase("AIR");
+        return itemStack != null && !itemStack.getType().name().equalsIgnoreCase("AIR") && !Creative.isBlackListed(item);
     }
 
     /**

@@ -60,6 +60,8 @@ public class PluginData {
         FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Blocks(), FakeCreative.getCore().getPlugin());
         FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Clicking(), FakeCreative.getCore().getPlugin());
         FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Crafting(), FakeCreative.getCore().getPlugin());
+        FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Drops(), FakeCreative.getCore().getPlugin());
+        FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Storable(), FakeCreative.getCore().getPlugin());
         FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Gamemode(), FakeCreative.getCore().getPlugin());
         FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Interact(), FakeCreative.getCore().getPlugin());
         FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Targeting(), FakeCreative.getCore().getPlugin());
@@ -171,7 +173,7 @@ public class PluginData {
                 for (final HashMap<String, String> sl1 : selectTable) {
                     DataObject dataObject = null;
                     if (tableEnum.equals(Table.ALLOW_FLIGHT) || tableEnum.equals(Table.ALLOW_HUNGER) || tableEnum.equals(Table.ALLOW_BURN) || tableEnum.equals(Table.UNBREAKABLE_ITEMS) || tableEnum.equals(Table.DROPS_BLOCK)
-                            || tableEnum.equals(Table.SWORD_BLOCK) || tableEnum.equals(Table.AUTO_RESTORE) || tableEnum.equals(Table.SET_GOD) || tableEnum.equals(Table.STORE_INVENTORY) || tableEnum.equals(Table.DESTROY_PICKUPS)) {
+                            || tableEnum.equals(Table.SWORD_BLOCK) || tableEnum.equals(Table.AUTO_RESTORE) || tableEnum.equals(Table.SET_GOD) || tableEnum.equals(Table.STORE_INVENTORY) || tableEnum.equals(Table.DESTROY_PICKUPS) || tableEnum.equals(Table.SELF_DROPS) || tableEnum.equals(Table.ITEM_STORE)) {
                         dataObject = new DataObject(tableEnum, sl1.get("Player_UUID"), Boolean.parseBoolean(sl1.get("Value")));
                     } else if (tableEnum.equals(Table.SPEED_FLIGHT) || tableEnum.equals(Table.SPEED_BREAK) || tableEnum.equals(Table.SET_SCALE)) {
                         dataObject = new DataObject(tableEnum, sl1.get("Player_UUID"), Double.parseDouble(sl1.get("Value")));
@@ -224,6 +226,8 @@ public class PluginData {
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "delay_god (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "store_inventory (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "destroy_pickups (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "self_drops (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "item_store (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "hotbar (`Player_UUID` varchar(1000), `Position` varchar(1000), `Inventory64` varchar(1000), `Time_Stamp` varchar(1000));");
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "playerstats (`Player_UUID` varchar(1000), `Health` varchar(1000), `Scale` varchar(1000), `Food` varchar(1000), `Fire_Ticks` varchar(1000), `Inventory64` varchar(1000), `Time_Stamp` varchar(1000));");
         };

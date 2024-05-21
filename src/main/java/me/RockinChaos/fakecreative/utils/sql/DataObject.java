@@ -297,7 +297,7 @@ public class DataObject {
         } else if (object1.getTable().equals(Table.ALLOW_FLIGHT) || object1.getTable().equals(Table.SPEED_FLIGHT) || object1.getTable().equals(Table.SPEED_BREAK) || object1.getTable().equals(Table.SET_FOOD) ||
                 object1.getTable().equals(Table.SET_HEALTH) || object1.getTable().equals(Table.SET_SCALE) || object1.getTable().equals(Table.ALLOW_HUNGER) || object1.getTable().equals(Table.ALLOW_BURN) ||
                 object1.getTable().equals(Table.UNBREAKABLE_ITEMS) || object1.getTable().equals(Table.DROPS_BLOCK) || object1.getTable().equals(Table.SWORD_BLOCK) || object1.getTable().equals(Table.AUTO_RESTORE) ||
-                object1.getTable().equals(Table.SET_GOD) || object1.getTable().equals(Table.DELAY_GOD) || object1.getTable().equals(Table.STORE_INVENTORY) || object1.getTable().equals(Table.DESTROY_PICKUPS) || object1.getTable().equals(Table.PLAYERSTATS)) {
+                object1.getTable().equals(Table.SET_GOD) || object1.getTable().equals(Table.DELAY_GOD) || object1.getTable().equals(Table.STORE_INVENTORY) || object1.getTable().equals(Table.DESTROY_PICKUPS) || object1.getTable().equals(Table.SELF_DROPS) || object1.getTable().equals(Table.ITEM_STORE) || object1.getTable().equals(Table.PLAYERSTATS)) {
             return object1.getPlayerId().equalsIgnoreCase(object2.getPlayerId());
         }
         return false;
@@ -360,6 +360,8 @@ public class DataObject {
         DELAY_GOD("delay_god", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
         STORE_INVENTORY("store_inventory", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
         DESTROY_PICKUPS("destroy_pickups", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        SELF_DROPS("self_drops", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        ITEM_STORE("item_store", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
         HOTBAR("hotbar", "`Player_UUID`, `Position`, `Inventory64`, `Time_Stamp`", "Player_UUID, Position"),
         PLAYERSTATS("playerstats", "`Player_UUID`, `Health`, `Scale`, `Food`, `Fire_Ticks`, `Inventory64`, `Time_Stamp`", "Player_UUID");
 

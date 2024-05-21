@@ -58,7 +58,7 @@ public class ChatTab implements TabCompleter {
                     || (args[0].equalsIgnoreCase("spectator") && PermissionsHandler.hasPermission(sender, "fakecreative.mode.spectator")))) {
                 PlayerHandler.forOnlinePlayers(player -> commands.add(player.getName()));
             } else if (args[0].equalsIgnoreCase("purge") && PermissionsHandler.hasPermission(sender, "fakecreative.purge")) {
-                commands.addAll(Arrays.asList("allow-flight", "speed-flight", "speed-break", "set-food", "set-health", "set-scale", "allow-hunger", "allow-burn", "unbreakable-items", "drops-block", "sword-block", "auto-restore", "set-god", "delay-god", "store-inventory", "destroy-pickups", "hotbar", "playerstats"));
+                commands.addAll(Arrays.asList("allow-flight", "speed-flight", "speed-break", "set-food", "set-health", "set-scale", "allow-hunger", "allow-burn", "unbreakable-items", "drops-block", "sword-block", "auto-restore", "set-god", "delay-god", "store-inventory", "destroy-pickups", "self-drops", "item-store", "hotbar", "playerstats"));
             }
         } else if (args.length == 1) {
             if (PermissionsHandler.hasPermission(sender, "fakecreative.mode.creative")) {

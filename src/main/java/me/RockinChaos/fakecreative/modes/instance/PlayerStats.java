@@ -52,6 +52,8 @@ public class PlayerStats {
     private int godDelay = FakeCreative.getCore().getConfig("config.yml").getInt("Preferences.Invulnerable-Delay");
     private boolean storeInventory = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Store-Inventory");
     private boolean destroyPickups = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Destroy-Pickups");
+    private boolean selfDrops = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Self-Drops");
+    private boolean itemStore = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Item-Store");
 
     /**
      * Creates a new PlayerStats instance
@@ -138,6 +140,16 @@ public class PlayerStats {
             final DataObject destroyPickups = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.DESTROY_PICKUPS, PlayerHandler.getPlayerID(player), true));
             if (destroyPickups != null) {
                 this.destroyPickups = destroyPickups.getBoolean();
+            }
+
+            final DataObject selfDrops = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.SELF_DROPS, PlayerHandler.getPlayerID(player), true));
+            if (selfDrops != null) {
+                this.selfDrops = selfDrops.getBoolean();
+            }
+
+            final DataObject itemStore = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.ITEM_STORE, PlayerHandler.getPlayerID(player), true));
+            if (itemStore != null) {
+                this.itemStore = itemStore.getBoolean();
             }
 
         }
@@ -590,6 +602,58 @@ public class PlayerStats {
                 Core.getCore().getSQL().removeData(dataObject);
             }
             Core.getCore().getSQL().saveData(new DataObject(Table.DESTROY_PICKUPS, PlayerHandler.getPlayerID(player), destroyPickups));
+        }
+    }
+
+    /**
+     * Checks if the Player should be allowed to drop items while in creative.
+     *
+     * @return If the Player should be able to drop items while in creative.
+     */
+    public boolean selfDrops() {
+        return this.selfDrops;
+    }
+
+    /**
+     * Sets the current state of Self Drops.
+     *
+     * @param player    - The Player being referenced.
+     * @param selfDrops - If the Player should be allowed to drop items.
+     */
+    public void setSelfDrops(final Player player, final boolean selfDrops) {
+        synchronized ("FK_SQL") {
+            this.selfDrops = selfDrops;
+            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.SELF_DROPS, PlayerHandler.getPlayerID(player), selfDrops));
+            if (dataObject != null) {
+                Core.getCore().getSQL().removeData(dataObject);
+            }
+            Core.getCore().getSQL().saveData(new DataObject(Table.SELF_DROPS, PlayerHandler.getPlayerID(player), selfDrops));
+        }
+    }
+
+    /**
+     * Checks if the Player should be allowed to store items while in creative.
+     *
+     * @return If the Player should be able to store items while in creative.
+     */
+    public boolean itemStore() {
+        return this.itemStore;
+    }
+
+    /**
+     * Sets the current state of Store Items.
+     *
+     * @param player    - The Player being referenced.
+     * @param itemStore - If the Player should be allowed to store items.
+     */
+    public void setItemStore(final Player player, final boolean itemStore) {
+        synchronized ("FK_SQL") {
+            this.itemStore = itemStore;
+            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.ITEM_STORE, PlayerHandler.getPlayerID(player), itemStore));
+            if (dataObject != null) {
+                Core.getCore().getSQL().removeData(dataObject);
+            }
+            Core.getCore().getSQL().saveData(new DataObject(Table.ITEM_STORE, PlayerHandler.getPlayerID(player), itemStore));
         }
     }
 
