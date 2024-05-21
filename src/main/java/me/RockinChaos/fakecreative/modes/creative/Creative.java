@@ -25,6 +25,7 @@ import me.RockinChaos.core.utils.ServerUtils;
 import me.RockinChaos.core.utils.StringUtils;
 import me.RockinChaos.core.utils.api.LegacyAPI;
 import me.RockinChaos.core.utils.protocol.events.PlayerEnterCreativeEvent;
+import me.RockinChaos.fakecreative.FakeCreative;
 import me.RockinChaos.fakecreative.modes.Mode;
 import me.RockinChaos.fakecreative.modes.instance.PlayerObject;
 import me.RockinChaos.fakecreative.utils.menus.Menu;
@@ -250,6 +251,16 @@ public class Creative {
                         String.valueOf(playerObject.getFood()), String.valueOf(playerObject.getFireTicks()), playerObject.getInventory64()));
             }
         }
+    }
+
+    /**
+     * Checks if the ItemStack Material is a blacklisted type.
+     *
+     * @param item - The ItemStack being checked.
+     * @return If the ItemStack Material is a blacklisted type.
+     */
+    public static boolean isBlackListed(final ItemStack item) {
+        return (FakeCreative.getCore().getConfig("config.yml").getString("Settings.Creative-Blacklist") != null && StringUtils.containsValue(FakeCreative.getCore().getConfig("config.yml").getStringList("Settings.Creative-Blacklist"), item.getType().name()));
     }
 
     @SuppressWarnings("unused")
