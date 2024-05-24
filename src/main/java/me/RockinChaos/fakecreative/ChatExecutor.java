@@ -156,6 +156,12 @@ public class ChatExecutor implements CommandExecutor {
             placeHolders[21] = sender.getName();
             FakeCreative.getCore().getLang().sendLangMessage("commands.updates.updateRequest", Bukkit.getServer().getConsoleSender(), placeHolders);
             SchedulerUtils.runAsync(() -> FakeCreative.getCore().getUpdater().forceUpdates(sender));
+        }  else if (Execute.DEBUG.accept(sender, args, 0)) {
+            if (ServerUtils.devListening()) {
+                FakeCreative.getCore().getLang().dispatchMessage(sender, FakeCreative.getCore().getData().getPluginPrefix() + " &aYou are &nnow listening&a for debug messages.");
+            } else {
+                FakeCreative.getCore().getLang().dispatchMessage(sender, FakeCreative.getCore().getData().getPluginPrefix() + "&cYou are &nno longer&c listening for debug messages.");
+            }
         } else if (executor == null) {
             FakeCreative.getCore().getLang().sendLangMessage("commands.default.unknownCommand", sender);
         } else if (!executor.playerRequired(sender)) {
@@ -320,7 +326,8 @@ public class ChatExecutor implements CommandExecutor {
         SPECTATOR("sp, spectator, 3", "fakecreative.mode.spectator", true),
         PURGE("purge", "fakecreative.purge", false),
         UPDATE("update, updates", "fakecreative.updates", false),
-        UPGRADE("upgrade", "fakecreative.upgrade", false);
+        UPGRADE("upgrade", "fakecreative.upgrade", false),
+        DEBUG("debug", "fakecreative.use", true);
         private final String command;
         private final String permission;
         private final boolean player;
@@ -378,7 +385,7 @@ public class ChatExecutor implements CommandExecutor {
          * @param sender - Source of the command.
          */
         public boolean hasPermission(final CommandSender sender) {
-            return PermissionsHandler.hasPermission(sender, this.permission);
+            return PermissionsHandler.hasPermission(sender, this.permission) && (!this.equals(Execute.DEBUG) || PermissionsHandler.isDeveloper(sender));
         }
 
         /**
