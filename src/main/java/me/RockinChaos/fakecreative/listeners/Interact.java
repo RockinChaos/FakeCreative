@@ -54,7 +54,7 @@ public class Interact implements Listener {
             SchedulerUtils.run(() -> {
                 if (player.getInventory().getHeldItemSlot() == slot) {
                     PlayerHandler.setMainHandItem(player, item);
-                } else if (PlayerHandler.isCraftingInv(player.getOpenInventory())) {
+                } else if (PlayerHandler.isCraftingInv(player)) {
                     player.getInventory().setItem(slot, item);
                 }
             });

@@ -18,6 +18,7 @@
 package me.RockinChaos.fakecreative.listeners;
 
 import me.RockinChaos.core.handlers.PlayerHandler;
+import me.RockinChaos.core.utils.CompatUtils;
 import me.RockinChaos.core.utils.SchedulerUtils;
 import me.RockinChaos.core.utils.protocol.events.PlayerCloneItemEvent;
 import me.RockinChaos.fakecreative.modes.creative.Creative;
@@ -46,9 +47,10 @@ public class Clicking implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onCopy(final InventoryClickEvent event) {
         final Player player = (Player) event.getWhoClicked();
+        final Inventory topInventory = CompatUtils.getTopInventory(event.getWhoClicked());
         final int slot = event.getSlot();
-        final Inventory inventory = ((!PlayerHandler.isCraftingInv(event.getView()) && event.getRawSlot() >= event.getView().getTopInventory().getSize()) ? event.getView().getBottomInventory() : ((!PlayerHandler.isCraftingInv(event.getView()) ? event.getView().getTopInventory() : event.getView().getBottomInventory())));
-        if (event.getClick() == ClickType.MIDDLE && Creative.isCreativeMode(player, true) && (Menu.isOpen(player) && inventory != player.getOpenInventory().getTopInventory() || !Menu.isOpen(player))) {
+        final Inventory inventory = ((!PlayerHandler.isCraftingInv(event.getView()) && event.getRawSlot() >= CompatUtils.getTopInventory(event.getView()).getSize()) ? CompatUtils.getBottomInventory(event.getView()) : ((!PlayerHandler.isCraftingInv(event.getView()) ? CompatUtils.getTopInventory(event.getView()) : CompatUtils.getBottomInventory(event.getView()))));
+        if (event.getClick() == ClickType.MIDDLE && Creative.isCreativeMode(player, true) && (Menu.isOpen(player) && inventory != CompatUtils.getTopInventory(player) || !Menu.isOpen(player))) {
             if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR && !Tabs.isItem(event.getCurrentItem())) {
                 final ItemStack item = event.getCurrentItem().clone();
                 item.setAmount(item.getMaxStackSize());
@@ -61,15 +63,15 @@ public class Clicking implements Listener {
                 }
             }
             PlayerHandler.updateInventory(player, 1L);
-        } else if (event.getRawSlot() >= event.getWhoClicked().getOpenInventory().getTopInventory().getSize() && Menu.isOpen(player) && (event.getClick() == ClickType.SHIFT_LEFT
+        } else if (event.getRawSlot() >= topInventory.getSize() && Menu.isOpen(player) && (event.getClick() == ClickType.SHIFT_LEFT
                 || event.getClick() == ClickType.SHIFT_RIGHT) && Creative.isCreativeMode(player, true)) {
             event.setCancelled(true);
-            event.getWhoClicked().getOpenInventory().getBottomInventory().setItem(event.getSlot(), new ItemStack(Material.AIR));
+            CompatUtils.getBottomInventory(event.getWhoClicked()).setItem(event.getSlot(), new ItemStack(Material.AIR));
             PlayerHandler.updateInventory(player, 1L);
-        } else if (event.getRawSlot() <= event.getWhoClicked().getOpenInventory().getTopInventory().getSize() && Menu.isOpen(player) && (event.getClick() == ClickType.SHIFT_LEFT
+        } else if (event.getRawSlot() <= topInventory.getSize() && Menu.isOpen(player) && (event.getClick() == ClickType.SHIFT_LEFT
                 || event.getClick() == ClickType.SHIFT_RIGHT || event.getClick() == ClickType.LEFT || event.getClick() == ClickType.RIGHT) && Creative.isCreativeMode(player, true)
-                && (event.getWhoClicked().getOpenInventory().getTopInventory().getSize() >= event.getSlot() && event.getSlot() >= 0 && (event.getWhoClicked().getOpenInventory().getTopInventory().getItem(event.getSlot()) == null
-                || Objects.requireNonNull(event.getWhoClicked().getOpenInventory().getTopInventory().getItem(event.getSlot())).getType() == Material.AIR))) {
+                && (topInventory.getSize() >= event.getSlot() && event.getSlot() >= 0 && (topInventory.getItem(event.getSlot()) == null
+                || Objects.requireNonNull(topInventory.getItem(event.getSlot())).getType() == Material.AIR))) {
             event.setCancelled(true);
             player.setItemOnCursor(new ItemStack(Material.AIR));
             PlayerHandler.updateInventory(player, 1L);
@@ -85,15 +87,15 @@ public class Clicking implements Listener {
     private void onClone(final PlayerCloneItemEvent event) {
         int tempSlot;
         Inventory tempInventory;
-        if (!PlayerHandler.isCraftingInv(event.getView()) && event.getSlot() >= event.getView().getTopInventory().getSize()) {
-            tempInventory = event.getView().getBottomInventory();
-            tempSlot = event.getSlot() - event.getView().getTopInventory().getSize() + 9;
+        if (!PlayerHandler.isCraftingInv(event.getView()) && event.getSlot() >= CompatUtils.getTopInventory(event.getView()).getSize()) {
+            tempInventory = CompatUtils.getBottomInventory(event.getView());
+            tempSlot = event.getSlot() - CompatUtils.getTopInventory(event.getView()).getSize() + 9;
             tempSlot = (tempSlot <= 35 ? tempSlot : (tempSlot >= 45 ? (tempSlot - 5) : (tempSlot - 36)));
         } else if (!PlayerHandler.isCraftingInv(event.getView())) {
-            tempInventory = event.getView().getTopInventory();
+            tempInventory = CompatUtils.getTopInventory(event.getView());
             tempSlot = event.getSlot();
         } else {
-            tempInventory = event.getView().getBottomInventory();
+            tempInventory = CompatUtils.getBottomInventory(event.getView());
             tempSlot = (event.getSlot() <= 35 ? event.getSlot() : (event.getSlot() >= 45 ? (event.getSlot() - 5) : (event.getSlot() - 36)));
         }
         final int slot = tempSlot;
@@ -102,7 +104,7 @@ public class Clicking implements Listener {
         final ItemStack cursorItem = player.getItemOnCursor().clone();
         final ItemStack slotItem = (inventory.getItem(slot) != null ? Objects.requireNonNull(inventory.getItem(slot)).clone() : inventory.getItem(slot));
         SchedulerUtils.run(() -> {
-            if (event.getClick() == ClickType.MIDDLE && Creative.isCreativeMode(player, true) && (Menu.isOpen(player) && inventory != player.getOpenInventory().getTopInventory() || !Menu.isOpen(player))) {
+            if (event.getClick() == ClickType.MIDDLE && Creative.isCreativeMode(player, true) && (Menu.isOpen(player) && inventory != CompatUtils.getTopInventory(player) || !Menu.isOpen(player))) {
                 if (cursorItem.getType() != Material.AIR && !Tabs.isItem(cursorItem) && (inventory.getItem(slot) == null || Objects.requireNonNull(inventory.getItem(slot)).getType() == Material.AIR || slotItem != null && slotItem.getType() != Material.AIR && cursorItem.getType() != Material.AIR && slotItem.isSimilar(cursorItem))) {
                     cursorItem.setAmount(cursorItem.getMaxStackSize());
                     inventory.setItem(slot, cursorItem);

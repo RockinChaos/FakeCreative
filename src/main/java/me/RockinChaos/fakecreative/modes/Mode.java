@@ -2,6 +2,7 @@ package me.RockinChaos.fakecreative.modes;
 
 import me.RockinChaos.core.handlers.ItemHandler;
 import me.RockinChaos.core.handlers.PlayerHandler;
+import me.RockinChaos.core.utils.CompatUtils;
 import me.RockinChaos.core.utils.SchedulerUtils;
 import me.RockinChaos.core.utils.ServerUtils;
 import me.RockinChaos.core.utils.api.LegacyAPI;
@@ -70,7 +71,7 @@ public class Mode {
     public static String getInventory64(final Player player) {
         if (Creative.get(player).getStats().storeInventory()) {
             final PlayerInventory inventory = player.getInventory();
-            final Inventory craftView = player.getOpenInventory().getTopInventory();
+            final Inventory craftView = CompatUtils.getTopInventory(player);
             final Inventory saveInventory = Bukkit.createInventory(null, 54);
             for (int i = 0; i <= 47; i++) {
                 if (i <= 41 && inventory.getSize() >= i) {
@@ -78,7 +79,7 @@ public class Mode {
                     if (item != null) {
                         saveInventory.setItem(i, item.clone());
                     }
-                } else if (i >= 42 && PlayerHandler.isCraftingInv(player.getOpenInventory())) {
+                } else if (i >= 42 && PlayerHandler.isCraftingInv(player)) {
                     final ItemStack item = craftView.getItem(i - 42);
                     if (item != null) {
                         saveInventory.setItem(i, item.clone());
@@ -99,14 +100,14 @@ public class Mode {
     public static void restoreInventory(final Player player) {
         if (Creative.get(player).getInventory64() != null) {
             final PlayerInventory inventory = player.getInventory();
-            final Inventory craftView = player.getOpenInventory().getTopInventory();
+            final Inventory craftView = CompatUtils.getTopInventory(player);
             PlayerHandler.clearItems(player);
             final Inventory inventory64 = ItemHandler.deserializeInventory(Creative.get(player).getInventory64());
             for (int i = 47; i >= 0; i--) {
                 if (inventory64 != null && inventory64.getItem(i) != null && Objects.requireNonNull(inventory64.getItem(i)).getType() != Material.AIR) {
                     if (i <= 41) {
                         inventory.setItem(i, Objects.requireNonNull(inventory64.getItem(i)).clone());
-                    } else if (PlayerHandler.isCraftingInv(player.getOpenInventory())) {
+                    } else if (PlayerHandler.isCraftingInv(player)) {
                         craftView.setItem(i - 42, Objects.requireNonNull(inventory64.getItem(i)).clone());
                         PlayerHandler.updateInventory(player, 1L);
                     }

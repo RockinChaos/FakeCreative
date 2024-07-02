@@ -1,6 +1,7 @@
 package me.RockinChaos.fakecreative.listeners;
 
 import me.RockinChaos.core.handlers.PlayerHandler;
+import me.RockinChaos.core.utils.CompatUtils;
 import me.RockinChaos.core.utils.StringUtils;
 import me.RockinChaos.fakecreative.modes.creative.Creative;
 import org.bukkit.entity.Player;
@@ -20,8 +21,8 @@ public class Storable implements Listener {
      */
     @EventHandler(ignoreCancelled = true)
     private void onInventoryStore(InventoryClickEvent event) {
-        Player player = (Player) event.getWhoClicked();
-        String invType = event.getView().getType().toString();
+        final Player player = (Player) event.getWhoClicked();
+        final String invType = CompatUtils.getInventoryType(event.getView()).toString();
         if (invType != null) {
             if (event.getRawSlot() >= event.getInventory().getSize() && event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY) || event.getRawSlot() < event.getInventory().getSize()) {
                 if ((invType.contains("CHEST") || invType.contains("BARREL") || invType.contains("BREWING") || invType.contains("FURNACE") || invType.contains("GRINDSTONE") || invType.contains("SHULKER_BOX")
@@ -43,8 +44,8 @@ public class Storable implements Listener {
      */
     @EventHandler(ignoreCancelled = true)
     private void onInventoryDragToStore(InventoryDragEvent event) {
-        Player player = (Player) event.getWhoClicked();
-        String invType = event.getView().getType().toString();
+        final Player player = (Player) event.getWhoClicked();
+        final String invType = CompatUtils.getInventoryType(event.getView()).toString();
         int inventorySize = event.getInventory().getSize();
         for (int i : event.getRawSlots()) {
             if (i < inventorySize) {
@@ -72,7 +73,7 @@ public class Storable implements Listener {
     @EventHandler(ignoreCancelled = true)
     private void onInteractEntity(PlayerInteractEntityEvent event) {
         if (event.getRightClicked().getType().name().equalsIgnoreCase("ITEM_FRAME") || event.getRightClicked().getType().name().equalsIgnoreCase("FOX") || event.getRightClicked().getType().name().equalsIgnoreCase("ALLAY")) {
-            Player player = event.getPlayer();
+            final Player player = event.getPlayer();
             if (Creative.isCreativeMode(player, true) && !Creative.get(player).getStats().itemStore()) {
                 event.setCancelled(true);
                 PlayerHandler.updateInventory(player, 1L);
@@ -88,7 +89,7 @@ public class Storable implements Listener {
     @EventHandler(ignoreCancelled = true)
     private void onInteractAtEntity(PlayerInteractAtEntityEvent event) {
         if (event.getRightClicked().getType().name().equalsIgnoreCase("ARMOR_STAND") || event.getRightClicked().getType().name().equalsIgnoreCase("FOX") || event.getRightClicked().getType().name().equalsIgnoreCase("ALLAY")) {
-            Player player = event.getPlayer();
+            final Player player = event.getPlayer();
             if (!Creative.isCreativeMode(player, true) && !Creative.get(player).getStats().itemStore()) {
                 event.setCancelled(true);
                 PlayerHandler.updateInventory(player, 1L);

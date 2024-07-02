@@ -20,6 +20,7 @@ package me.RockinChaos.fakecreative.modes.creative;
 import me.RockinChaos.core.Core;
 import me.RockinChaos.core.handlers.ItemHandler;
 import me.RockinChaos.core.handlers.PlayerHandler;
+import me.RockinChaos.core.utils.CompatUtils;
 import me.RockinChaos.core.utils.SchedulerUtils;
 import me.RockinChaos.core.utils.ServerUtils;
 import me.RockinChaos.core.utils.StringUtils;
@@ -299,8 +300,8 @@ public class Creative {
          * @param player - The Player having their crafting items set.
          */
         public static void setTabs(final Player player) {
-            if (PlayerHandler.isCraftingInv(player.getOpenInventory())) {
-                final Inventory craftInventory = player.getOpenInventory().getTopInventory();
+            if (PlayerHandler.isCraftingInv(player)) {
+                final Inventory craftInventory = CompatUtils.getTopInventory(player);
                 for (int i = 0; i <= 4; i++) {
                     if (craftInventory.getItem(i) != null && Objects.requireNonNull(craftInventory.getItem(i)).getType() != Material.AIR) {
                         final ItemStack drop = Objects.requireNonNull(craftInventory.getItem(i)).clone();
@@ -364,9 +365,9 @@ public class Creative {
                     player.getInventory().remove(item);
                 }
             }
-            for (final ItemStack item : player.getOpenInventory().getTopInventory()) {
+            for (final ItemStack item : CompatUtils.getTopInventory(player)) {
                 if (Tabs.isItem(item)) {
-                    player.getOpenInventory().getTopInventory().remove(item);
+                    CompatUtils.getTopInventory(player).remove(item);
                 }
             }
             removePick(player);

@@ -19,6 +19,7 @@ package me.RockinChaos.fakecreative.utils.menus;
 
 import me.RockinChaos.core.handlers.ItemHandler;
 import me.RockinChaos.core.handlers.PlayerHandler;
+import me.RockinChaos.core.utils.CompatUtils;
 import me.RockinChaos.core.utils.SchedulerUtils;
 import me.RockinChaos.core.utils.ServerUtils;
 import me.RockinChaos.core.utils.StringUtils;
@@ -413,7 +414,7 @@ public class Menu {
                         if (Creative.isCreativeMode(player, true)) {
                             Inventory inventoryData = Bukkit.getServer().createInventory(null, 9);
                             for (int j = 0; j < 9; j++) {
-                                final ItemStack item = player.getOpenInventory().getBottomInventory().getItem(j);
+                                final ItemStack item = CompatUtils.getBottomInventory(player).getItem(j);
                                 if (item != null && item.getType() != Material.AIR) {
                                     inventoryData.setItem(j, item.clone());
                                     empty = false;
@@ -436,7 +437,7 @@ public class Menu {
                                     for (int j = 0; j < 9; j++) {
                                         final ItemStack item = inventory.getItem(j);
                                         if (item != null && item.getType() != Material.AIR) {
-                                            player.getOpenInventory().getBottomInventory().setItem(j, item.clone());
+                                            CompatUtils.getBottomInventory(player).setItem(j, item.clone());
                                             empty = false;
                                         }
                                     }
@@ -515,7 +516,7 @@ public class Menu {
                     "&7", "&a&lSpeed: &b&l" + Creative.get(player).getStats().flySpeed()), event -> {
                 final InventoryHolder inventoryHolder = event.getInventory().getHolder();
                 if (inventoryHolder != null) {
-                    ((Interface) inventoryHolder).onTyping((Player) event.getView().getPlayer());
+                    ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
                     Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
                 }
             }
@@ -543,7 +544,7 @@ public class Menu {
                     "&7", "&a&lSpeed: &b&l" + Creative.get(player).getStats().breakSpeed()), event -> {
                 final InventoryHolder inventoryHolder = event.getInventory().getHolder();
                 if (inventoryHolder != null) {
-                    ((Interface) inventoryHolder).onTyping((Player) event.getView().getPlayer());
+                    ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
                     Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
                 }
             }
@@ -575,7 +576,7 @@ public class Menu {
                     "&7", "&a&lFood: &b&l" + Creative.get(player).getStats().foodLevel()), event -> {
                 final InventoryHolder inventoryHolder = event.getInventory().getHolder();
                 if (inventoryHolder != null) {
-                    ((Interface) inventoryHolder).onTyping((Player) event.getView().getPlayer());
+                    ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
                     Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
                 }
             }
@@ -601,7 +602,7 @@ public class Menu {
                     "&7", "&a&lHealth: &b&l" + Creative.get(player).getStats().health()), event -> {
                 final InventoryHolder inventoryHolder = event.getInventory().getHolder();
                 if (inventoryHolder != null) {
-                    ((Interface) inventoryHolder).onTyping((Player) event.getView().getPlayer());
+                    ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
                     Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
                 }
             }
@@ -629,7 +630,7 @@ public class Menu {
                     "&7", "&a&lScale: &b&l" + Creative.get(player).getStats().heartScale()), event -> {
                 final InventoryHolder inventoryHolder = event.getInventory().getHolder();
                 if (inventoryHolder != null) {
-                    ((Interface) inventoryHolder).onTyping((Player) event.getView().getPlayer());
+                    ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
                     Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
                 }
             }
@@ -713,7 +714,7 @@ public class Menu {
                     "&7", "&a&lDelay: &b&l" + Creative.get(player).getStats().godDelay()), event -> {
                 final InventoryHolder inventoryHolder = event.getInventory().getHolder();
                 if (inventoryHolder != null) {
-                    ((Interface) inventoryHolder).onTyping((Player) event.getView().getPlayer());
+                    ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
                     Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
                 }
             }
@@ -786,7 +787,7 @@ public class Menu {
         } else if (event.getClick() == ClickType.NUMBER_KEY) {
             if (cursorItem == null || cursorItem.getType() == Material.AIR) {
                 clickItem.setAmount(clickItem.getMaxStackSize());
-                clickPlayer.getOpenInventory().getBottomInventory().setItem(event.getHotbarButton(), clickItem);
+                CompatUtils.getBottomInventory(clickPlayer).setItem(event.getHotbarButton(), clickItem);
             }
         } else if (event.getClick() == ClickType.DROP) {
             PlayerHandler.dropItem(clickPlayer, clickItem);
@@ -811,7 +812,7 @@ public class Menu {
         pagedPane.addButton(new Button(ItemHandler.getItem("COMPASS", 1, (selected == 0), true, (selected == 0 ? "&a" : "&f") + "Search Items", "&7", "&8&oClick to view", "&8&oShift+Left-click to search."), event -> {
             final InventoryHolder inventoryHolder = event.getInventory().getHolder();
             if (event.getClick() == ClickType.SHIFT_LEFT && inventoryHolder != null) {
-                ((Interface) inventoryHolder).onTyping((Player) event.getView().getPlayer());
+                ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
                 Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
             } else {
                 creativeMenu(event.getWhoClicked(), 0, null);
@@ -1014,9 +1015,9 @@ public class Menu {
             userGUIName = ServerUtils.hasSpecificUpdate("1_9") ? StringUtils.colorFormat("&7               &0&nUser Menu") : StringUtils.colorFormat("&7              &0&n User Menu");
         }
         return player != null &&
-                ((GUIName != null && player.getOpenInventory().getTitle().equalsIgnoreCase(StringUtils.colorFormat(GUIName)))
-                        || (HotbarGUIName != null && player.getOpenInventory().getTitle().equalsIgnoreCase(StringUtils.colorFormat(HotbarGUIName)))
-                        || (userGUIName != null && player.getOpenInventory().getTitle().equalsIgnoreCase(StringUtils.colorFormat(userGUIName))));
+                ((GUIName != null && CompatUtils.getInventoryTitle(player).equalsIgnoreCase(StringUtils.colorFormat(GUIName)))
+                        || (HotbarGUIName != null && CompatUtils.getInventoryTitle(player).equalsIgnoreCase(StringUtils.colorFormat(HotbarGUIName)))
+                        || (userGUIName != null && CompatUtils.getInventoryTitle(player).equalsIgnoreCase(StringUtils.colorFormat(userGUIName))));
     }
 
 

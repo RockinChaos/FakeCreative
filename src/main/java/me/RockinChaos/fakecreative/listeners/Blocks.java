@@ -93,7 +93,7 @@ public class Blocks implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onClick(final PlayerInteractEvent event) {
         final Player player = event.getPlayer();
-        if (Creative.isCreativeMode(player, true) && !PlayerHandler.isMenuClick(player.getOpenInventory(), event.getAction())) {
+        if (Creative.isCreativeMode(player, true) && !PlayerHandler.isMenuClick(player, event.getAction())) {
             final Block block = PlayerHandler.getTargetBlock(player, 6);
             if (this.handMap.get(PlayerHandler.getPlayerID(player)) == null || !this.handMap.get(PlayerHandler.getPlayerID(player)).equals(event.getAction())) {
                 if ((event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR) && (block != null && block.getType() != Material.AIR)) {

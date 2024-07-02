@@ -18,6 +18,7 @@
 package me.RockinChaos.fakecreative.listeners;
 
 import me.RockinChaos.core.handlers.ItemHandler;
+import me.RockinChaos.core.utils.CompatUtils;
 import me.RockinChaos.core.utils.SchedulerUtils;
 import me.RockinChaos.core.utils.StringUtils;
 import me.RockinChaos.fakecreative.modes.creative.Creative;
@@ -39,7 +40,7 @@ public class PlayerClear implements Listener {
         final String command = event.getMessage();
         if (Creative.isCreativeMode(event.getPlayer(), true) && !command.isEmpty() && StringUtils.containsIgnoreCase(command, "clear")) {
             SchedulerUtils.runLater(2L, () -> {
-                if (ItemHandler.isContentsEmpty(event.getPlayer().getOpenInventory().getTopInventory().getContents())) {
+                if (ItemHandler.isContentsEmpty(CompatUtils.getTopInventory(event.getPlayer()).getContents())) {
                     Tabs.setTabs(event.getPlayer());
                 }
             });
