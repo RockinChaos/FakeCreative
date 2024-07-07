@@ -20,7 +20,7 @@ package me.RockinChaos.fakecreative.listeners;
 import me.RockinChaos.core.handlers.ItemHandler;
 import me.RockinChaos.core.utils.CompatUtils;
 import me.RockinChaos.core.utils.SchedulerUtils;
-import me.RockinChaos.core.utils.StringUtils;
+import me.RockinChaos.core.utils.types.Clear;
 import me.RockinChaos.fakecreative.modes.creative.Creative;
 import me.RockinChaos.fakecreative.modes.creative.Creative.Tabs;
 import org.bukkit.event.EventHandler;
@@ -38,8 +38,8 @@ public class PlayerClear implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerCommand(final PlayerCommandPreprocessEvent event) {
         final String command = event.getMessage();
-        if (Creative.isCreativeMode(event.getPlayer(), true) && !command.isEmpty() && StringUtils.containsIgnoreCase(command, "clear")) {
-            SchedulerUtils.runLater(2L, () -> {
+        if (Creative.isCreativeMode(event.getPlayer(), true) && Clear.isClear(command)) {
+            SchedulerUtils.run(() -> {
                 if (ItemHandler.isContentsEmpty(CompatUtils.getTopInventory(event.getPlayer()).getContents())) {
                     Tabs.setTabs(event.getPlayer());
                 }
