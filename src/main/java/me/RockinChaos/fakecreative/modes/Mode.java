@@ -6,6 +6,8 @@ import me.RockinChaos.core.utils.CompatUtils;
 import me.RockinChaos.core.utils.SchedulerUtils;
 import me.RockinChaos.core.utils.ServerUtils;
 import me.RockinChaos.core.utils.api.LegacyAPI;
+import me.RockinChaos.core.utils.types.PlaceHolder;
+import me.RockinChaos.core.utils.types.PlaceHolder.Holder;
 import me.RockinChaos.fakecreative.FakeCreative;
 import me.RockinChaos.fakecreative.modes.creative.Creative;
 import me.RockinChaos.fakecreative.modes.instance.PlayerObject;
@@ -180,12 +182,10 @@ public class Mode {
      */
     public static void sendStatus(final CommandSender who, final Player altWho, final GameMode gamemode, final boolean silent) {
         if (!silent) {
-            final String[] placeHolders = FakeCreative.getCore().getLang().newString();
-            placeHolders[19] = gamemode.name().toLowerCase();
-            placeHolders[1] = altWho.getName();
+            final PlaceHolder placeHolders = new PlaceHolder().with(Holder.TARGET_PLAYER, altWho.getName()).with(Holder.GAMEMODE, gamemode.name().toLowerCase());
             FakeCreative.getCore().getLang().sendLangMessage("commands.gamemode.setMode", who, placeHolders);
             if (who instanceof ConsoleCommandSender || !who.equals(altWho)) {
-                placeHolders[1] = who.getName();
+                placeHolders.with(Holder.TARGET_PLAYER, who.getName());
                 FakeCreative.getCore().getLang().sendLangMessage("commands.gamemode.setModeTarget", altWho, placeHolders);
             }
         }

@@ -27,6 +27,8 @@ import me.RockinChaos.core.utils.api.LegacyAPI;
 import me.RockinChaos.core.utils.interfaces.Interface;
 import me.RockinChaos.core.utils.interfaces.Query;
 import me.RockinChaos.core.utils.interfaces.types.Button;
+import me.RockinChaos.core.utils.types.PlaceHolder;
+import me.RockinChaos.core.utils.types.PlaceHolder.Holder;
 import me.RockinChaos.core.utils.types.*;
 import me.RockinChaos.fakecreative.FakeCreative;
 import me.RockinChaos.fakecreative.modes.creative.Creative;
@@ -421,8 +423,7 @@ public class Menu {
                                 }
                             }
                             if (!empty) {
-                                String[] placeHolders = FakeCreative.getCore().getLang().newString();
-                                placeHolders[20] = Integer.toString(k);
+                                final PlaceHolder placeHolders = new PlaceHolder().with(Holder.HOTBAR, Integer.toString(k));
                                 FakeCreative.getCore().getLang().sendLangMessage("commands.menu.savedHotbar", sender, placeHolders);
                                 Creative.get(player).getStats().saveHotbar(player, ItemHandler.serializeInventory(inventoryData), k);
                                 SchedulerUtils.run(() -> hotbarMenu(sender));
@@ -444,8 +445,7 @@ public class Menu {
                                 }
                             }
                             if (!empty) {
-                                String[] placeHolders = FakeCreative.getCore().getLang().newString();
-                                placeHolders[20] = Integer.toString(k);
+                                final PlaceHolder placeHolders = new PlaceHolder().with(Holder.HOTBAR, Integer.toString(k));
                                 FakeCreative.getCore().getLang().sendLangMessage("commands.menu.loadedHotbar", sender, placeHolders);
                                 SchedulerUtils.run(() -> hotbarMenu(sender));
                             }

@@ -26,6 +26,8 @@ import me.RockinChaos.core.utils.ServerUtils;
 import me.RockinChaos.core.utils.StringUtils;
 import me.RockinChaos.core.utils.api.LegacyAPI;
 import me.RockinChaos.core.utils.api.PasteAPI;
+import me.RockinChaos.core.utils.types.PlaceHolder;
+import me.RockinChaos.core.utils.types.PlaceHolder.Holder;
 import me.RockinChaos.fakecreative.modes.creative.Creative;
 import me.RockinChaos.fakecreative.utils.sql.DataObject;
 import me.RockinChaos.fakecreative.utils.sql.DataObject.Table;
@@ -147,13 +149,11 @@ public class ChatExecutor implements CommandExecutor {
             final Player argsPlayer = (args.length > 1 ? PlayerHandler.getPlayerString(args[1]) : null);
             PlayerHandler.setMode(sender, argsPlayer, GameMode.SPECTATOR, false, false);
         } else if (Execute.UPDATE.accept(sender, args, 0)) {
-            String[] placeHolders = FakeCreative.getCore().getLang().newString();
-            placeHolders[21] = sender.getName();
+            final PlaceHolder placeHolders = new PlaceHolder().with(Holder.PLAYER, sender.getName());
             FakeCreative.getCore().getLang().sendLangMessage("commands.updates.checkRequest", Bukkit.getServer().getConsoleSender(), placeHolders);
             SchedulerUtils.runAsync(() -> FakeCreative.getCore().getUpdater().checkUpdates(sender, true));
         } else if (Execute.UPGRADE.accept(sender, args, 0)) {
-            String[] placeHolders = FakeCreative.getCore().getLang().newString();
-            placeHolders[21] = sender.getName();
+            final PlaceHolder placeHolders = new PlaceHolder().with(Holder.PLAYER, sender.getName());
             FakeCreative.getCore().getLang().sendLangMessage("commands.updates.updateRequest", Bukkit.getServer().getConsoleSender(), placeHolders);
             SchedulerUtils.runAsync(() -> FakeCreative.getCore().getUpdater().forceUpdates(sender));
         }  else if (Execute.DEBUG.accept(sender, args, 0)) {
@@ -222,12 +222,10 @@ public class ChatExecutor implements CommandExecutor {
      * @param args   - The player name having their data purged.
      */
     private void purge(final CommandSender sender, final String table, final String args) {
-        String[] placeHolders = FakeCreative.getCore().getLang().newString();
-        placeHolders[1] = args;
-        placeHolders[10] = table;
+        final PlaceHolder placeHolders = new PlaceHolder().with(Holder.TARGET_PLAYER, args).with(Holder.PURGE_DATA, table);
         OfflinePlayer foundPlayer = null;
         if (!table.equalsIgnoreCase("Database")) {
-            placeHolders[9] = "/ij purge " + table + " <player>";
+            placeHolders.with(Holder.COMMAND, "/ij purge " + table + " <player>");
             if (!table.equalsIgnoreCase("map-ids")) {
                 foundPlayer = LegacyAPI.getOfflinePlayer(args);
             }
@@ -236,7 +234,7 @@ public class ChatExecutor implements CommandExecutor {
                 return;
             }
         } else {
-            placeHolders[9] = "/ij purge";
+            placeHolders.with(Holder.COMMAND, "/ij purge");
         }
         if (this.confirmationRequests.get(table + sender.getName()) != null && this.confirmationRequests.get(table + sender.getName()).equals(true)) {
             if (!table.equalsIgnoreCase("Database")) {
