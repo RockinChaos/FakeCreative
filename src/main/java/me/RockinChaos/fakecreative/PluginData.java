@@ -30,7 +30,9 @@ import me.RockinChaos.fakecreative.listeners.*;
 import me.RockinChaos.fakecreative.utils.api.LegacyAPI;
 import me.RockinChaos.fakecreative.utils.sql.DataObject;
 import me.RockinChaos.fakecreative.utils.sql.DataObject.Table;
+import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class PluginData {
@@ -118,9 +120,9 @@ public class PluginData {
         }
         //
         SchedulerUtils.runAsync(() -> {
+            final String compileVersion = Objects.requireNonNull(YamlConfiguration.loadConfiguration(new InputStreamReader(Objects.requireNonNull(FakeCreative.getCore().getPlugin().getResource("plugin.yml")))).getString("nms-version")).split("-")[0].replace(".", "_");
+            final String serverVersion = ServerUtils.getVersion();
             if (!silent) {
-                final String compileVersion = "${spigot.version}".split("-")[0].replace(".", "_");
-                final String serverVersion = ServerUtils.getVersion();
                 if (StringUtils.containsIgnoreCase(compileVersion, "spigot_version")) {
                     ServerUtils.logInfo("Running a developer version ... skipping NMS check.");
                 } else if (!compileVersion.equalsIgnoreCase(serverVersion) && ServerUtils.hasPreciseUpdate(compileVersion)) {
