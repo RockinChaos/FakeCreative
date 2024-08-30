@@ -85,7 +85,7 @@ public class FakeCreative extends JavaPlugin {
                     Mode.setMode(player, null, player.getGameMode(), true, true);
                 }
             });
-            Bukkit.getScheduler().cancelTasks(this);
+            SchedulerUtils.cancelTasks();
             Menu.closeMenu();
             ProtocolManager.closeProtocol();
             ServerUtils.logInfo("has been Disabled.");
