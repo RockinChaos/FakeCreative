@@ -153,9 +153,11 @@ public class PluginData {
             SchedulerUtils.runSingleAsync(() -> FakeCreative.getCore().getData().setStarted(true));
             {
                 SchedulerUtils.runAsyncLater(100L, () -> {
-                    final MetricsAPI metrics = new MetricsAPI(FakeCreative.getCore().getPlugin(), 10818);
-                    FakeCreative.getCore().getDependencies().addCustomCharts(metrics);
-                    ServerUtils.sendErrorStatements(null);
+                    if (FakeCreative.getCore().getConfig("config.yml").getBoolean("General.Metrics-Logging")) {
+                        final MetricsAPI metrics = new MetricsAPI(FakeCreative.getCore().getPlugin(), 10818);
+                        FakeCreative.getCore().getDependencies().addCustomCharts(metrics);
+                        ServerUtils.sendErrorStatements(null);
+                    }
                 });
             }
         }
