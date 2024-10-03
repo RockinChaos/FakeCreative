@@ -189,7 +189,7 @@
 
     <ciManagement>
         <system>Jenkins</system>
-        <url>https://ci.craftationgaming.com/job/FakeCreative/</url>
+        <url>https://ci-dev.craftationgaming.com/job/FakeCreative</url>
     </ciManagement>
 
     <distributionManagement>
