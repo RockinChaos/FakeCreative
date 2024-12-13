@@ -19,6 +19,7 @@ package me.RockinChaos.fakecreative.modes.instance;
 
 import me.RockinChaos.core.Core;
 import me.RockinChaos.core.handlers.PlayerHandler;
+import me.RockinChaos.core.utils.CompatUtils;
 import me.RockinChaos.core.utils.SchedulerUtils;
 import me.RockinChaos.core.utils.ServerUtils;
 import me.RockinChaos.core.utils.api.LegacyAPI;
@@ -324,7 +325,7 @@ public class PlayerStats {
             }
             Core.getCore().getSQL().saveData(new DataObject(Table.SET_SCALE, PlayerHandler.getPlayerID(player), heartScale));
             if (ServerUtils.hasSpecificUpdate("1_9")) {
-                SchedulerUtils.run(() -> Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(((heartScale) * 2)));
+                SchedulerUtils.run(() -> Objects.requireNonNull(player.getAttribute((Attribute) CompatUtils.valueOf(Attribute.class, "GENERIC_MAX_HEALTH"))).setBaseValue(((heartScale) * 2)));
             } else {
                 SchedulerUtils.run(() -> LegacyAPI.setMaxHealth(player, (heartScale) * 2));
             }

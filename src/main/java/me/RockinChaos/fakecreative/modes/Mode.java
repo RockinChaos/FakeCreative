@@ -45,7 +45,7 @@ public class Mode {
             final PlayerObject playerObject = Creative.get(argsPlayer);
             setFlight(argsPlayer, false);
             if (ServerUtils.hasSpecificUpdate("1_9")) {
-                Objects.requireNonNull(argsPlayer.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(playerObject.getMaxHealth());
+                Objects.requireNonNull(argsPlayer.getAttribute((Attribute)CompatUtils.valueOf(Attribute.class, "GENERIC_MAX_HEALTH"))).setBaseValue(playerObject.getMaxHealth());
             } else {
                 LegacyAPI.setMaxHealth(argsPlayer, playerObject.getMaxHealth());
             }

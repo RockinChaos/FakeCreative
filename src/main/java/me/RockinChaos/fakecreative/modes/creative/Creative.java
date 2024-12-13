@@ -107,7 +107,7 @@ public class Creative {
             double health = argsPlayer.getHealth();
             double maxHealth = 20;
             try {
-                maxHealth = (ServerUtils.hasSpecificUpdate("1_9") ? Objects.requireNonNull(argsPlayer.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue() : (double) argsPlayer.getClass().getMethod("getMaxHealth").invoke(argsPlayer));
+                maxHealth = (ServerUtils.hasSpecificUpdate("1_9") ? Objects.requireNonNull(argsPlayer.getAttribute((Attribute)CompatUtils.valueOf(Attribute.class, "GENERIC_MAX_HEALTH"))).getBaseValue() : (double) argsPlayer.getClass().getMethod("getMaxHealth").invoke(argsPlayer));
             } catch (Exception ignored) {
             }
             if (!refresh && !restore) {
@@ -130,7 +130,7 @@ public class Creative {
             SchedulerUtils.run(() -> {
                 if (!refresh) {
                     if (ServerUtils.hasSpecificUpdate("1_9")) {
-                        Objects.requireNonNull(argsPlayer.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(((playerObject.getStats().heartScale()) * 2));
+                        Objects.requireNonNull(argsPlayer.getAttribute((Attribute)CompatUtils.valueOf(Attribute.class, "GENERIC_MAX_HEALTH"))).setBaseValue(((playerObject.getStats().heartScale()) * 2));
                     } else {
                         LegacyAPI.setMaxHealth(argsPlayer, ((playerObject.getStats().heartScale()) * 2));
                     }
