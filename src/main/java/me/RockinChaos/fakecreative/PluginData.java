@@ -94,8 +94,6 @@ public class PluginData {
         FakeCreative.getCore().getData().setLanguages(Collections.singletonList("English"));
         FakeCreative.getCore().getData().setPermissions(Arrays.asList("FakeCreative.use", "FakeCreative.dump", "FakeCreative.reload", "FakeCreative.updates", "FakeCreative.upgrade", "FakeCreative.permissions", "FakeCreative.purge", "FakeCreative.preferences",
                 "FakeCreative.mode.creative", "FakeCreative.mode.survival", "FakeCreative.mode.adventure", "FakeCreative.mode.spectator"));
-        FakeCreative.getCore().getData().setAlterTables(this.getAlterTables());
-        FakeCreative.getCore().getData().setCreateTables(this.getCreateTables());
         // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //
         // -=-=-=-=-=-=   Copy The Configuration Files to Disk and Load them into Memory.   =-=-=-=-=-=- //
         // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //
@@ -111,6 +109,8 @@ public class PluginData {
         FakeCreative.getCore().getData().setSQLUser(FakeCreative.getCore().getConfig("config.yml").getString("Database.user"));
         FakeCreative.getCore().getData().setSQLPass(FakeCreative.getCore().getConfig("config.yml").getString("Database.pass"));
         FakeCreative.getCore().getData().setSQLDatabase(FakeCreative.getCore().getConfig("config.yml").getString("Database.database"));
+        FakeCreative.getCore().getData().setAlterTables(this.getAlterTables());
+        FakeCreative.getCore().getData().setCreateTables(this.getCreateTables());
         FakeCreative.getCore().getDependencies().refresh();
         //
         if (!FakeCreative.getCore().getDependencies().protocolEnabled() && ProtocolManager.isDead()) {
@@ -213,27 +213,28 @@ public class PluginData {
      * @return The Runnable to create the data set.
      */
     public Runnable getCreateTables() {
+        final String prefix = FakeCreative.getCore().getData().getTablePrefix();
         return () -> {
-            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "allow_flight (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
-            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "speed_flight (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
-            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "speed_break (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
-            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "set_food (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
-            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "set_health (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
-            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "set_scale (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
-            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "allow_hunger (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
-            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "allow_burn (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
-            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "unbreakable_items (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
-            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "drops_block (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
-            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "sword_block (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
-            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "auto_restore (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
-            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "set_god (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
-            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "delay_god (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
-            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "store_inventory (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
-            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "destroy_pickups (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
-            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "self_drops (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
-            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "item_store (`Player_UUID` varchar(1000), `Value` varchar(1000), `Time_Stamp` varchar(1000));");
-            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "hotbar (`Player_UUID` varchar(1000), `Position` varchar(1000), `Inventory64` varchar(1000), `Time_Stamp` varchar(1000));");
-            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + FakeCreative.getCore().getData().getTablePrefix() + "playerstats (`Player_UUID` varchar(1000), `Health` varchar(1000), `Scale` varchar(1000), `Food` varchar(1000), `Fire_Ticks` varchar(1000), `Inventory64` varchar(1000), `Time_Stamp` varchar(1000));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "allow_flight (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "speed_flight (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "speed_break (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "set_food (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "set_health (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "set_scale (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "allow_hunger (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "allow_burn (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "unbreakable_items (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "drops_block (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "sword_block (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "auto_restore (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "set_god (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "delay_god (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "store_inventory (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "destroy_pickups (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "self_drops (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "item_store (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "hotbar (`Player_UUID` varchar(64), `Position` varchar(12), `Inventory64` text, `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "playerstats (`Player_UUID` varchar(64), `Health` varchar(64), `Scale` varchar(64), `Food` varchar(64), `Fire_Ticks` varchar(128), `Inventory64` text, `Time_Stamp` varchar(64));");
         };
     }
 
