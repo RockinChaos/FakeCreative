@@ -1,0 +1,37 @@
+# --{ =-=-=-=-=-=-=-=-=-= FakeCreative's Deutsche Sprachdatei, von Ryūgū Rena (竜宮 レナ)  =-=-=-=-=-=-=-=-=-= }--
+# Wenn du nicht möchtest, dass eine Nachricht gesendet wird, entferne sie vollständig oder lasse sie leer.
+
+# Änderungen an dieser Datei können dazu führen, dass sie beschädigt wird und neu generiert werden muss.
+de-Version: 0
+
+# Dies ist das Prefix, das am Anfang jeder Nachricht aus der Sprachdatei gesendet wird.
+Prefix: '&7[&6FakeCreative&7]'
+
+# Diese Nachrichten sind spezifisch für die Plugin-Befehle.
+commands:
+  default:
+    unknownCommand: '&cUnbekannter Befehl. Siehe &l/FakeCreative Hilfe&c für eine Liste der Befehle.'
+    noPermission: '&cDu hast keine Berechtigung, diesen Befehl zu verwenden!'
+    configReload: '%prefix% &6Konfiguration(en) neu geladen!'
+    noPlayer: '&cDu musst ein Spieler sein, um diesen Befehl auszuführen!'
+    noTarget: '&cDer Spieler &c%target_player%&c konnte nicht gefunden werden!'
+  gamemode:
+    setMode: '&6Spielmodus für &c%target_player% &6auf &c%gamemode%&6 gesetzt.'
+    setModeTarget: '&6Spielmodus durch &c%target_player% &6auf &c%gamemode% &6gesetzt.'
+  menu:
+    savedHotbar: '&6Hotbar &c%hotbar% &6wurde gespeichert.'
+    loadedHotbar: '&6Hotbar &c%hotbar% &6wurde geladen.'
+    searchType: '%prefix% &aGib Schlüsselwörter ein, \n um Artikel anzuzeigen, die du sehen möchtest.'
+    searchExample: '%prefix% &aBeispiel: %input_example%'
+    inputType: '%prefix% &aGib die &e%input%&a ein, die du festlegen möchtest.'
+    inputExample: '%prefix% &aBeispiel: %input_example%'
+    inputSet: '%prefix% &aDie Artikel &e%input% &awurden erfolgreich festgelegt!'
+    noInteger: '%prefix% &c&l&nFEHLER:&c Der eingegebene Wert &4%input% &cist keine Ganzzahl!'
+  updates:
+    checkRequest: '%prefix% &4%player% hat eine Anfrage zur Überprüfung von Updates gestellt!'
+    updateRequest: '%prefix% &4%player% hat eine Anfrage zur erzwungenen Aktualisierung des Plugins gestellt!'
+  database:
+    purgeWarn: '%prefix% &aDas Löschen der Datenbank wird &cALLE &a%purge_data%-Daten für &b%target_player%&a löschen.'
+    purgeSuccess: '%prefix% &aDu hast die Datenbankdatei von den %purge_data%-Daten für &b%target_player%&a bereinigt!'
+    purgeConfirm: '%prefix% &aDu hast 5 Sekunden Zeit, um &e%command%&a erneut einzugeben, um die Bereinigung der Datenbank zu bestätigen.'
+    purgeTimeout: '%prefix% &cDu hast die Bereinigung der Datenbank nicht innerhalb von &b5 Sekunden&c bestätigt. Die Bereinigung wurde abgebrochen!'
