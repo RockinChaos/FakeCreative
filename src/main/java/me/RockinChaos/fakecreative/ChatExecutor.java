@@ -284,7 +284,7 @@ public class ChatExecutor implements CommandExecutor {
                 FakeCreative.getCore().getData().setStarted(false);
                 FakeCreative.getCore().getSQL().purgeDatabase();
                 {
-                    SchedulerUtils.runAsync(() -> {
+                    SchedulerUtils.runAsyncLater(20L, () -> {
                         FakeCreative.getCore().getSQL().refresh();
                         {
                             SchedulerUtils.runAsyncLater(2L, () -> {

@@ -155,10 +155,10 @@ public class Clicking implements Listener {
                         }
                     }
                 });
-            } else if (Tabs.SAVE.isTab(event.getCurrentItem())) {
+            } else if (Tabs.HOTBARS.isTab(event.getCurrentItem())) {
                 event.setCancelled(true);
                 SchedulerUtils.run(() -> Menu.hotbarMenu(player));
-            } else if (Tabs.USER.isTab(event.getCurrentItem())) {
+            } else if (Tabs.PREFERENCES.isTab(event.getCurrentItem())) {
                 event.setCancelled(true);
                 SchedulerUtils.run(() -> {
                     if (Creative.get(player).getStats().isLocalePreferences(player)) {

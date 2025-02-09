@@ -17,7 +17,6 @@
  */
 package me.RockinChaos.fakecreative.modes.creative;
 
-import me.RockinChaos.core.Core;
 import me.RockinChaos.core.handlers.ItemHandler;
 import me.RockinChaos.core.handlers.PlayerHandler;
 import me.RockinChaos.core.utils.CompatUtils;
@@ -71,7 +70,7 @@ public class Creative {
      * @param silent - If the event should be silent.
      */
     public static void restart(final boolean silent) {
-        final List<Object> dataObject = Core.getCore().getSQL().getDataList(new DataObject(Table.PLAYERSTATS));
+        final List<Object> dataObject = FakeCreative.getCore().getSQL().getDataList(new DataObject(Table.PLAYERSTATS));
         for (Object object : dataObject) {
             final DataObject playerStats = (DataObject) object;
             final Player player = PlayerHandler.getPlayerString(playerStats.getPlayerId());
@@ -85,7 +84,7 @@ public class Creative {
             } else {
                 creativePlayers.add(playerObject);
             }
-            Core.getCore().getSQL().removeData(playerStats);
+            FakeCreative.getCore().getSQL().removeData(playerStats);
         }
     }
 
@@ -248,7 +247,7 @@ public class Creative {
     public static void save() {
         for (PlayerObject playerObject : creativePlayers) {
             if (playerObject.getStats().autoRestore()) {
-                Core.getCore().getSQL().saveData(new DataObject(Table.PLAYERSTATS, playerObject.getPlayer(), String.valueOf(playerObject.getHealth()), String.valueOf(playerObject.getMaxHealth()),
+                FakeCreative.getCore().getSQL().saveData(new DataObject(Table.PLAYERSTATS, playerObject.getPlayer(), String.valueOf(playerObject.getHealth()), String.valueOf(playerObject.getMaxHealth()),
                         String.valueOf(playerObject.getFood()), String.valueOf(playerObject.getFireTicks()), playerObject.getInventory64()));
             }
         }
@@ -266,12 +265,12 @@ public class Creative {
 
     @SuppressWarnings("unused")
     public enum Tabs {
-        PICK_ITEM(ItemHandler.getItem("STICK", 1, true, true, "&d&1&c&2&a&b&l&nPick Block", "&7", "&7&o*Right-click a block to", "&7&oadd to your inventory.")),
-        PICK(ItemHandler.getItem("STICK", 1, false, true, "&a&1&c&2&d&b&l&nPick Block", "&7", "&7&o*Allows you to clone", "&7&oa existing block item.")),
-        CREATIVE(ItemHandler.getItem("APPLE", 1, false, true, "&a&1&c&2&d&e&l&nCreative Tab", "&7", "&7&o*Access the creative menu to", "&7&oselect from a list of minecraft items.")),
-        SAVE(ItemHandler.getItem("PAPER", 1, false, true, "&a&1&c&2&d&a&l&nSaved Hotbars", "&7", "&7&o*Save or restore a hotbar", "&7&oto your current inventory.")),
-        USER(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "PLAYER_HEAD" : "SKULL_ITEM:3"), 1, false, true, "&a&1&c&2&d&6&l&nPreferences", "&7", "&7*Creative mode settings", "&7that are specific to you.")),
-        DESTROY(ItemHandler.getItem("LAVA_BUCKET", 1, false, true, "&a&1&c&2&d&c&l&nDestroy Item", "&7", "&7*Permanently destroy your items.", "&7", "&8&oDrop an item to delete it.", "&8&oShift-click to clear inventory."));
+        PICK_ITEM(ItemHandler.getItem("STICK", 1, true, true, "&d&1&c&2&a" + FakeCreative.getCore().getLang().getString("tabs.pickBlock.name"), FakeCreative.getCore().getLang().getStringList("tabs.pickBlock.itemLore").toArray(new String[0]))),
+        PICK(ItemHandler.getItem("STICK", 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.pickBlock.name"), FakeCreative.getCore().getLang().getStringList("tabs.pickBlock.lore").toArray(new String[0]))),
+        CREATIVE(ItemHandler.getItem("APPLE", 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.creative.name"), FakeCreative.getCore().getLang().getStringList("tabs.creative.lore").toArray(new String[0]))),
+        HOTBARS(ItemHandler.getItem("PAPER", 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.hotbars.name"), FakeCreative.getCore().getLang().getStringList("tabs.hotbars.lore").toArray(new String[0]))),
+        PREFERENCES(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "PLAYER_HEAD" : "SKULL_ITEM:3"), 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.preferences.name"), FakeCreative.getCore().getLang().getStringList("tabs.preferences.lore").toArray(new String[0]))),
+        DESTROY(ItemHandler.getItem("LAVA_BUCKET", 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.destroy.name"), FakeCreative.getCore().getLang().getStringList("tabs.destroy.lore").toArray(new String[0])));
 
         private final ItemStack itemStack;
 
@@ -313,7 +312,7 @@ public class Creative {
                         }
                     }
                 }
-                final ItemStack userClone = Tabs.USER.getItem().clone();
+                final ItemStack userClone = Tabs.PREFERENCES.getItem().clone();
                 userClone.setItemMeta(ItemHandler.setSkullOwner(Objects.requireNonNull(userClone.getItemMeta()), player, player.getName()));
                 if (!get(player).getStats().isLocalePreferences(player)) {
                     final ItemMeta userMeta = userClone.getItemMeta();
@@ -342,7 +341,7 @@ public class Creative {
                 }
                 craftInventory.setItem(1, Tabs.CREATIVE.getItem());
                 craftInventory.setItem(2, Tabs.PICK.getItem());
-                craftInventory.setItem(3, Tabs.SAVE.getItem());
+                craftInventory.setItem(3, Tabs.HOTBARS.getItem());
                 craftInventory.setItem(4, userClone);
                 SchedulerUtils.run(() -> {
                     craftInventory.setItem(0, Tabs.DESTROY.getItem());

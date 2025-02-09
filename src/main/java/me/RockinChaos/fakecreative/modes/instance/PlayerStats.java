@@ -17,7 +17,6 @@
  */
 package me.RockinChaos.fakecreative.modes.instance;
 
-import me.RockinChaos.core.Core;
 import me.RockinChaos.core.handlers.PlayerHandler;
 import me.RockinChaos.core.utils.CompatUtils;
 import me.RockinChaos.core.utils.SchedulerUtils;
@@ -63,92 +62,92 @@ public class PlayerStats {
      */
     public PlayerStats(final Player player) {
         if (player != null && this.isLocalePreferences(player)) {
-            final DataObject allowFlight = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.ALLOW_FLIGHT, PlayerHandler.getPlayerID(player), true));
+            final DataObject allowFlight = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ALLOW_FLIGHT, PlayerHandler.getPlayerID(player), true));
             if (allowFlight != null) {
                 this.allowFlight = allowFlight.getBoolean();
             }
 
-            final DataObject flySpeed = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.SPEED_FLIGHT, PlayerHandler.getPlayerID(player), 0.0));
+            final DataObject flySpeed = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SPEED_FLIGHT, PlayerHandler.getPlayerID(player), 0.0));
             if (flySpeed != null) {
                 this.flySpeed = flySpeed.getDouble();
             }
 
-            final DataObject breakSpeed = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.SPEED_BREAK, PlayerHandler.getPlayerID(player), 0.0));
+            final DataObject breakSpeed = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SPEED_BREAK, PlayerHandler.getPlayerID(player), 0.0));
             if (breakSpeed != null) {
                 this.breakSpeed = breakSpeed.getDouble();
             }
 
-            final DataObject foodLevel = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.SET_FOOD, PlayerHandler.getPlayerID(player), 0));
+            final DataObject foodLevel = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_FOOD, PlayerHandler.getPlayerID(player), 0));
             if (foodLevel != null) {
                 this.foodLevel = foodLevel.getInt();
             }
 
-            final DataObject health = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.SET_HEALTH, PlayerHandler.getPlayerID(player), 0));
+            final DataObject health = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_HEALTH, PlayerHandler.getPlayerID(player), 0));
             if (health != null) {
                 this.health = health.getInt();
             }
 
-            final DataObject heartScale = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.SET_SCALE, PlayerHandler.getPlayerID(player), 0.0));
+            final DataObject heartScale = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_SCALE, PlayerHandler.getPlayerID(player), 0.0));
             if (heartScale != null) {
                 this.heartScale = heartScale.getDouble();
             }
 
-            final DataObject allowHunger = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.ALLOW_HUNGER, PlayerHandler.getPlayerID(player), true));
+            final DataObject allowHunger = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ALLOW_HUNGER, PlayerHandler.getPlayerID(player), true));
             if (allowHunger != null) {
                 this.allowHunger = allowHunger.getBoolean();
             }
 
-            final DataObject allowBurn = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.ALLOW_BURN, PlayerHandler.getPlayerID(player), true));
+            final DataObject allowBurn = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ALLOW_BURN, PlayerHandler.getPlayerID(player), true));
             if (allowBurn != null) {
                 this.allowBurn = allowBurn.getBoolean();
             }
 
-            final DataObject unbreakableItems = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.UNBREAKABLE_ITEMS, PlayerHandler.getPlayerID(player), true));
+            final DataObject unbreakableItems = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.UNBREAKABLE_ITEMS, PlayerHandler.getPlayerID(player), true));
             if (unbreakableItems != null) {
                 this.unbreakableItems = unbreakableItems.getBoolean();
             }
 
-            final DataObject blockDrops = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.DROPS_BLOCK, PlayerHandler.getPlayerID(player), true));
+            final DataObject blockDrops = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.DROPS_BLOCK, PlayerHandler.getPlayerID(player), true));
             if (blockDrops != null) {
                 this.blockDrops = blockDrops.getBoolean();
             }
 
-            final DataObject swordBlock = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.SWORD_BLOCK, PlayerHandler.getPlayerID(player), true));
+            final DataObject swordBlock = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SWORD_BLOCK, PlayerHandler.getPlayerID(player), true));
             if (swordBlock != null) {
                 this.swordBlock = swordBlock.getBoolean();
             }
 
-            final DataObject autoRestore = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.AUTO_RESTORE, PlayerHandler.getPlayerID(player), true));
+            final DataObject autoRestore = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.AUTO_RESTORE, PlayerHandler.getPlayerID(player), true));
             if (autoRestore != null) {
                 this.autoRestore = autoRestore.getBoolean();
             }
 
-            final DataObject god = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.SET_GOD, PlayerHandler.getPlayerID(player), true));
+            final DataObject god = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_GOD, PlayerHandler.getPlayerID(player), true));
             if (god != null) {
                 this.god = god.getBoolean();
             }
 
-            final DataObject godDelay = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.DELAY_GOD, PlayerHandler.getPlayerID(player), 0));
+            final DataObject godDelay = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.DELAY_GOD, PlayerHandler.getPlayerID(player), 0));
             if (godDelay != null) {
                 this.godDelay = godDelay.getInt();
             }
 
-            final DataObject storeInventory = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.STORE_INVENTORY, PlayerHandler.getPlayerID(player), true));
+            final DataObject storeInventory = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.STORE_INVENTORY, PlayerHandler.getPlayerID(player), true));
             if (storeInventory != null) {
                 this.storeInventory = storeInventory.getBoolean();
             }
 
-            final DataObject destroyPickups = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.DESTROY_PICKUPS, PlayerHandler.getPlayerID(player), true));
+            final DataObject destroyPickups = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.DESTROY_PICKUPS, PlayerHandler.getPlayerID(player), true));
             if (destroyPickups != null) {
                 this.destroyPickups = destroyPickups.getBoolean();
             }
 
-            final DataObject selfDrops = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.SELF_DROPS, PlayerHandler.getPlayerID(player), true));
+            final DataObject selfDrops = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SELF_DROPS, PlayerHandler.getPlayerID(player), true));
             if (selfDrops != null) {
                 this.selfDrops = selfDrops.getBoolean();
             }
 
-            final DataObject itemStore = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.ITEM_STORE, PlayerHandler.getPlayerID(player), true));
+            final DataObject itemStore = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ITEM_STORE, PlayerHandler.getPlayerID(player), true));
             if (itemStore != null) {
                 this.itemStore = itemStore.getBoolean();
             }
@@ -156,7 +155,7 @@ public class PlayerStats {
         }
 
         for (int i = 1; i <= 9; i++) {
-            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.HOTBAR, PlayerHandler.getPlayerID(player), Integer.toString(i), "64"));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.HOTBAR, PlayerHandler.getPlayerID(player), Integer.toString(i), "64"));
             if (dataObject != null) {
                 this.hotbars.put(Integer.valueOf(dataObject.getPosition()), dataObject.getInventory64());
             }
@@ -181,11 +180,11 @@ public class PlayerStats {
     public void setFlight(final Player player, final boolean allowFlight) {
         synchronized ("FK_SQL") {
             this.allowFlight = allowFlight;
-            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.ALLOW_FLIGHT, PlayerHandler.getPlayerID(player), allowFlight));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ALLOW_FLIGHT, PlayerHandler.getPlayerID(player), allowFlight));
             if (dataObject != null) {
-                Core.getCore().getSQL().removeData(dataObject);
+                FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            Core.getCore().getSQL().saveData(new DataObject(Table.ALLOW_FLIGHT, PlayerHandler.getPlayerID(player), allowFlight));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.ALLOW_FLIGHT, PlayerHandler.getPlayerID(player), allowFlight));
             player.setAllowFlight(allowFlight);
             player.setFlying(allowFlight);
         }
@@ -209,11 +208,11 @@ public class PlayerStats {
     public void setFlySpeed(final Player player, final double flySpeed) {
         synchronized ("FK_SQL") {
             this.flySpeed = (flySpeed >= 0 ? flySpeed : 1);
-            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.SPEED_FLIGHT, PlayerHandler.getPlayerID(player), flySpeed));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SPEED_FLIGHT, PlayerHandler.getPlayerID(player), flySpeed));
             if (dataObject != null) {
-                Core.getCore().getSQL().removeData(dataObject);
+                FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            Core.getCore().getSQL().saveData(new DataObject(Table.SPEED_FLIGHT, PlayerHandler.getPlayerID(player), flySpeed));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SPEED_FLIGHT, PlayerHandler.getPlayerID(player), flySpeed));
             player.setFlySpeed(Float.parseFloat((Double.toString((flySpeed) / 10))));
         }
     }
@@ -236,11 +235,11 @@ public class PlayerStats {
     public void setBreakSpeed(final Player player, final double breakSpeed) {
         synchronized ("FK_SQL") {
             this.breakSpeed = (breakSpeed >= 0 ? breakSpeed : 3);
-            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.SPEED_BREAK, PlayerHandler.getPlayerID(player), breakSpeed));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SPEED_BREAK, PlayerHandler.getPlayerID(player), breakSpeed));
             if (dataObject != null) {
-                Core.getCore().getSQL().removeData(dataObject);
+                FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            Core.getCore().getSQL().saveData(new DataObject(Table.SPEED_BREAK, PlayerHandler.getPlayerID(player), breakSpeed));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SPEED_BREAK, PlayerHandler.getPlayerID(player), breakSpeed));
         }
     }
 
@@ -262,11 +261,11 @@ public class PlayerStats {
     public void setFoodLevel(final Player player, final int foodLevel) {
         synchronized ("FK_SQL") {
             this.foodLevel = (foodLevel >= 0 ? foodLevel : 20);
-            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.SET_FOOD, PlayerHandler.getPlayerID(player), foodLevel));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_FOOD, PlayerHandler.getPlayerID(player), foodLevel));
             if (dataObject != null) {
-                Core.getCore().getSQL().removeData(dataObject);
+                FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            Core.getCore().getSQL().saveData(new DataObject(Table.SET_FOOD, PlayerHandler.getPlayerID(player), foodLevel));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SET_FOOD, PlayerHandler.getPlayerID(player), foodLevel));
             player.setFoodLevel(foodLevel);
         }
     }
@@ -290,11 +289,11 @@ public class PlayerStats {
     public void setHealth(final Player player, final int health, final boolean scaleUpdate) {
         synchronized ("FK_SQL") {
             this.health = (health >= 0 ? health : 20);
-            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.SET_HEALTH, PlayerHandler.getPlayerID(player), health));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_HEALTH, PlayerHandler.getPlayerID(player), health));
             if (dataObject != null) {
-                Core.getCore().getSQL().removeData(dataObject);
+                FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            Core.getCore().getSQL().saveData(new DataObject(Table.SET_HEALTH, PlayerHandler.getPlayerID(player), health));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SET_HEALTH, PlayerHandler.getPlayerID(player), health));
             if (!scaleUpdate) {
                 player.setHealth(health);
             }
@@ -319,11 +318,11 @@ public class PlayerStats {
     public void setScale(final Player player, final double heartScale) {
         synchronized ("FK_SQL") {
             this.heartScale = (heartScale >= 0 ? heartScale : 10);
-            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.SET_SCALE, PlayerHandler.getPlayerID(player), heartScale));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_SCALE, PlayerHandler.getPlayerID(player), heartScale));
             if (dataObject != null) {
-                Core.getCore().getSQL().removeData(dataObject);
+                FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            Core.getCore().getSQL().saveData(new DataObject(Table.SET_SCALE, PlayerHandler.getPlayerID(player), heartScale));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SET_SCALE, PlayerHandler.getPlayerID(player), heartScale));
             if (ServerUtils.hasSpecificUpdate("1_9")) {
                 SchedulerUtils.run(() -> Objects.requireNonNull(player.getAttribute((Attribute) CompatUtils.valueOf(Attribute.class, "GENERIC_MAX_HEALTH"))).setBaseValue(((heartScale) * 2)));
             } else {
@@ -350,11 +349,11 @@ public class PlayerStats {
     public void setAllowHunger(final Player player, final boolean allowHunger) {
         synchronized ("FK_SQL") {
             this.allowHunger = allowHunger;
-            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.ALLOW_HUNGER, PlayerHandler.getPlayerID(player), allowHunger));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ALLOW_HUNGER, PlayerHandler.getPlayerID(player), allowHunger));
             if (dataObject != null) {
-                Core.getCore().getSQL().removeData(dataObject);
+                FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            Core.getCore().getSQL().saveData(new DataObject(Table.ALLOW_HUNGER, PlayerHandler.getPlayerID(player), allowHunger));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.ALLOW_HUNGER, PlayerHandler.getPlayerID(player), allowHunger));
         }
     }
 
@@ -376,11 +375,11 @@ public class PlayerStats {
     public void setAllowBurn(final Player player, final boolean allowBurn) {
         synchronized ("FK_SQL") {
             this.allowBurn = allowBurn;
-            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.ALLOW_BURN, PlayerHandler.getPlayerID(player), allowBurn));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ALLOW_BURN, PlayerHandler.getPlayerID(player), allowBurn));
             if (dataObject != null) {
-                Core.getCore().getSQL().removeData(dataObject);
+                FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            Core.getCore().getSQL().saveData(new DataObject(Table.ALLOW_BURN, PlayerHandler.getPlayerID(player), allowBurn));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.ALLOW_BURN, PlayerHandler.getPlayerID(player), allowBurn));
             if (!allowBurn) {
                 player.setFireTicks(0);
             } else {
@@ -407,11 +406,11 @@ public class PlayerStats {
     public void setUnbreakableItems(final Player player, final boolean unbreakableItems) {
         synchronized ("FK_SQL") {
             this.unbreakableItems = unbreakableItems;
-            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.UNBREAKABLE_ITEMS, PlayerHandler.getPlayerID(player), unbreakableItems));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.UNBREAKABLE_ITEMS, PlayerHandler.getPlayerID(player), unbreakableItems));
             if (dataObject != null) {
-                Core.getCore().getSQL().removeData(dataObject);
+                FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            Core.getCore().getSQL().saveData(new DataObject(Table.UNBREAKABLE_ITEMS, PlayerHandler.getPlayerID(player), unbreakableItems));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.UNBREAKABLE_ITEMS, PlayerHandler.getPlayerID(player), unbreakableItems));
         }
     }
 
@@ -433,11 +432,11 @@ public class PlayerStats {
     public void setBlockDrops(final Player player, final boolean blockDrops) {
         synchronized ("FK_SQL") {
             this.blockDrops = blockDrops;
-            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.DROPS_BLOCK, PlayerHandler.getPlayerID(player), blockDrops));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.DROPS_BLOCK, PlayerHandler.getPlayerID(player), blockDrops));
             if (dataObject != null) {
-                Core.getCore().getSQL().removeData(dataObject);
+                FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            Core.getCore().getSQL().saveData(new DataObject(Table.DROPS_BLOCK, PlayerHandler.getPlayerID(player), blockDrops));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.DROPS_BLOCK, PlayerHandler.getPlayerID(player), blockDrops));
         }
     }
 
@@ -459,11 +458,11 @@ public class PlayerStats {
     public void setSwordBlock(final Player player, final boolean swordBlock) {
         synchronized ("FK_SQL") {
             this.swordBlock = swordBlock;
-            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.SWORD_BLOCK, PlayerHandler.getPlayerID(player), swordBlock));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SWORD_BLOCK, PlayerHandler.getPlayerID(player), swordBlock));
             if (dataObject != null) {
-                Core.getCore().getSQL().removeData(dataObject);
+                FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            Core.getCore().getSQL().saveData(new DataObject(Table.SWORD_BLOCK, PlayerHandler.getPlayerID(player), swordBlock));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SWORD_BLOCK, PlayerHandler.getPlayerID(player), swordBlock));
         }
     }
 
@@ -485,11 +484,11 @@ public class PlayerStats {
     public void setRestore(final Player player, final boolean autoRestore) {
         synchronized ("FK_SQL") {
             this.autoRestore = autoRestore;
-            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.AUTO_RESTORE, PlayerHandler.getPlayerID(player), autoRestore));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.AUTO_RESTORE, PlayerHandler.getPlayerID(player), autoRestore));
             if (dataObject != null) {
-                Core.getCore().getSQL().removeData(dataObject);
+                FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            Core.getCore().getSQL().saveData(new DataObject(Table.AUTO_RESTORE, PlayerHandler.getPlayerID(player), autoRestore));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.AUTO_RESTORE, PlayerHandler.getPlayerID(player), autoRestore));
         }
     }
 
@@ -511,11 +510,11 @@ public class PlayerStats {
     public void setGod(final Player player, final boolean god) {
         synchronized ("FK_SQL") {
             this.god = god;
-            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.SET_GOD, PlayerHandler.getPlayerID(player), god));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_GOD, PlayerHandler.getPlayerID(player), god));
             if (dataObject != null) {
-                Core.getCore().getSQL().removeData(dataObject);
+                FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            Core.getCore().getSQL().saveData(new DataObject(Table.SET_GOD, PlayerHandler.getPlayerID(player), god));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SET_GOD, PlayerHandler.getPlayerID(player), god));
             player.setInvulnerable(god);
         }
     }
@@ -538,11 +537,11 @@ public class PlayerStats {
     public void setGodDelay(final Player player, final int godDelay) {
         synchronized ("FK_SQL") {
             this.godDelay = (godDelay >= 0 ? godDelay : 3);
-            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.DELAY_GOD, PlayerHandler.getPlayerID(player), godDelay));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.DELAY_GOD, PlayerHandler.getPlayerID(player), godDelay));
             if (dataObject != null) {
-                Core.getCore().getSQL().removeData(dataObject);
+                FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            Core.getCore().getSQL().saveData(new DataObject(Table.DELAY_GOD, PlayerHandler.getPlayerID(player), godDelay));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.DELAY_GOD, PlayerHandler.getPlayerID(player), godDelay));
         }
     }
 
@@ -564,11 +563,11 @@ public class PlayerStats {
     public void setStore(final Player player, final boolean storeInventory) {
         synchronized ("FK_SQL") {
             this.storeInventory = storeInventory;
-            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.STORE_INVENTORY, PlayerHandler.getPlayerID(player), storeInventory));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.STORE_INVENTORY, PlayerHandler.getPlayerID(player), storeInventory));
             if (dataObject != null) {
-                Core.getCore().getSQL().removeData(dataObject);
+                FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            Core.getCore().getSQL().saveData(new DataObject(Table.STORE_INVENTORY, PlayerHandler.getPlayerID(player), storeInventory));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.STORE_INVENTORY, PlayerHandler.getPlayerID(player), storeInventory));
             if (!storeInventory) {
                 Mode.restoreInventory(player);
                 {
@@ -598,11 +597,11 @@ public class PlayerStats {
     public void setPickups(final Player player, final boolean destroyPickups) {
         synchronized ("FK_SQL") {
             this.destroyPickups = destroyPickups;
-            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.DESTROY_PICKUPS, PlayerHandler.getPlayerID(player), destroyPickups));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.DESTROY_PICKUPS, PlayerHandler.getPlayerID(player), destroyPickups));
             if (dataObject != null) {
-                Core.getCore().getSQL().removeData(dataObject);
+                FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            Core.getCore().getSQL().saveData(new DataObject(Table.DESTROY_PICKUPS, PlayerHandler.getPlayerID(player), destroyPickups));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.DESTROY_PICKUPS, PlayerHandler.getPlayerID(player), destroyPickups));
         }
     }
 
@@ -624,11 +623,11 @@ public class PlayerStats {
     public void setSelfDrops(final Player player, final boolean selfDrops) {
         synchronized ("FK_SQL") {
             this.selfDrops = selfDrops;
-            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.SELF_DROPS, PlayerHandler.getPlayerID(player), selfDrops));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SELF_DROPS, PlayerHandler.getPlayerID(player), selfDrops));
             if (dataObject != null) {
-                Core.getCore().getSQL().removeData(dataObject);
+                FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            Core.getCore().getSQL().saveData(new DataObject(Table.SELF_DROPS, PlayerHandler.getPlayerID(player), selfDrops));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SELF_DROPS, PlayerHandler.getPlayerID(player), selfDrops));
         }
     }
 
@@ -650,11 +649,11 @@ public class PlayerStats {
     public void setItemStore(final Player player, final boolean itemStore) {
         synchronized ("FK_SQL") {
             this.itemStore = itemStore;
-            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.ITEM_STORE, PlayerHandler.getPlayerID(player), itemStore));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ITEM_STORE, PlayerHandler.getPlayerID(player), itemStore));
             if (dataObject != null) {
-                Core.getCore().getSQL().removeData(dataObject);
+                FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            Core.getCore().getSQL().saveData(new DataObject(Table.ITEM_STORE, PlayerHandler.getPlayerID(player), itemStore));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.ITEM_STORE, PlayerHandler.getPlayerID(player), itemStore));
         }
     }
 
@@ -677,11 +676,11 @@ public class PlayerStats {
     public void saveHotbar(final Player player, final String inventoryData, final int hotbar) {
         synchronized ("FK_SQL") {
             this.hotbars.put(hotbar, inventoryData);
-            final DataObject dataObject = (DataObject) Core.getCore().getSQL().getData(new DataObject(Table.HOTBAR, PlayerHandler.getPlayerID(player), Integer.toString(hotbar), ""));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.HOTBAR, PlayerHandler.getPlayerID(player), Integer.toString(hotbar), ""));
             if (dataObject != null) {
-                Core.getCore().getSQL().removeData(dataObject);
+                FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            Core.getCore().getSQL().saveData(new DataObject(Table.HOTBAR, PlayerHandler.getPlayerID(player), Integer.toString(hotbar), inventoryData));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.HOTBAR, PlayerHandler.getPlayerID(player), Integer.toString(hotbar), inventoryData));
         }
     }
 

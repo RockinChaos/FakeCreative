@@ -49,6 +49,7 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionType;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Handles the in-game GUI.
@@ -56,12 +57,12 @@ import java.util.*;
 public class Menu {
     private static final ItemStack fillerPaneBItem = ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "BLACK_STAINED_GLASS_PANE" : "STAINED_GLASS_PANE:15"), 1, false, false, "&7", "");
     private static final ItemStack fillerPaneGItem = ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "GRAY_STAINED_GLASS_PANE" : "STAINED_GLASS_PANE:7"), 1, false, false, "&7", "");
-    private static final ItemStack exitItem = ItemHandler.getItem("BARRIER", 1, false, false, "&c&l&nExit", "&7", "&7*Return to playing the game.");
+    private static final ItemStack exitItem = ItemHandler.getItem("BARRIER", 1, false, false, FakeCreative.getCore().getLang().getString("menus.general.items.exit.name"), FakeCreative.getCore().getLang().getStringList("menus.general.items.exit.lore").toArray(new String[0]));
     private static final List<String> modifyMenu = new ArrayList<>();
     private static final Map<String, Interface> typingMenu = new HashMap<>();
-    private static String GUIName = ServerUtils.hasSpecificUpdate("1_9") ? StringUtils.colorFormat("&7           &0&nCreative Menu") : StringUtils.colorFormat("&7           &0&n Creative Menu");
-    private static String HotbarGUIName = ServerUtils.hasSpecificUpdate("1_9") ? StringUtils.colorFormat("&7            &0&nHotbar Menu") : StringUtils.colorFormat("&7            &0&n Hotbar Menu");
-    private static String userGUIName = ServerUtils.hasSpecificUpdate("1_9") ? StringUtils.colorFormat("&7              &0&nUser Menu") : StringUtils.colorFormat("&7             &0&n User Menu");
+    private static String GUIName = StringUtils.colorFormat(!FakeCreative.getCore().getLang().getString("menus.creative.title").isEmpty() ? FakeCreative.getCore().getLang().getString("menus.creative.title") : "&7           &0&nCreative Menu");
+    private static String HotbarGUIName = StringUtils.colorFormat(!FakeCreative.getCore().getLang().getString("menus.hotbars.title").isEmpty() ? FakeCreative.getCore().getLang().getString("menus.hotbars.title") : "&7            &0&nHotbar Menu");
+    private static String userGUIName = StringUtils.colorFormat(!FakeCreative.getCore().getLang().getString("menus.preferences.title").isEmpty() ? FakeCreative.getCore().getLang().getString("menus.preferences.title") : "&7              &0&nUser Menu");
 
     /**
      * Opens the MAIN CREATIVE PANE for the Player.
@@ -408,9 +409,9 @@ public class Menu {
                     }
                 }
                 final boolean matExisting = existingMats.length() > 0;
-                pagedPane.addButton(new Button(ItemHandler.getItem("PAPER", k, false, false, "&a&l[" + k + "] " + "&aHotbar",
-                        (existingMats.length() > 0) ? existingMats.substring(0, existingMats.length() - 4) : "&7No items saved for this hotbar.", "&7",
-                        "&8&oLeft-click to save.", (existingMats.length() > 0) ? "&8&oShift+Left-click to load." : "", (existingMats.length() > 0) ? "&8&oRight-click to view." : ""), event -> {
+                pagedPane.addButton(new Button(ItemHandler.getItem("PAPER", k, false, false, "&a&l[" + k + "] " + FakeCreative.getCore().getLang().getString("menus.hotbars.items.hotbar.name"),
+                        Stream.concat(Arrays.stream((existingMats.length() > 0) ? new String[]{existingMats.substring(0, existingMats.length() - 4)} : FakeCreative.getCore().getLang().getStringList("menus.hotbars.items.hotbar.lore").toArray(new String[0])),
+                                Arrays.stream((existingMats.length() > 0) ? FakeCreative.getCore().getLang().getStringList("menus.hotbars.items.hotbar.savedLore").toArray(new String[0]) : new String[0])).toArray(String[]::new)), event -> {
                     boolean empty = true;
                     if (event.getClick() == ClickType.LEFT) {
                         if (Creative.isCreativeMode(player, true)) {
@@ -457,7 +458,7 @@ public class Menu {
             }
             pagedPane.addButton(new Button(exitItem, event -> player.closeInventory()));
             pagedPane.addButton(new Button(fillerPaneBItem), 3);
-            pagedPane.addButton(new Button(ItemHandler.getItem("BOOK", 1, true, true, "&e&l&nInformation", "&7", "&7Left-click to save", "&7your current hotbar.", "&7", "&7Shift+Left-click to load", "&7the clicked hotbar.", "&7", "&7Right-click to view", "&7the clicked hotbar.")));
+            pagedPane.addButton(new Button(ItemHandler.getItem("BOOK", 1, true, true, FakeCreative.getCore().getLang().getString("menus.hotbars.items.information.name"), FakeCreative.getCore().getLang().getStringList("menus.hotbars.items.information.lore").toArray(new String[0]))));
             pagedPane.addButton(new Button(fillerPaneBItem), 3);
             pagedPane.addButton(new Button(exitItem, event -> player.closeInventory()));
         });
@@ -506,14 +507,14 @@ public class Menu {
         final Player player = (Player) sender;
         Interface pagedPane = new Interface(false, 3, exitButton, userGUIName, player);
         SchedulerUtils.runAsync(() -> {
-            pagedPane.addButton(new Button(ItemHandler.getItem("FEATHER", 1, Creative.get(player).getStats().allowFlight(), true, "&fAllow Flight", "&7*If you should be allowed to fly", "&7using double-space to ascend.",
-                    "&7", "&a&lEnabled: &b&l" + Creative.get(player).getStats().allowFlight()),
+            pagedPane.addButton(new Button(ItemHandler.getItem("FEATHER", 1, Creative.get(player).getStats().allowFlight(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.allowFlight.name"),
+                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.allowFlight.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().allowFlight()))).toArray(String[]::new)),
                     event -> {
                         Creative.get(player).getStats().setFlight(player, !Creative.get(player).getStats().allowFlight());
                         userMenu(player);
                     }));
-            pagedPane.addButton(new Button(ItemHandler.getItem("SUGAR", 1, false, true, "&fFlight Speed", "&7*The desired speed while flying.",
-                    "&7", "&a&lSpeed: &b&l" + Creative.get(player).getStats().flySpeed()), event -> {
+            pagedPane.addButton(new Button(ItemHandler.getItem("SUGAR", 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.flightSpeed.name"),
+                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.flightSpeed.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().flySpeed()))).toArray(String[]::new)), event -> {
                 final InventoryHolder inventoryHolder = event.getInventory().getHolder();
                 if (inventoryHolder != null) {
                     ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
@@ -537,11 +538,17 @@ public class Menu {
                         }
                     })
                     .itemLeft(ItemHandler.getItem("NAME_TAG", 1, false, true, " ", "&7"))
-                    .itemRight(ItemHandler.getItem("GOLD_NUGGET", 1, true, true, "&c&n&lTips", FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputType").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"), FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputExample").replace("%input_example%", "BOAT").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"), "&7", "&aMaximum Speed is 10."))
-                    .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, "&bStart typing...", "&8Preview of what", "&8you have entered.'"))
-                    .title("Flight Speed:"), 0));
-            pagedPane.addButton(new Button(ItemHandler.getItem("DIAMOND_PICKAXE", 1, false, true, "&fBreak Speed", "&7*The desired speed", "&7in-between each block-break.",
-                    "&7", "&a&lSpeed: &b&l" + Creative.get(player).getStats().breakSpeed()), event -> {
+                    .itemRight(ItemHandler.getItem("GOLD_NUGGET", 1, true, true, FakeCreative.getCore().getLang().getString("menus.general.items.tips.name"),
+                            Stream.concat(Stream.concat(
+                                                Stream.of(FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputType").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number")),
+                                                Stream.of("&7", FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputExample").replace("%input_example%", "20").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"))
+                                            ),
+                                            FakeCreative.getCore().getLang().getStringList("menus.preferences.items.flightSpeed.tipLore").stream().filter(s -> !s.isEmpty()).map(lore -> lore.replace("%value%", String.valueOf(((int) Creative.get(player).getStats().flySpeed()) * 2)))
+                                          ).toArray(String[]::new)))
+                    .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, FakeCreative.getCore().getLang().getString("menus.general.items.typing.name"), FakeCreative.getCore().getLang().getStringList("menus.general.items.typing.lore").toArray(new String[0])))
+                    .title(FakeCreative.getCore().getLang().getString("menus.preferences.items.flightSpeed.name") + ":"), 0));
+            pagedPane.addButton(new Button(ItemHandler.getItem("DIAMOND_PICKAXE", 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.breakSpeed.name"),
+                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.breakSpeed.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().breakSpeed()))).toArray(String[]::new)), event -> {
                 final InventoryHolder inventoryHolder = event.getInventory().getHolder();
                 if (inventoryHolder != null) {
                     ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
@@ -563,17 +570,17 @@ public class Menu {
                         }
                     })
                     .itemLeft(ItemHandler.getItem("NAME_TAG", 1, false, true, " ", "&7"))
-                    .itemRight(ItemHandler.getItem("GOLD_NUGGET", 1, true, true, "&c&n&lTips", FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputType").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"), FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputExample").replace("%input_example%", "BOAT").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number")))
-                    .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, "&bStart typing...", "&8Preview of what", "&8you have entered.'"))
-                    .title("Break Speed:"), 0));
-            pagedPane.addButton(new Button(ItemHandler.getItem("DIAMOND_SWORD", 1, Creative.get(player).getStats().swordBlock(), true, "&fSword Block", "&7*When holding a sword you will not", "&7be able to break any blocks.",
-                    "&7", "&a&lEnabled: &b&l" + Creative.get(player).getStats().swordBlock()),
+                    .itemRight(ItemHandler.getItem("GOLD_NUGGET", 1, true, true, FakeCreative.getCore().getLang().getString("menus.general.items.tips.name"), FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputType").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"), "&7", FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputExample").replace("%input_example%", "20").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number")))
+                    .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, FakeCreative.getCore().getLang().getString("menus.general.items.typing.name"), FakeCreative.getCore().getLang().getStringList("menus.general.items.typing.lore").toArray(new String[0])))
+                    .title(FakeCreative.getCore().getLang().getString("menus.preferences.items.breakSpeed.name") + ":"), 0));
+            pagedPane.addButton(new Button(ItemHandler.getItem("DIAMOND_SWORD", 1, Creative.get(player).getStats().swordBlock(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.swordBlock.name"),
+                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.swordBlock.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().swordBlock()))).toArray(String[]::new)),
                     event -> {
                         Creative.get(player).getStats().setSwordBlock(player, !Creative.get(player).getStats().swordBlock());
                         userMenu(player);
                     }));
-            pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "COOKED_BEEF" : "364"), 1, false, true, "&fFood", "&7*The desired food/hunger level.",
-                    "&7", "&a&lFood: &b&l" + Creative.get(player).getStats().foodLevel()), event -> {
+            pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "COOKED_BEEF" : "364"), 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.food.name"),
+                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.food.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().foodLevel()))).toArray(String[]::new)), event -> {
                 final InventoryHolder inventoryHolder = event.getInventory().getHolder();
                 if (inventoryHolder != null) {
                     ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
@@ -595,11 +602,11 @@ public class Menu {
                         }
                     })
                     .itemLeft(ItemHandler.getItem("NAME_TAG", 1, false, true, " ", "&7"))
-                    .itemRight(ItemHandler.getItem("GOLD_NUGGET", 1, true, true, "&c&n&lTips", FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputType").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"), FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputExample").replace("%input_example%", "BOAT").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number")))
-                    .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, "&bStart typing...", "&8Preview of what", "&8you have entered.'"))
-                    .title("Food Level:"), 0));
-            pagedPane.addButton(new Button(ItemHandler.getItem("APPLE", 1, false, true, "&fHealth", "&7*The desired health level.",
-                    "&7", "&a&lHealth: &b&l" + Creative.get(player).getStats().health()), event -> {
+                    .itemRight(ItemHandler.getItem("GOLD_NUGGET", 1, true, true, FakeCreative.getCore().getLang().getString("menus.general.items.tips.name"), FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputType").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"), "&7", FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputExample").replace("%input_example%", "20").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number")))
+                    .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, FakeCreative.getCore().getLang().getString("menus.general.items.typing.name"), FakeCreative.getCore().getLang().getStringList("menus.general.items.typing.lore").toArray(new String[0])))
+                    .title(FakeCreative.getCore().getLang().getString("menus.preferences.items.food.name") + ":"), 0));
+            pagedPane.addButton(new Button(ItemHandler.getItem("APPLE", 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.health.name"),
+                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.health.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().health()))).toArray(String[]::new)), event -> {
                 final InventoryHolder inventoryHolder = event.getInventory().getHolder();
                 if (inventoryHolder != null) {
                     ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
@@ -623,11 +630,17 @@ public class Menu {
                         }
                     })
                     .itemLeft(ItemHandler.getItem("NAME_TAG", 1, false, true, " ", "&7"))
-                    .itemRight(ItemHandler.getItem("GOLD_NUGGET", 1, true, true, "&c&n&lTips", FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputType").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"), FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputExample").replace("%input_example%", "BOAT").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"), "&7", "&cCannot exceed your set heart-scale.", "&cCurrently cannot exceed " + (((int) Creative.get(player).getStats().heartScale()) * 2) + "."))
-                    .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, "&bStart typing...", "&8Preview of what", "&8you have entered.'"))
-                    .title("Heart Level:"), 0));
-            pagedPane.addButton(new Button(ItemHandler.getItem("REDSTONE", 1, false, true, "&fHeart Scale", "&7*The desired health scale.", "&7This is the number of hearts to", "&7be displayed in the user interface.",
-                    "&7", "&a&lScale: &b&l" + Creative.get(player).getStats().heartScale()), event -> {
+                    .itemRight(ItemHandler.getItem("GOLD_NUGGET", 1, true, true, FakeCreative.getCore().getLang().getString("menus.general.items.tips.name"),
+                            Stream.concat(Stream.concat(
+                                                Stream.of(FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputType").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number")),
+                                                Stream.of("&7", FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputExample").replace("%input_example%", "20").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"))
+                                            ),
+                                            FakeCreative.getCore().getLang().getStringList("menus.preferences.items.heartScale.tipLore").stream().filter(s -> !s.isEmpty()).map(lore -> lore.replace("%value%", String.valueOf(((int) Creative.get(player).getStats().heartScale()) * 2)))
+                                          ).toArray(String[]::new)))
+                    .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, FakeCreative.getCore().getLang().getString("menus.general.items.typing.name"), FakeCreative.getCore().getLang().getStringList("menus.general.items.typing.lore").toArray(new String[0])))
+                    .title(FakeCreative.getCore().getLang().getString("menus.preferences.items.heart.name") + ":"), 0));
+            pagedPane.addButton(new Button(ItemHandler.getItem("REDSTONE", 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.heartScale.name"),
+                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.heartScale.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().heartScale()))).toArray(String[]::new)), event -> {
                 final InventoryHolder inventoryHolder = event.getInventory().getHolder();
                 if (inventoryHolder != null) {
                     ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
@@ -652,66 +665,65 @@ public class Menu {
                         }
                     })
                     .itemLeft(ItemHandler.getItem("NAME_TAG", 1, false, true, " ", "&7"))
-                    .itemRight(ItemHandler.getItem("GOLD_NUGGET", 1, true, true, "&c&n&lTips", FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputType").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"), FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputExample").replace("%input_example%", "BOAT").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number")))
-                    .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, "&bStart typing...", "&8Preview of what", "&8you have entered.'"))
-                    .title("Heart Scale:"), 0));
-            pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "ROTTEN_FLESH" : "367"), 1, Creative.get(player).getStats().allowHunger(), true, "&fAllow Hunger", "&7*If your hunger should decrease.",
-                    "&7", "&a&lEnabled: &b&l" + Creative.get(player).getStats().allowHunger()),
+                    .itemRight(ItemHandler.getItem("GOLD_NUGGET", 1, true, true, FakeCreative.getCore().getLang().getString("menus.general.items.tips.name"), FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputType").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"), "&7", FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputExample").replace("%input_example%", "20").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number")))
+                    .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, FakeCreative.getCore().getLang().getString("menus.general.items.typing.name"), FakeCreative.getCore().getLang().getStringList("menus.general.items.typing.lore").toArray(new String[0])))
+                    .title(FakeCreative.getCore().getLang().getString("menus.preferences.items.heartScale.name") + ":"), 0));
+            pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "ROTTEN_FLESH" : "367"), 1, Creative.get(player).getStats().allowHunger(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.allowHunger.name"),
+                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.allowHunger.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().allowHunger()))).toArray(String[]::new)),
                     event -> {
                         Creative.get(player).getStats().setAllowHunger(player, !Creative.get(player).getStats().allowHunger());
                         userMenu(player);
                     }));
-            pagedPane.addButton(new Button(ItemHandler.getItem("LAVA_BUCKET", 1, Creative.get(player).getStats().allowBurn(), true, "&fAllow Burn", "&7*If lava or fire should do damage.",
-                    "&7", "&a&lEnabled: &b&l" + Creative.get(player).getStats().allowBurn()),
+            pagedPane.addButton(new Button(ItemHandler.getItem("LAVA_BUCKET", 1, Creative.get(player).getStats().allowBurn(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.allowBurn.name"),
+                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.allowBurn.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().allowBurn()))).toArray(String[]::new)),
                     event -> {
                         Creative.get(player).getStats().setAllowBurn(player, !Creative.get(player).getStats().allowBurn());
                         userMenu(player);
                     }));
-            pagedPane.addButton(new Button(ItemHandler.getItem("BEDROCK", 1, Creative.get(player).getStats().unbreakableItems(), true, "&fUnbreakable Items", "&7*If items in creative should be unbreakable.",
-                    "&7This is only effective in creative", "&7unbreakable items will automatically", "&7become breakable when exiting creative.",
-                    "&7", "&a&lEnabled: &b&l" + Creative.get(player).getStats().unbreakableItems()),
+            pagedPane.addButton(new Button(ItemHandler.getItem("BEDROCK", 1, Creative.get(player).getStats().unbreakableItems(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.unbreakableItems.name"),
+                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.unbreakableItems.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().unbreakableItems()))).toArray(String[]::new)),
                     event -> {
                         Creative.get(player).getStats().setUnbreakableItems(player, !Creative.get(player).getStats().unbreakableItems());
                         userMenu(player);
                     }));
-            pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "GRASS_BLOCK" : "2"), 1, Creative.get(player).getStats().blockDrops(), true, "&fBlock Drops", "&7*If blocks should drop when you", "&7break them using your hand or an item.",
-                    "&7", "&a&lEnabled: &b&l" + Creative.get(player).getStats().blockDrops()),
+            pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "GRASS_BLOCK" : "2"), 1, Creative.get(player).getStats().blockDrops(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.blockDrops.name"),
+                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.blockDrops.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().blockDrops()))).toArray(String[]::new)),
                     event -> {
                         Creative.get(player).getStats().setBlockDrops(player, !Creative.get(player).getStats().blockDrops());
                         userMenu(player);
                     }));
-            pagedPane.addButton(new Button(ItemHandler.getItem("DISPENSER", 1, Creative.get(player).getStats().destroyPickups(), true, "&fDestroy Pickups", "&7*If items should be destroyed when", "&7the your inventory is full and", "&7you try to pick up items on the ground.",
-                    "&7", "&a&lEnabled: &b&l" + Creative.get(player).getStats().destroyPickups()),
+            pagedPane.addButton(new Button(ItemHandler.getItem("DISPENSER", 1, Creative.get(player).getStats().destroyPickups(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.destroyPickups.name"),
+                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.destroyPickups.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().destroyPickups()))).toArray(String[]::new)),
                     event -> {
                         Creative.get(player).getStats().setPickups(player, !Creative.get(player).getStats().destroyPickups());
                         userMenu(player);
                     }));
-            pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "HOPPER" : "154"), 1, Creative.get(player).getStats().selfDrops(), true, "&fSelf Drops", "&7*If items should be allowed to be", "&7dropped manually and on player death.",
-                    "&7", "&a&lEnabled: &b&l" + Creative.get(player).getStats().selfDrops()),
+            pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "HOPPER" : "154"), 1, Creative.get(player).getStats().selfDrops(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.selfDrops.name"),
+                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.selfDrops.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().selfDrops()))).toArray(String[]::new)),
                     event -> {
                         Creative.get(player).getStats().setSelfDrops(player, !Creative.get(player).getStats().selfDrops());
                         userMenu(player);
                     }));
-            pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "CHEST_MINECART" : "342"), 1, Creative.get(player).getStats().itemStore(), true, "&fItem Store", "&7*If items should be allowed to be", "&7placed or stored in storage related", "&7items like chests and hoppers.",
-                    "&7", "&a&lEnabled: &b&l" + Creative.get(player).getStats().itemStore()),
+            pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "CHEST_MINECART" : "342"), 1, Creative.get(player).getStats().itemStore(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.itemStore.name"),
+                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.itemStore.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().itemStore()))).toArray(String[]::new)),
                     event -> {
                         Creative.get(player).getStats().setItemStore(player, !Creative.get(player).getStats().itemStore());
                         userMenu(player);
                     }));
-            pagedPane.addButton(new Button(ItemHandler.getItem("BEACON", 1, Creative.get(player).getStats().autoRestore(), true, "&fAuto Restore", "&7*If you exit the server or the server", "&7restarts while you are in creative, you", "&7will automatically be set back to", "&7creative upon entering the server.",
-                    "&7", "&a&lEnabled: &b&l" + Creative.get(player).getStats().autoRestore()),
+            pagedPane.addButton(new Button(ItemHandler.getItem("BEACON", 1, Creative.get(player).getStats().autoRestore(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.autoRestore.name"),
+                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.autoRestore.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().autoRestore()))).toArray(String[]::new)),
                     event -> {
                         Creative.get(player).getStats().setRestore(player, !Creative.get(player).getStats().autoRestore());
                         userMenu(player);
                     }));
-            pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "ENCHANTED_GOLDEN_APPLE" : "322:1"), 1, Creative.get(player).getStats().god(), true, "&fInvulnerable", "&7*If you should take damage.",
-                    "&7", "&a&lEnabled: &b&l" + Creative.get(player).getStats().god()),
+            pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "ENCHANTED_GOLDEN_APPLE" : "322:1"), 1, Creative.get(player).getStats().god(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.invulnerable.name"),
+                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.invulnerable.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().god()))).toArray(String[]::new)),
                     event -> {
                         Creative.get(player).getStats().setGod(player, !Creative.get(player).getStats().god());
                         userMenu(player);
                     }));
-            pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "CLOCK" : "347"), 1, false, true, "&fInvulnerable Delay", "&7*How long to wait after exiting creative", "&7before you can take damage again.",
-                    "&7", "&a&lDelay: &b&l" + Creative.get(player).getStats().godDelay()), event -> {
+            pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "CLOCK" : "347"), 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.invulnerableDelay.name"),
+                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.invulnerableDelay.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().godDelay()))).toArray(String[]::new)), event -> {
                 final InventoryHolder inventoryHolder = event.getInventory().getHolder();
                 if (inventoryHolder != null) {
                     ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
@@ -733,11 +745,11 @@ public class Menu {
                         }
                     })
                     .itemLeft(ItemHandler.getItem("NAME_TAG", 1, false, true, " ", "&7"))
-                    .itemRight(ItemHandler.getItem("GOLD_NUGGET", 1, true, true, "&c&n&lTips", FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputType").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"), FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputExample").replace("%input_example%", "BOAT").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number")))
-                    .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, "&bStart typing...", "&8Preview of what", "&8you have entered.'"))
-                    .title("Invulnerable Delay:"), 0));
-            pagedPane.addButton(new Button(ItemHandler.getItem("CHEST", 1, Creative.get(player).getStats().storeInventory(), true, "&fStore Inventory", "&7*If the previous gamemodes inventory", "&7should be saved when entering creative.", "&7This inventory will automatically", "&7be restored when exiting creative.",
-                    "&7", "&a&lEnabled: &b&l" + Creative.get(player).getStats().storeInventory()),
+                    .itemRight(ItemHandler.getItem("GOLD_NUGGET", 1, true, true, FakeCreative.getCore().getLang().getString("menus.general.items.tips.name"), FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputType").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"), "&7", FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputExample").replace("%input_example%", "20").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number")))
+                    .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, FakeCreative.getCore().getLang().getString("menus.general.items.typing.name"), FakeCreative.getCore().getLang().getStringList("menus.general.items.typing.lore").toArray(new String[0])))
+                    .title(FakeCreative.getCore().getLang().getString("menus.preferences.items.invulnerableDelay.name") + ":"), 0));
+            pagedPane.addButton(new Button(ItemHandler.getItem("CHEST", 1, Creative.get(player).getStats().storeInventory(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.storeInventory.name"),
+                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.storeInventory.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().storeInventory()))).toArray(String[]::new)),
                     event -> {
                         Creative.get(player).getStats().setStore(player, !Creative.get(player).getStats().storeInventory());
                         userMenu(player);
@@ -809,7 +821,7 @@ public class Menu {
             pagedPane.addButton(new Button(new ItemStack(Material.AIR)), currentCount);
         }
         pagedPane.addButton(new Button(fillerPaneBItem), 9);
-        pagedPane.addButton(new Button(ItemHandler.getItem("COMPASS", 1, (selected == 0), true, (selected == 0 ? "&a" : "&f") + "Search Items", "&7", "&8&oClick to view", "&8&oShift+Left-click to search."), event -> {
+        pagedPane.addButton(new Button(ItemHandler.getItem("COMPASS", 1, (selected == 0), true, (selected == 0 ? "&a" : "&f") + FakeCreative.getCore().getLang().getString("menus.creative.items.search.name"), FakeCreative.getCore().getLang().getStringList("menus.creative.items.search.lore").toArray(new String[0])), event -> {
             final InventoryHolder inventoryHolder = event.getInventory().getHolder();
             if (event.getClick() == ClickType.SHIFT_LEFT && inventoryHolder != null) {
                 ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
@@ -827,17 +839,17 @@ public class Menu {
                     return Collections.singletonList(Query.ResponseAction.close());
                 })
                 .itemLeft(ItemHandler.getItem("NAME_TAG", 1, false, true, " ", "&7"))
-                .itemRight(ItemHandler.getItem("GOLD_NUGGET", 1, true, true, "&c&n&lTips", FakeCreative.getCore().getLang().getLangMessage("commands.menu.searchType").replace("%prefix% ", "").replace("%prefix%", ""), FakeCreative.getCore().getLang().getLangMessage("commands.menu.searchExample").replace("%input_example%", "BOAT").replace("%prefix% ", "").replace("%prefix%", "")))
-                .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, "&bStart typing...", "&8Preview of what", "&8you have entered.'"))
-                .title("Search Items:"), 0));
-        pagedPane.addButton(new Button(ItemHandler.getItem("LAVA_BUCKET", 1, (selected == 1), true, (selected == 1 ? "&a" : "&f") + "Miscellaneous", "&7", "&8&oClick to view"), event -> miscellaneousMenu(event.getWhoClicked())));
-        pagedPane.addButton(new Button(ItemHandler.getItem("APPLE", 1, (selected == 2), true, (selected == 2 ? "&a" : "&f") + "Foodstuffs", "&7", "&8&oClick to view"), event -> foodMenu(event.getWhoClicked())));
-        pagedPane.addButton(new Button(ItemHandler.getItem("IRON_AXE", 1, (selected == 3), true, (selected == 3 ? "&a" : "&f") + "Tools", "&7", "&8&oClick to view"), event -> toolsMenu(event.getWhoClicked())));
-        pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "GOLDEN_SWORD" : "283"), 1, (selected == 4), true, (selected == 4 ? "&a" : "&f") + "Combat", "&7", "&8&oClick to view"), event -> combatMenu(event.getWhoClicked())));
-        pagedPane.addButton(new Button(ItemHandler.getItem("WATER_BOTTLE", 1, (selected == 5), true, (selected == 5 ? "&a" : "&f") + "Brewing", "&7", "&8&oClick to view"), event -> brewingMenu(event.getWhoClicked())));
-        pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "BRICKS" : "45"), 1, (selected == 6), true, (selected == 6 ? "&a" : "&f") + "Building Blocks", "&7", "&8&oClick to view"), event -> buildingMenu(event.getWhoClicked())));
-        pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "PEONY" : "175:5"), 1, (selected == 7), true, (selected == 7 ? "&a" : "&f") + "Decoration Blocks", "&7", "&8&oClick to view"), event -> decorationMenu(event.getWhoClicked())));
-        pagedPane.addButton(new Button(ItemHandler.getItem("REDSTONE", 1, (selected == 8), true, (selected == 8 ? "&a" : "&f") + "Redstone", "&7", "&8&oClick to view"), event -> redstoneMenu(event.getWhoClicked())));
+                .itemRight(ItemHandler.getItem("GOLD_NUGGET", 1, true, true, FakeCreative.getCore().getLang().getString("menus.general.items.tips.name"), FakeCreative.getCore().getLang().getLangMessage("commands.menu.searchType").replace("%prefix% ", "").replace("%prefix%", ""), "&7", FakeCreative.getCore().getLang().getLangMessage("commands.menu.searchExample").replace("%input_example%", "BOAT").replace("%prefix% ", "").replace("%prefix%", "")))
+                .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, FakeCreative.getCore().getLang().getString("menus.general.items.typing.name"), FakeCreative.getCore().getLang().getStringList("menus.general.items.typing.lore").toArray(new String[0])))
+                .title(FakeCreative.getCore().getLang().getString("menus.creative.items.search.name") + ":"), 0));
+        pagedPane.addButton(new Button(ItemHandler.getItem("LAVA_BUCKET", 1, (selected == 1), true, (selected == 1 ? "&a" : "&f") + FakeCreative.getCore().getLang().getString("menus.creative.items.miscellaneous.name"), FakeCreative.getCore().getLang().getStringList("menus.creative.items.miscellaneous.lore").toArray(new String[0])), event -> miscellaneousMenu(event.getWhoClicked())));
+        pagedPane.addButton(new Button(ItemHandler.getItem("APPLE", 1, (selected == 2), true, (selected == 2 ? "&a" : "&f") + FakeCreative.getCore().getLang().getString("menus.creative.items.foodstuffs.name"), FakeCreative.getCore().getLang().getStringList("menus.creative.items.foodstuffs.lore").toArray(new String[0])), event -> foodMenu(event.getWhoClicked())));
+        pagedPane.addButton(new Button(ItemHandler.getItem("IRON_AXE", 1, (selected == 3), true, (selected == 3 ? "&a" : "&f") + FakeCreative.getCore().getLang().getString("menus.creative.items.tools.name"), FakeCreative.getCore().getLang().getStringList("menus.creative.items.tools.lore").toArray(new String[0])), event -> toolsMenu(event.getWhoClicked())));
+        pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "GOLDEN_SWORD" : "283"), 1, (selected == 4), true, (selected == 4 ? "&a" : "&f") + FakeCreative.getCore().getLang().getString("menus.creative.items.combat.name"), FakeCreative.getCore().getLang().getStringList("menus.creative.items.combat.lore").toArray(new String[0])), event -> combatMenu(event.getWhoClicked())));
+        pagedPane.addButton(new Button(ItemHandler.getItem("WATER_BOTTLE", 1, (selected == 5), true, (selected == 5 ? "&a" : "&f") + FakeCreative.getCore().getLang().getString("menus.creative.items.brewing.name"), FakeCreative.getCore().getLang().getStringList("menus.creative.items.brewing.lore").toArray(new String[0])), event -> brewingMenu(event.getWhoClicked())));
+        pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "BRICKS" : "45"), 1, (selected == 6), true, (selected == 6 ? "&a" : "&f") + FakeCreative.getCore().getLang().getString("menus.creative.items.buildingBlocks.name"), FakeCreative.getCore().getLang().getStringList("menus.creative.items.buildingBlocks.lore").toArray(new String[0])), event -> buildingMenu(event.getWhoClicked())));
+        pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "PEONY" : "175:5"), 1, (selected == 7), true, (selected == 7 ? "&a" : "&f") + FakeCreative.getCore().getLang().getString("menus.creative.items.decorationBlocks.name"), FakeCreative.getCore().getLang().getStringList("menus.creative.items.decorationBlocks.lore").toArray(new String[0])), event -> decorationMenu(event.getWhoClicked())));
+        pagedPane.addButton(new Button(ItemHandler.getItem("REDSTONE", 1, (selected == 8), true, (selected == 8 ? "&a" : "&f") + FakeCreative.getCore().getLang().getString("menus.creative.items.redstone.name"), FakeCreative.getCore().getLang().getStringList("menus.creative.items.redstone.lore").toArray(new String[0])), event -> redstoneMenu(event.getWhoClicked())));
     }
 
     /**
@@ -1006,18 +1018,21 @@ public class Menu {
      */
     public static boolean isOpen(final Player player) {
         if (GUIName == null) {
-            GUIName = ServerUtils.hasSpecificUpdate("1_9") ? StringUtils.colorFormat("&7           &0&nCreative Menu") : StringUtils.colorFormat("&7           &0&n Creative Menu");
+            final String menuName = FakeCreative.getCore().getLang().getString("menus.creative.title");
+            GUIName = StringUtils.colorFormat(!menuName.isEmpty() ? menuName : "&7           &0&nCreative Menu");
         }
         if (HotbarGUIName == null) {
-            HotbarGUIName = ServerUtils.hasSpecificUpdate("1_9") ? StringUtils.colorFormat("&7            &0&nHotbar Menu") : StringUtils.colorFormat("&7            &0&n Hotbar Menu");
+            final String menuName = FakeCreative.getCore().getLang().getString("menus.hotbars.title");
+            HotbarGUIName = StringUtils.colorFormat(!menuName.isEmpty() ? menuName : "&7            &0&nHotbar Menu");
         }
         if (userGUIName == null) {
-            userGUIName = ServerUtils.hasSpecificUpdate("1_9") ? StringUtils.colorFormat("&7               &0&nUser Menu") : StringUtils.colorFormat("&7              &0&n User Menu");
+            final String menuName = FakeCreative.getCore().getLang().getString("menus.preferences.title");
+            userGUIName = StringUtils.colorFormat(!menuName.isEmpty() ? menuName : "&7               &0&nUser Menu");
         }
         return player != null &&
                 ((GUIName != null && CompatUtils.getInventoryTitle(player).equalsIgnoreCase(StringUtils.colorFormat(GUIName)))
-                        || (HotbarGUIName != null && CompatUtils.getInventoryTitle(player).equalsIgnoreCase(StringUtils.colorFormat(HotbarGUIName)))
-                        || (userGUIName != null && CompatUtils.getInventoryTitle(player).equalsIgnoreCase(StringUtils.colorFormat(userGUIName))));
+                || (HotbarGUIName != null && CompatUtils.getInventoryTitle(player).equalsIgnoreCase(StringUtils.colorFormat(HotbarGUIName)))
+                || (userGUIName != null && CompatUtils.getInventoryTitle(player).equalsIgnoreCase(StringUtils.colorFormat(userGUIName))));
     }
 
 

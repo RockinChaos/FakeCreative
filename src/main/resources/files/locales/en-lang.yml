@@ -2,7 +2,7 @@
 # If you don't want a message to be sent, fully remove it from below or make it blank.
 
 # Modifying this will cause the file to break and regenerate.
-en-Version: 0
+en-Version: 1
 
 # This is the prefix that will be sent at the beginning of every single message sent in the language file.
 Prefix: '&7[&6FakeCreative&7]'
@@ -21,7 +21,7 @@ commands:
   menu:
     savedHotbar: '&6Hotbar &c%hotbar% &6has been set.'
     loadedHotbar: '&6Hotbar &c%hotbar% &6has been loaded.'
-    searchType: '%prefix% &aType keywords of \n items you would like to view.'
+    searchType: '%prefix% &aType keywords of \n &aitems you would like to view.'
     searchExample: '%prefix% &aExample: %input_example%'
     inputType: '%prefix% &aType the &e%input%&a that you want to set.'
     inputExample: '%prefix% &aExample: %input_example%'
@@ -35,3 +35,289 @@ commands:
     purgeSuccess: '%prefix% &aYou have purged the database file of the %purge_data% data for &b%target_player%&a!'
     purgeConfirm: '%prefix% &aYou have 5 seconds to type &e%command%&a again to confirm you wish to purge the database.'
     purgeTimeout: '%prefix% &cYou did not confirm the database purge within &b5 seconds&c, purge has been canceled!'
+
+# These are specific to the inventory tabs visible in creative mode.
+tabs:
+  destroy:
+    name: '&c&l&nDestroy Item'
+    lore:
+      - '&7'
+      - '&7*Permanently destroy your items.'
+      - '&7'
+      - '&8&oDrop an item to delete it.'
+      - '&8&oShift-click to clear inventory.'
+  creative:
+    name: '&e&l&nCreative Tab'
+    lore:
+      - '&7'
+      - '&7&o*Access the creative menu to'
+      - '&7&oselect from a list of minecraft items.'
+  hotbars:
+    name: '&a&l&nSaved Hotbars'
+    lore:
+      - '&7'
+      - '&7&o*Save or restore a hotbar'
+      - '&7&oto your current inventory.'
+  preferences:
+    name: '&6&l&nPreferences'
+    lore:
+      - '&7'
+      - '&7&o*Creative mode settings'
+      - '&7&othat are specific to you.'
+  pickBlock:
+    name: '&b&l&nPick Block'
+    lore:
+      - '&7'
+      - '&7&o*Allows you to clone'
+      - '&7&oa existing block item.'
+    itemLore:
+      - '&7'
+      - '&7&o*Right-click a block to'
+      - '&7&oadd to your inventory.'
+
+# These are specific to the gui menus.
+menus:
+  general:
+    items:
+      exit:
+        name: '&c&l&nExit'
+        lore:
+          - '&7'
+          - '&7*Return to playing the game.'
+      prevPage:
+        name: '&l&nPrevious Page'
+        lore:
+          - '&7'
+          - '&7*Previous page &a&l%page% &7/ &c&l%total_pages%'
+        firstLore:
+          - '&7'
+          - '&7*You are already at the first page.'
+      nextPage:
+        name: '&l&nNext Page'
+        lore:
+          - '&7'
+          - '&7*Next page &a&l%page% &7/ &c&l%total_pages%'
+        lastLore:
+          - '&7'
+          - '&7*You are already at the last page.'
+      page:
+        name: '&3&lPage &a&l%page% &7/ &c&l%total_pages%'
+        lore:
+          - '&7You are on page &a&l%page% &7/ &c&l%total_pages%'
+      typing:
+        name: '&bStart typing...'
+        lore:
+          - '&7'
+          - '&8Preview of what'
+          - '&8you have entered.'
+      tips:
+        name: '&c&n&lTips'
+  creative:
+    title: '&7           &0&nCreative Menu'
+    items:
+      search:
+        name: 'Search Items'
+        lore:
+          - '&7'
+          - '&8&oClick to view'
+          - '&8&oShift+Left-click to search.'
+      miscellaneous:
+        name: 'Miscellaneous'
+        lore:
+          - '&7'
+          - '&8&oClick to view'
+      foodstuffs:
+        name: 'Foodstuffs'
+        lore:
+          - '&7'
+          - '&8&oClick to view'
+      tools:
+        name: 'Tools'
+        lore:
+          - '&7'
+          - '&8&oClick to view'
+      combat:
+        name: 'Combat'
+        lore:
+          - '&7'
+          - '&8&oClick to view'
+      brewing:
+        name: 'Brewing'
+        lore:
+          - '&7'
+          - '&8&oClick to view'
+      buildingBlocks:
+        name: 'Building Blocks'
+        lore:
+          - '&7'
+          - '&8&oClick to view'
+      decorationBlocks:
+        name: 'Decoration Blocks'
+        lore:
+          - '&7'
+          - '&8Click to view'
+      redstone:
+        name: 'Redstone'
+        lore:
+          - '&7'
+          - '&8&oClick to view'
+  hotbars:
+    title: '&7            &0&nHotbar Menu'
+    items:
+      information:
+        name: '&e&l&nInformation'
+        lore:
+          - '&7'
+          - '&7Left-click to save'
+          - '&7your current hotbar.'
+          - '&7'
+          - '&7Shift+Left-click to load'
+          - '&7the clicked hotbar.'
+          - '&7'
+          - '&7Right-click to view'
+          - '&7the clicked hotbar.'
+      hotbar:
+        name: '&aHotbar'
+        lore:
+          - '&7No items saved for this hotbar.'
+          - '&7'
+          - '&8&oLeft-click to save.'
+        savedLore:
+          - '&7'
+          - '&8&oLeft-click to save.'
+          - '&8&oShift+Left-click to load.'
+          - '&8&oRight-click to view.'
+  preferences:
+    title: '&7              &0&nUser Menu'
+    items:
+      allowFlight:
+        name: '&fAllow Flight'
+        lore:
+          - '&7*If you should be allowed to fly'
+          - '&7using double-space to ascend.'
+          - '&7'
+          - '&a&lEnabled: &b&l%value%'
+      flightSpeed:
+        name: 'Flight Speed'
+        lore:
+          - '&7*The desired speed while flying.'
+          - '&7'
+          - '&a&lSpeed: &b&l%value%'
+        tipLore:
+          - '&cMaximum Speed is &410&c.'
+      breakSpeed:
+        name: 'Break Speed'
+        lore:
+          - '&7*The desired speed'
+          - '&7in-between each block-break.'
+          - '&7'
+          - '&a&lSpeed: &b&l%value%'
+      swordBlock:
+        name: 'Sword Block'
+        lore:
+          - '&7*When holding a sword you will not'
+          - '&7be able to break any blocks.'
+          - '&7'
+          - '&a&lEnabled: &b&l%value%'
+      food:
+        name: 'Food'
+        lore:
+          - '&7*The desired food/hunger level.'
+          - '&7'
+          - '&a&lFood: &b&l%value%'
+      health:
+        name: 'Health'
+        lore:
+          - '&7*The desired health level.'
+          - '&7'
+          - '&a&lHealth: &b&l%value%'
+      heartScale:
+        name: 'Heart Scale'
+        lore:
+          - '&7*The desired health scale.'
+          - '&7This is the number of hearts to'
+          - '&7be displayed in the user interface.'
+          - '&7'
+          - '&a&lScale: &b&l%value%'
+        tipLore:
+          - '&cCannot exceed your set heart-scale.'
+          - '&cCurrently cannot exceed &4%value%&c.'
+      allowHunger:
+        name: 'Allow Hunger'
+        lore:
+          - '&7*If your hunger should decrease.'
+          - '&7'
+          - '&a&lEnabled: &b&l%value%'
+      allowBurn:
+        name: 'Allow Burn'
+        lore:
+          - '&7*If lava or fire should do damage.'
+          - '&7'
+          - '&a&lEnabled: &b&l%value%'
+      unbreakableItems:
+        name: 'Unbreakable Items'
+        lore:
+          - '&7*If items in creative should be unbreakable.'
+          - '&7'
+          - '&a&lEnabled: &b&l%value%'
+      blockDrops:
+        name: 'Block Drops'
+        lore:
+          - '&7*If blocks should drop when you'
+          - '&7break them using your hand or an item.'
+          - '&7'
+          - '&a&lEnabled: &b&l%value%'
+      destroyPickups:
+        name: 'Destroy Pickups'
+        lore:
+          - '&7*If items should be destroyed when'
+          - '&7the your inventory is full and'
+          - '&7you try to pick up items on the ground.'
+          - '&7'
+          - '&a&lEnabled: &b&l%value%'
+      selfDrops:
+        name: 'Self Drops'
+        lore:
+          - '&7*If items should be allowed to be'
+          - '&7dropped manually and on player death.'
+          - '&7'
+          - '&a&lEnabled: &b&l%value%'
+      itemStore:
+        name: 'Item Store'
+        lore:
+          - '&7*If items should be allowed to be'
+          - '&7placed or stored in storage related'
+          - '&7items like chests and hoppers.'
+          - '&7'
+          - '&a&lEnabled: &b&l%value%'
+      autoRestore:
+        name: 'Auto Restore'
+        lore:
+          - '&7*If you exit the server or the server'
+          - '&7restarts while you are in creative, you'
+          - '&7will automatically be set back to'
+          - '&7creative upon entering the server.'
+          - '&7'
+          - '&a&lEnabled: &b&l%value%'
+      invulnerable:
+        name: 'Invulnerable'
+        lore:
+          - '&7*If you should take damage.'
+          - '&7'
+          - '&a&lEnabled: &b&l%value%'
+      invulnerableDelay:
+        name: 'Invulnerable Delay'
+        lore:
+          - '&7*How long to wait after exiting creative'
+          - '&7before you can take damage again.'
+          - '&7'
+          - '&a&lDelay: &b&l%value%'
+      storeInventory:
+        name: 'Store Inventory'
+        lore:
+          - '&7*If the previous gamemodes inventory'
+          - '&7should be saved when entering creative.'
+          - '&7This inventory will automatically'
+          - '&7be restored when exiting creative.'
+          - '&7'
+          - '&a&lEnabled: &b&l%value%'

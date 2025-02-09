@@ -1,37 +1,323 @@
-# --{ =-=-=-=-=-=-=-=-=-= FakeCreative's Deutsche Sprachdatei, von Ryūgū Rena (竜宮 レナ)  =-=-=-=-=-=-=-=-=-= }--
-# Wenn du nicht möchtest, dass eine Nachricht gesendet wird, entferne sie vollständig oder lasse sie leer.
+# --{ =-=-=-=-=-=-=-=-=-= FakeCreative's Deutsche Sprachdatei, von TheRobLP =-=-=-=-=-=-=-=-=-= }--
+# Wenn du nicht möchtest dass eine Nachricht gesendet wird, entferne sie vollständig oder lasse sie leer.
 
-# Änderungen an dieser Datei können dazu führen, dass sie beschädigt wird und neu generiert werden muss.
-de-Version: 0
+# Änderungen an dieser Zeile setzen die Datei zurück.
+de-Version: 1
 
-# Dies ist das Prefix, das am Anfang jeder Nachricht aus der Sprachdatei gesendet wird.
+# Der Prefix, der am Anfang jeder Nachricht gesendet wird.
 Prefix: '&7[&6FakeCreative&7]'
 
 # Diese Nachrichten sind spezifisch für die Plugin-Befehle.
 commands:
   default:
-    unknownCommand: '&cUnbekannter Befehl. Siehe &l/FakeCreative Hilfe&c für eine Liste der Befehle.'
+    unknownCommand: '&cUnbekannter Befehl. Benutze &l/fakecreative help&c für eine Liste von Befehlen.'
     noPermission: '&cDu hast keine Berechtigung, diesen Befehl zu verwenden!'
-    configReload: '%prefix% &6Konfiguration(en) neu geladen!'
-    noPlayer: '&cDu musst ein Spieler sein, um diesen Befehl auszuführen!'
-    noTarget: '&cDer Spieler &c%target_player%&c konnte nicht gefunden werden!'
+    configReload: '%prefix% &6Konfiguration(en) wurden neu geladen!'
+    noPlayer: '&cDu musst ein Spieler sein um diesen Befehl auszuführen!'
+    noTarget: '&cDer Spieler &c%target_player%&c wurde nicht gefunden!'
   gamemode:
-    setMode: '&6Spielmodus für &c%target_player% &6auf &c%gamemode%&6 gesetzt.'
-    setModeTarget: '&6Spielmodus durch &c%target_player% &6auf &c%gamemode% &6gesetzt.'
+    setMode: '&6Der Spielmodus für &c%target_player% wurde &6auf &c%gamemode%&6 gesetzt.'
+    setModeTarget: '&6Der Spielmodus wurde durch &c%target_player% &6auf &c%gamemode% &6gesetzt.'
   menu:
-    savedHotbar: '&6Hotbar &c%hotbar% &6wurde gespeichert.'
-    loadedHotbar: '&6Hotbar &c%hotbar% &6wurde geladen.'
-    searchType: '%prefix% &aGib Schlüsselwörter ein, \n um Artikel anzuzeigen, die du sehen möchtest.'
+    savedHotbar: '&6 Die Hotbar &c%hotbar% &6wurde gespeichert.'
+    loadedHotbar: '&6Die Hotbar &c%hotbar% &6wurde geladen.'
+    searchType: '%prefix% &aGib die Namen von \n &a Gegenständen ein, die du anzeigen möchtest.'
     searchExample: '%prefix% &aBeispiel: %input_example%'
-    inputType: '%prefix% &aGib die &e%input%&a ein, die du festlegen möchtest.'
+    inputType: '%prefix% &aGib &e%input%&a ein, den du festlegen möchtest.'
     inputExample: '%prefix% &aBeispiel: %input_example%'
-    inputSet: '%prefix% &aDie Artikel &e%input% &awurden erfolgreich festgelegt!'
-    noInteger: '%prefix% &c&l&nFEHLER:&c Der eingegebene Wert &4%input% &cist keine Ganzzahl!'
+    inputSet: '%prefix% &e%input% des Gegenstands &awurde erfolgreich festgelegt!'
+    noInteger: '%prefix% &c&l&nFEHLER:&c Der eingegebene Wert &4%input% &cist keine ganze Zahl!'
   updates:
-    checkRequest: '%prefix% &4%player% hat eine Anfrage zur Überprüfung von Updates gestellt!'
-    updateRequest: '%prefix% &4%player% hat eine Anfrage zur erzwungenen Aktualisierung des Plugins gestellt!'
+    checkRequest: '%prefix% &4%player% hat das Plugin auf Updates geprüft!'
+    updateRequest: '%prefix% &4%player% hat eine Aktualisierung des Plugins erzwungen!'
   database:
-    purgeWarn: '%prefix% &aDas Löschen der Datenbank wird &cALLE &a%purge_data%-Daten für &b%target_player%&a löschen.'
-    purgeSuccess: '%prefix% &aDu hast die Datenbankdatei von den %purge_data%-Daten für &b%target_player%&a bereinigt!'
-    purgeConfirm: '%prefix% &aDu hast 5 Sekunden Zeit, um &e%command%&a erneut einzugeben, um die Bereinigung der Datenbank zu bestätigen.'
-    purgeTimeout: '%prefix% &cDu hast die Bereinigung der Datenbank nicht innerhalb von &b5 Sekunden&c bestätigt. Die Bereinigung wurde abgebrochen!'
+    purgeWarn: '%prefix% &aDas leeren der Datenbank wird &cALLE &a%purge_data% Daten für &b%target_player%&a löschen.'
+    purgeSuccess: '%prefix% &aDu hast die Datenbankdatei für die %purge_data% Daten für &b%target_player%&a geleert!'
+    purgeConfirm: '%prefix% &aDu hast 5 Sekunden Zeit um &e%command%&a erneut einzugeben, um das Leeren der Datenbank zu bestätigen.'
+    purgeTimeout: '%prefix% &cDu hast das Leeren der Datenbank nicht innerhalb von &b5 Sekunden&c bestätigt. Der Löschvorgang wurde abgebrochen!'
+
+# Die folgenden Nachrichten sind spezifisch für die Inventar-Tabs, die im Kreativ-Menü angezeigt werden.
+tabs:
+  destroy:
+    name: '&c&l&nItem zerstören'
+    lore:
+      - '&7'
+      - '&7*Zerstöre deine Gegenstände für immer. (Eine lange Zeit)'
+      - '&7'
+      - '&8&oLass einen Gegenstand hier fallen, um es zu löschen'
+      - '&8&oShift-Klick um das gesamte Inventar zu löschen'
+  creative:
+    name: '&e&l&nKreativ-Tab'
+    lore:
+      - '&7'
+      - '&7&o*Greife auf das Kreativ-Menü zu, um'
+      - '&7&aus einer Liste von Minecraft-Gegenständen zu wählen'
+  hotbars:
+    name: '&a&l&nGespeicherte Hotbars'
+    lore:
+      - '&7'
+      - '&7&o*Speichere eine Hotbar aus deinem'
+      - '&7&oInventar, oder stelle sie wieder her'
+  preferences:
+    name: '&6&l&nPräferenzen'
+    lore:
+      - '&7'
+      - '&7&o*Nutzerspezifische'
+      - '&7&oKreativ-Modus-Einstellungen'
+  pickBlock:
+    name: '&b&l&nBlock aufheben'
+    lore:
+      - '&7'
+      - '&7&o*Erlaubt es dir,'
+      - '&7&ovorhandene Blöcke zu klonen'
+    itemLore:
+      - '&7'
+      - '&7&o*Rechtsklick auf einen Block, um'
+      - '&7&oihn zu deinem Inventar hinzuzufügen'
+
+# Die folgenden Nachrichten sind spezifisch für die GUI-Menüs.
+menus:
+  general:
+    items:
+      exit:
+        name: '&c&l&nBeenden'
+        lore:
+          - '&7'
+          - '&7*Zum Spiel zurückkehren'
+      prevPage:
+        name: '&l&nVorherige Seite'
+        lore:
+          - '&7'
+          - '&7*Vorherige Seite &a&l%page% &7/ &c&l%total_pages%'
+        firstLore:
+          - '&7'
+          - '&7*Du bist schon auf der ersten Seite'
+      nextPage:
+        name: '&l&nNächste Seite'
+        lore:
+          - '&7'
+          - '&7*Nächste Seite &a&l%page% &7/ &c&l%total_pages%'
+        lastLore:
+          - '&7'
+          - '&7*Du bist schon auf der letzten Seite'
+      page:
+        name: '&3&lSeite &a&l%page% &7/ &c&l%total_pages%'
+        lore:
+          - '&7Du bist auf Seite &a&l%page% &7/ &c&l%total_pages%'
+      typing:
+        name: '&bFang an zu schreiben...'
+        lore:
+          - '&7'
+          - '&8Vorschau auf das,'
+          - '&8was du eingegeben hast.'
+      tips:
+        name: '&c&n&lTipps'
+  creative:
+    title: '&7           &0&nKreativ-Menü'
+    items:
+      search:
+        name: 'Gegenstände suchen'
+        lore:
+          - '&7'
+          - '&8&oKlicken zum Anzeigen'
+          - '&8&oShift+Linksklick zum Suchen'
+      miscellaneous:
+        name: 'Verschiedenes'
+        lore:
+          - '&7'
+          - '&8&oKlicken zum anzeigen'
+      foodstuffs:
+        name: 'Nahrung'
+        lore:
+          - '&7'
+          - '&8&oKlicken zum anzeigen'
+      tools:
+        name: 'Werkzeuge'
+        lore:
+          - '&7'
+          - '&8&oKlicken zum anzeigen'
+      combat:
+        name: 'Kampf'
+        lore:
+          - '&7'
+          - '&8&oKlicken zum anzeigen'
+      brewing:
+        name: 'Alchemie'
+        lore:
+          - '&7'
+          - '&8&oKlicken zum anzeigen'
+      buildingBlocks:
+        name: 'Blöcke'
+        lore:
+          - '&7'
+          - '&8&oKlicken zum anzeigen'
+      decorationBlocks:
+        name: 'Dekorationen'
+        lore:
+          - '&7'
+          - '&8Klicken zum anzeigen'
+      redstone:
+        name: 'Redstone'
+        lore:
+          - '&7'
+          - '&8&oKlicken zum anzeigen'
+  hotbars:
+    title: '&7            &0&nHotbar-Menü'
+    items:
+      information:
+        name: '&e&l&nInformation'
+        lore:
+          - '&7'
+          - '&7Linksklick um die'
+          - '&7derzeitige Hotbar zu speichern'
+          - '&7'
+          - '&7Shift+Linksklick um die'
+          - '&7angeklickte Hotbar zu laden'
+          - '&7'
+          - '&7Rechtsklick um die'
+          - '&7angeklickte Hotbar anzuzeigen'
+      hotbar:
+        name: '&aHotbar'
+        lore:
+          - '&7Keine Gegenstände für diese Hotbar gespeichert'
+          - '&7'
+          - '&8&oLinksklick zum speichern'
+        savedLore:
+          - '&7'
+          - '&8&oLinksklick zum speichern'
+          - '&8&oShift+Linksklick zum laden'
+          - '&8&oRechtsklick zum anzeigen'
+  preferences:
+    title: '&7              &0&nBenutzer-Menü'
+    items:
+      allowFlight:
+        name: '&fFliegen erlauben'
+        lore:
+          - '&7*Fliegen durch doppeltes'
+          - '&7tippen der Leertaste erlauben'
+          - '&7'
+          - '&a&lAktiviert: &b&l%value%'
+      flightSpeed:
+        name: 'Fluggeschwindigkeit'
+        lore:
+          - '&7*Die gewünschte Geschwindigkeit beim Fliegen'
+          - '&7'
+          - '&a&lGeschwindigkeit: &b&l%value%'
+        tipLore:
+          - '&cDie maximale Geschwindigkeit ist &410&c'
+      breakSpeed:
+        name: 'Abbaugeschwindigkeit'
+        lore:
+          - '&7*Die gewünschte Effizienz'
+          - '&7mit der Blöcke abgebaut werden'
+          - '&7'
+          - '&a&lEffizienz: &b&l%value%'
+      swordBlock:
+        name: 'Schwert-Abbau blockieren'
+        lore:
+          - '&7*Wenn ein Schwert gehalten wird,'
+          - '&7kannst du keine Blöcke abbauen'
+          - '&7'
+          - '&a&lAktiviert: &b&l%value%'
+      food:
+        name: 'Hungerleiste'
+        lore:
+          - '&7*Das gewünschte Level der Hungerleiste'
+          - '&7'
+          - '&a&lNahrung: &b&l%value%'
+      health:
+        name: 'Leben'
+        lore:
+          - '&7*Die gewünschte Anzahl an Lebenspunkten'
+          - '&7'
+          - '&a&lLeben: &b&l%value%'
+      heartScale:
+        name: 'Herzanzeige'
+        lore:
+          - '&7*Die gewünschte Anzahl an Herzen'
+          - '&7Das ist die Nummer an Herzen, die'
+          - '&7über der Hotbar angezeigt werden'
+          - '&7'
+          - '&a&lAnzahl: &b&l%value%'
+        tipLore:
+          - '&cLebenspunkte können nicht die maximale Herzanzahl überschreiten.'
+          - '&cLeben kann derzeit nicht &4%value%&c überschreiten'
+      allowHunger:
+        name: 'Hunger erlauben'
+        lore:
+          - '&7*Ob deine Hungerleiste abnehmen soll'
+          - '&7'
+          - '&a&lAktiviert: &b&l%value%'
+      allowBurn:
+        name: 'Brennen erlauben'
+        lore:
+          - '&7*Ob Lava oder Feuer Schaden verursachen sollen'
+          - '&7'
+          - '&a&lAktiviert: &b&l%value%'
+      unbreakableItems:
+        name: 'Unzerstörbare Gegenstände'
+        lore:
+          - '&7*Ob Gegenstände im Kreativ-Modus unzerstörbar sein sollen'
+          - '&7'
+          - '&a&lAktiviert: &b&l%value%'
+      blockDrops:
+        name: 'Blöcke fallen lassen'
+        lore:
+          - '&7*Ob Blöcke fallen gelassen werden sollen, wenn sie'
+          - '&7mit der Hand oder einem Gegenstand abgebaut werden'
+          - '&7'
+          - '&a&lAktiviert: &b&l%value%'
+      destroyPickups:
+        name: 'Aufgenommene Gegenstände zerstören'
+        lore:
+          - '&7*Ob Gegenstände zerstört werden sollen'
+          - '&7wenn das derzeitige Inventar voll ist, und'
+          - '&7du versuchst die Gegenstände vom Boden aufzunehmen'
+          - '&7'
+          - '&a&lAktiviert: &b&l%value%'
+      selfDrops:
+        name: 'Gegenstände fallen lassen'
+        lore:
+          - '&7*Ob Gegenstände vom Spieler, oder'
+          - '&7bei Tod fallen gelassen werden'
+          - '&7'
+          - '&a&lAktiviert: &b&l%value%'
+      itemStore:
+        name: 'Gegenstände verstauen'
+        lore:
+          - '&7*Ob es erlaubt ist Gegenstände in'
+          - '&7Containern, wie Kisten oder Trichter'
+          - '&7zu verstauen'
+          - '&7'
+          - '&a&lAktiviert: &b&l%value%'
+      autoRestore:
+        name: 'Auto-Wiederherstellen'
+        lore:
+          - '&7*Falls du den Server verlässt oder dieser'
+          - '&7neu startet während du im Kreativ-Modus bist,'
+          - '&7wirst du automatisch auf den Kreativ-Modus'
+          - '&7gesetzt wenn du wieder beitrittst'
+          - '&7'
+          - '&a&lAktiviert: &b&l%value%'
+      invulnerable:
+        name: 'Unverwundbarkeit'
+        lore:
+          - '&7*Ob du Schaden nehmen kannst'
+          - '&7'
+          - '&a&lAktiviert: &b&l%value%'
+      invulnerableDelay:
+        name: 'Unverwundbarkeits-Verzögerung'
+        lore:
+          - '&7*Wie lange man nach verlassen des Kreativ-Modus'
+          - '&7warten muss, bevor man wieder Schaden nehmen kann'
+          - '&7'
+          - '&a&lVerzögerung: &b&l%value%'
+      storeInventory:
+        name: 'Inventar speichern'
+        lore:
+          - '&7*Ob das vorherige Inventar gespeichert werden soll'
+          - '&7wenn der Kreativ-Modus aktiviert wird.'
+          - '&7Das Inventar wird automatisch wiederhergestellt,'
+          - '&7sobald der Kreativ-Modus verlassen wird'
+          - '&7'
+          - '&a&lAktiviert: &b&l%value%'
