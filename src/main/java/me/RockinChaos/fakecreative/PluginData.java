@@ -90,8 +90,8 @@ public class PluginData {
         FakeCreative.getCore().getData().refresh();
         FakeCreative.getCore().getData().setStarted(false);
         FakeCreative.getCore().getData().setPluginPrefix("&7[&6FakeCreative&7]");
-        FakeCreative.getCore().getData().setLanguages(Arrays.asList("English", "German"));
         FakeCreative.getCore().getData().setConfig(ImmutableMap.of("config.yml", 0, "lang.yml", 1));
+        FakeCreative.getCore().getData().setLanguages(Arrays.asList("English", "German", "Spanish"));
         FakeCreative.getCore().getData().setPermissions(Arrays.asList("FakeCreative.use", "FakeCreative.dump", "FakeCreative.reload", "FakeCreative.updates", "FakeCreative.upgrade", "FakeCreative.permissions", "FakeCreative.purge", "FakeCreative.preferences",
                 "FakeCreative.mode.creative", "FakeCreative.mode.survival", "FakeCreative.mode.adventure", "FakeCreative.mode.spectator"));
         // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //

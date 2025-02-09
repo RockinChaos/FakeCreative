@@ -5,8 +5,8 @@
 # Modifying the Version will cause this file to break and regenerate.
 config-Version: 0
 
-# At the moment, the available language translations are; English.
-# If you want to contribute to a language translation please create a pull request; https://github.com/RockinChaos/FakeCreative/tree/master/files/locales
+# At the moment, the available language translations are; English, German, Spanish
+# If you want to contribute to a language translation please create a pull request; https://github.com/RockinChaos/FakeCreative/tree/master/src/main/resources/files/locales
 Language: 'English'
 
 # These are typically general maintenance settings that do not affect functionality.
