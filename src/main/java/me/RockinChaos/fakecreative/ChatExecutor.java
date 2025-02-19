@@ -246,30 +246,30 @@ public class ChatExecutor implements CommandExecutor {
         }
         if (this.confirmationRequests.get(table + sender.getName()) != null && this.confirmationRequests.get(table + sender.getName()).equals(true)) {
             if (!table.equalsIgnoreCase("Database")) {
-                PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args));
+                final String playerId = PlayerHandler.getPlayerString(args) != null ? PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)) : null;
                 DataObject dataObject = ((table.replace("-", "_").equalsIgnoreCase("allow_flight")
-                        ? new DataObject(Table.ALLOW_FLIGHT, PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)), "", "") : (table.replace("-", "_").equalsIgnoreCase("speed_flight")
-                        ? new DataObject(Table.SPEED_FLIGHT, PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)), "", "") : (table.replace("-", "_").equalsIgnoreCase("speed_break")
-                        ? new DataObject(Table.SPEED_BREAK, PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)), "", "") : (table.replace("-", "_").equalsIgnoreCase("set_food")
-                        ? new DataObject(Table.SET_FOOD, PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)), "", "") : (table.replace("-", "_").equalsIgnoreCase("set_health")
-                        ? new DataObject(Table.SET_HEALTH, PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)), "", "") : (table.replace("-", "_").equalsIgnoreCase("set_scale")
-                        ? new DataObject(Table.SET_SCALE, PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)), "", "") : (table.replace("-", "_").equalsIgnoreCase("allow_hunger")
-                        ? new DataObject(Table.ALLOW_HUNGER, PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)), "", "") : (table.replace("-", "_").equalsIgnoreCase("allow_burn")
-                        ? new DataObject(Table.ALLOW_BURN, PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)), "", "") : (table.replace("-", "_").equalsIgnoreCase("unbreakable_items")
-                        ? new DataObject(Table.UNBREAKABLE_ITEMS, PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)), "", "") : (table.replace("-", "_").equalsIgnoreCase("drops_block")
-                        ? new DataObject(Table.DROPS_BLOCK, PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)), "", "") : (table.replace("-", "_").equalsIgnoreCase("sword_block")
-                        ? new DataObject(Table.SWORD_BLOCK, PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)), "", "") : (table.replace("-", "_").equalsIgnoreCase("auto_restore")
-                        ? new DataObject(Table.AUTO_RESTORE, PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)), "", "") : (table.replace("-", "_").equalsIgnoreCase("set_god")
-                        ? new DataObject(Table.SET_GOD, PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)), "", "") : (table.replace("-", "_").equalsIgnoreCase("delay_god")
-                        ? new DataObject(Table.DELAY_GOD, PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)), "", "") : (table.replace("-", "_").equalsIgnoreCase("store_inventory")
-                        ? new DataObject(Table.STORE_INVENTORY, PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)), "", "") : (table.replace("-", "_").equalsIgnoreCase("destroy_pickups")
-                        ? new DataObject(Table.DESTROY_PICKUPS, PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)), "", "") : (table.replace("-", "_").equalsIgnoreCase("self_drops")
-                        ? new DataObject(Table.SELF_DROPS, PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)), "", "") : (table.replace("-", "_").equalsIgnoreCase("item_store")
-                        ? new DataObject(Table.ITEM_STORE, PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)), "", "") : (table.replace("-", "_").equalsIgnoreCase("hotbar")
-                        ? new DataObject(Table.HOTBAR, PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)), "", "") : (table.replace("-", "_").equalsIgnoreCase("playerstats")
-                        ? new DataObject(Table.PLAYERSTATS, PlayerHandler.getPlayerID(PlayerHandler.getPlayerString(args)), "", "") : null)))))))))))))))))))));
+                        ? new DataObject(Table.ALLOW_FLIGHT, playerId, "", "") : (table.replace("-", "_").equalsIgnoreCase("speed_flight")
+                        ? new DataObject(Table.SPEED_FLIGHT, playerId, "", "") : (table.replace("-", "_").equalsIgnoreCase("speed_break")
+                        ? new DataObject(Table.SPEED_BREAK, playerId, "", "") : (table.replace("-", "_").equalsIgnoreCase("set_food")
+                        ? new DataObject(Table.SET_FOOD, playerId, "", "") : (table.replace("-", "_").equalsIgnoreCase("set_health")
+                        ? new DataObject(Table.SET_HEALTH, playerId, "", "") : (table.replace("-", "_").equalsIgnoreCase("set_scale")
+                        ? new DataObject(Table.SET_SCALE, playerId, "", "") : (table.replace("-", "_").equalsIgnoreCase("allow_hunger")
+                        ? new DataObject(Table.ALLOW_HUNGER, playerId, "", "") : (table.replace("-", "_").equalsIgnoreCase("allow_burn")
+                        ? new DataObject(Table.ALLOW_BURN, playerId, "", "") : (table.replace("-", "_").equalsIgnoreCase("unbreakable_items")
+                        ? new DataObject(Table.UNBREAKABLE_ITEMS, playerId, "", "") : (table.replace("-", "_").equalsIgnoreCase("drops_block")
+                        ? new DataObject(Table.DROPS_BLOCK, playerId, "", "") : (table.replace("-", "_").equalsIgnoreCase("sword_block")
+                        ? new DataObject(Table.SWORD_BLOCK, playerId, "", "") : (table.replace("-", "_").equalsIgnoreCase("auto_restore")
+                        ? new DataObject(Table.AUTO_RESTORE, playerId, "", "") : (table.replace("-", "_").equalsIgnoreCase("set_god")
+                        ? new DataObject(Table.SET_GOD, playerId, "", "") : (table.replace("-", "_").equalsIgnoreCase("delay_god")
+                        ? new DataObject(Table.DELAY_GOD, playerId, "", "") : (table.replace("-", "_").equalsIgnoreCase("store_inventory")
+                        ? new DataObject(Table.STORE_INVENTORY, playerId, "", "") : (table.replace("-", "_").equalsIgnoreCase("destroy_pickups")
+                        ? new DataObject(Table.DESTROY_PICKUPS, playerId, "", "") : (table.replace("-", "_").equalsIgnoreCase("self_drops")
+                        ? new DataObject(Table.SELF_DROPS, playerId, "", "") : (table.replace("-", "_").equalsIgnoreCase("item_store")
+                        ? new DataObject(Table.ITEM_STORE, playerId, "", "") : (table.replace("-", "_").equalsIgnoreCase("hotbar")
+                        ? new DataObject(Table.HOTBAR, playerId, "", "") : (table.replace("-", "_").equalsIgnoreCase("playerstats")
+                        ? new DataObject(Table.PLAYERSTATS, playerId, "", "") : null)))))))))))))))))))));
                 if (dataObject != null) {
-                    FakeCreative.getCore().getSQL().removeData(dataObject);
+                    FakeCreative.getCore().getSQL().removeData(dataObject, playerId == null);
                     SchedulerUtils.run(() -> {
                         final Player playerString = PlayerHandler.getPlayerString(args);
                         if (playerString != null && Creative.isCreativeMode(playerString, true)) {
