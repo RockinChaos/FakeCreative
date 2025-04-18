@@ -19,6 +19,7 @@ package me.RockinChaos.fakecreative;
 
 import com.google.common.collect.ImmutableMap;
 import me.RockinChaos.core.listeners.Interfaces;
+import me.RockinChaos.core.listeners.PlayerLogin;
 import me.RockinChaos.core.utils.SchedulerUtils;
 import me.RockinChaos.core.utils.ServerUtils;
 import me.RockinChaos.core.utils.StringUtils;
@@ -71,6 +72,7 @@ public class PluginData {
         FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new PlayerQuit(), FakeCreative.getCore().getPlugin());
         FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new PlayerClear(), FakeCreative.getCore().getPlugin());
         FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new PlayerRespawn(), FakeCreative.getCore().getPlugin());
+        FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new PlayerLogin(), FakeCreative.getCore().getPlugin());
         FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Interfaces(), FakeCreative.getCore().getPlugin());
         FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Interface(), FakeCreative.getCore().getPlugin());
         FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Movement(), FakeCreative.getCore().getPlugin());
@@ -112,13 +114,11 @@ public class PluginData {
         FakeCreative.getCore().getData().setAlterTables(this.getAlterTables());
         FakeCreative.getCore().getData().setCreateTables(this.getCreateTables());
         FakeCreative.getCore().getDependencies().refresh();
-        //
         if (!FakeCreative.getCore().getDependencies().protocolEnabled() && ProtocolManager.isDead()) {
             ProtocolManager.handleProtocols();
         } else if (FakeCreative.getCore().getDependencies().protocolEnabled() && !ProtocolAPI.isHandling()) {
             ProtocolAPI.handleProtocols();
         }
-        //
         SchedulerUtils.runAsync(() -> {
             final String compileVersion = Objects.requireNonNull(YamlConfiguration.loadConfiguration(new InputStreamReader(Objects.requireNonNull(FakeCreative.getCore().getPlugin().getResource("plugin.yml")))).getString("nms-version")).split("-")[0].replace(".", "_");
             final String serverVersion = ServerUtils.getVersion();
@@ -132,35 +132,24 @@ public class PluginData {
                 }
                 FakeCreative.getCore().getDependencies().sendUtilityDepends();
             }
-            if (isRunning) {
-                if (FakeCreative.getCore().getSQL().refresh()) {
-                    FakeCreative.getCore().getData().setDatabaseData(this.getDatabaseData());
-                    {
-                        FakeCreative.getCore().getSQL().load();
-                    }
-                }
-            } else {
-                FakeCreative.getCore().getSQL();
-                {
-                    FakeCreative.getCore().getData().setDatabaseData(this.getDatabaseData());
-                    {
-                        FakeCreative.getCore().getSQL().load();
-                    }
-                }
+            if (isRunning && FakeCreative.getCore().getSQL().refresh()) {
+                FakeCreative.getCore().getData().setDatabaseData(this.getDatabaseData());
+                FakeCreative.getCore().getSQL().load();
             }
         });
-        {
-            SchedulerUtils.runSingleAsync(() -> FakeCreative.getCore().getData().setStarted(true));
-            {
-                SchedulerUtils.runAsyncLater(100L, () -> {
-                    if (FakeCreative.getCore().getConfig("config.yml").getBoolean("General.Metrics-Logging")) {
-                        final MetricsAPI metrics = new MetricsAPI(FakeCreative.getCore().getPlugin(), 10818);
-                        FakeCreative.getCore().getDependencies().addCustomCharts(metrics);
-                        ServerUtils.sendErrorStatements(null);
-                    }
-                });
-            }
+        if (!isRunning) {
+            FakeCreative.getCore().getSQL();
+            FakeCreative.getCore().getData().setDatabaseData(this.getDatabaseData());
+            FakeCreative.getCore().getSQL().load();
         }
+        SchedulerUtils.runSingleAsync(() -> FakeCreative.getCore().getData().setStarted(true));
+        SchedulerUtils.runAsyncLater(100L, () -> {
+            if (FakeCreative.getCore().getConfig("config.yml").getBoolean("General.Metrics-Logging")) {
+                final MetricsAPI metrics = new MetricsAPI(FakeCreative.getCore().getPlugin(), 10818);
+                FakeCreative.getCore().getDependencies().addCustomCharts(metrics);
+                ServerUtils.sendErrorStatements(null);
+            }
+        });
     }
 
     /**
