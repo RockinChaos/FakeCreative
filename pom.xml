@@ -15,9 +15,7 @@
 
     <properties>
         <chaoscore.version>1.1.4-SNAPSHOT</chaoscore.version>
-        <spigot.version>1.21.8-R0.1-SNAPSHOT</spigot.version>
-
-        <authlib.version>1.5.21</authlib.version>
+        <spigot.version>1.21.10-R0.1-SNAPSHOT</spigot.version>
 
         <build.version>${env.BUILD_NUMBER}</build.version>
 
@@ -146,13 +144,6 @@
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
             <version>4.1.65.Final</version>
-            <scope>provided</scope>
-        </dependency>
-        <!--Mojang AuthLib API-->
-        <dependency>
-            <groupId>com.mojang</groupId>
-            <artifactId>authlib</artifactId>
-            <version>${authlib.version}</version>
             <scope>provided</scope>
         </dependency>
         <!--bStats API-->
