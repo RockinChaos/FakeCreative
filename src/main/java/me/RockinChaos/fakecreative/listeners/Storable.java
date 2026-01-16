@@ -90,7 +90,7 @@ public class Storable implements Listener {
     private void onInteractAtEntity(PlayerInteractAtEntityEvent event) {
         if (event.getRightClicked().getType().name().equalsIgnoreCase("ARMOR_STAND") || event.getRightClicked().getType().name().equalsIgnoreCase("FOX") || event.getRightClicked().getType().name().equalsIgnoreCase("ALLAY")) {
             final Player player = event.getPlayer();
-            if (!Creative.isCreativeMode(player, true) && !Creative.get(player).getStats().itemStore()) {
+            if (Creative.isCreativeMode(player, true) && !Creative.get(player).getStats().itemStore()) {
                 event.setCancelled(true);
                 PlayerHandler.updateInventory(player, 1L);
             }
