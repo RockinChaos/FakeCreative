@@ -28,12 +28,14 @@ import me.RockinChaos.core.utils.protocol.events.PlayerEnterCreativeEvent;
 import me.RockinChaos.fakecreative.FakeCreative;
 import me.RockinChaos.fakecreative.modes.Mode;
 import me.RockinChaos.fakecreative.modes.instance.PlayerObject;
+import me.RockinChaos.fakecreative.modes.instance.PlayerStats;
 import me.RockinChaos.fakecreative.utils.menus.Menu;
 import me.RockinChaos.fakecreative.utils.sql.DataObject;
 import me.RockinChaos.fakecreative.utils.sql.DataObject.Table;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -42,6 +44,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -50,7 +53,6 @@ public class Creative {
 
     private static final List<PlayerObject> creativePlayers = new ArrayList<>();
     private static final List<String> activePickItem = new ArrayList<>();
-
 
     /**
      * Puts the Player in Fake Creative Mode if they have an existing DataObject.
@@ -73,18 +75,20 @@ public class Creative {
         final List<Object> dataObject = FakeCreative.getCore().getSQL().getDataList(new DataObject(Table.PLAYERSTATS));
         for (Object object : dataObject) {
             final DataObject playerStats = (DataObject) object;
-            final Player player = PlayerHandler.getPlayerString(playerStats.getPlayerId());
-            final PlayerObject playerObject = new PlayerObject(playerStats.getPlayerId(), playerStats.getHealth(), playerStats.getMaxHealth(), playerStats.getFood(), playerStats.getFireTicks());
-            playerObject.setInventory64(playerStats.getInventory64());
-            if (player != null && player.isOnline() && playerObject.getStats().autoRestore()) {
-                creativePlayers.add(playerObject);
-                {
+            if (playerStats.getPlayerId() != null && !playerStats.getPlayerId().isEmpty()) {
+                final Player player = PlayerHandler.getPlayerString(playerStats.getPlayerId());
+                final PlayerObject playerObject = new PlayerObject(playerStats.getPlayerId(), playerStats.getHealth(), playerStats.getMaxHealth(), playerStats.getFood(), playerStats.getFireTicks());
+                playerObject.setInventory64(playerStats.getInventory64());
+                if (player != null && player.isOnline() && playerObject.getStats().autoRestore()) {
+                    creativePlayers.add(playerObject);
                     Bukkit.getPluginManager().callEvent(new PlayerEnterCreativeEvent(player, null, false, true, silent));
+                } else {
+                    creativePlayers.add(playerObject);
                 }
+                FakeCreative.getCore().getSQL().removeData(playerStats);
             } else {
-                creativePlayers.add(playerObject);
+                ServerUtils.logSevere("{Creative} Got saved player stats with NULL data! If you continue to see this please report it to the developer!");
             }
-            FakeCreative.getCore().getSQL().removeData(playerStats);
         }
     }
 
@@ -208,7 +212,7 @@ public class Creative {
     }
 
     /**
-     * Gets the current list of Fake Creative Players.
+     * Gets the PlayerObject of the Creative Player.
      *
      * @param player - The Player being referenced.
      */
@@ -222,6 +226,31 @@ public class Creative {
             }
         }
         return new PlayerObject();
+    }
+
+    /**
+     * Gets the PlayerObject of the Offline Player.
+     *
+     * @param playerId - The Player ID being referenced.
+     */
+    public static @Nullable PlayerStats getOfflineStats(final String playerId) {
+        synchronized ("SET_CREATIVE") {
+            for (final PlayerObject pl : creativePlayers) {
+                if (pl.getPlayer().equalsIgnoreCase(playerId)) {
+                    return pl.getStats();
+                }
+            }
+            final Player player = PlayerHandler.getPlayerString(playerId);
+            if (player != null) {
+                return new PlayerStats(player);
+            } else {
+                final OfflinePlayer offlinePlayer = PlayerHandler.getOfflinePlayer(playerId);
+                if (offlinePlayer != null) {
+                    return new PlayerStats(offlinePlayer);
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -247,8 +276,7 @@ public class Creative {
     public static void save() {
         for (PlayerObject playerObject : creativePlayers) {
             if (playerObject.getStats().autoRestore()) {
-                FakeCreative.getCore().getSQL().saveData(new DataObject(Table.PLAYERSTATS, playerObject.getPlayer(), String.valueOf(playerObject.getHealth()), String.valueOf(playerObject.getMaxHealth()),
-                        String.valueOf(playerObject.getFood()), String.valueOf(playerObject.getFireTicks()), playerObject.getInventory64()));
+                FakeCreative.getCore().getSQL().saveData(new DataObject(Table.PLAYERSTATS, playerObject.getPlayer(), String.valueOf(playerObject.getHealth()), String.valueOf(playerObject.getMaxHealth()), String.valueOf(playerObject.getFood()), String.valueOf(playerObject.getFireTicks()), playerObject.getInventory64()));
             }
         }
     }
@@ -265,8 +293,8 @@ public class Creative {
 
     @SuppressWarnings("unused")
     public enum Tabs {
-        PICK_ITEM(ItemHandler.getItem("STICK", 1, true, true, "&d&1&c&2&a" + FakeCreative.getCore().getLang().getString("tabs.pickBlock.name"), FakeCreative.getCore().getLang().getStringList("tabs.pickBlock.itemLore").toArray(new String[0]))),
-        PICK(ItemHandler.getItem("STICK", 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.pickBlock.name"), FakeCreative.getCore().getLang().getStringList("tabs.pickBlock.lore").toArray(new String[0]))),
+        PICK_ITEM(ItemHandler.getItem("STICK", 1, true, true, "&d&1&c&2&a" + FakeCreative.getCore().getLang().getString("tabs.pickItem.name"), FakeCreative.getCore().getLang().getStringList("tabs.pickItem.itemLore").toArray(new String[0]))),
+        PICK(ItemHandler.getItem("STICK", 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.pickItem.name"), FakeCreative.getCore().getLang().getStringList("tabs.pickItem.lore").toArray(new String[0]))),
         CREATIVE(ItemHandler.getItem("APPLE", 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.creative.name"), FakeCreative.getCore().getLang().getStringList("tabs.creative.lore").toArray(new String[0]))),
         HOTBARS(ItemHandler.getItem("PAPER", 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.hotbars.name"), FakeCreative.getCore().getLang().getStringList("tabs.hotbars.lore").toArray(new String[0]))),
         PREFERENCES(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "PLAYER_HEAD" : "SKULL_ITEM:3"), 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.preferences.name"), FakeCreative.getCore().getLang().getStringList("tabs.preferences.lore").toArray(new String[0]))),
@@ -343,10 +371,8 @@ public class Creative {
                 craftInventory.setItem(2, Tabs.PICK.getItem());
                 craftInventory.setItem(3, Tabs.HOTBARS.getItem());
                 craftInventory.setItem(4, userClone);
-                SchedulerUtils.run(() -> {
-                    craftInventory.setItem(0, Tabs.DESTROY.getItem());
-                    PlayerHandler.updateInventory(player);
-                });
+                craftInventory.setItem(0, Tabs.DESTROY.getItem());
+                PlayerHandler.updateInventory(player, 2L);
             }
         }
 

@@ -24,7 +24,9 @@ public class DataObject {
 
     private final Table table;
     private Boolean isTemporary = false;
+    private String location = "";
     private String playerId = "";
+    private String state = "";
     private String position = "";
     private Boolean condition = null;
     private Double numerical = -1.0;
@@ -76,11 +78,28 @@ public class DataObject {
      * @param object1  - The Object being referenced.
      * @param object2  - The Object being referenced.
      */
-    public DataObject(final Table table, String playerId, final String object1, final String object2) {
+    public DataObject(final Table table, final String playerId, final String object1, final String object2) {
         this.table = table;
         this.playerId = playerId;
         this.position = object1;
         this.inventory64 = object2;
+        this.timeStamp = new Timestamp(System.currentTimeMillis()).toString();
+    }
+
+    /**
+     * Creates a new DataObject instance.
+     *
+     * @param table    - The Table being accessed.
+     * @param location  - The World and Block Location being referenced.
+     * @param playerId - The Player UUID being referenced.
+     * @param object1  - The Object being referenced.
+     * @param object2  - The Object being referenced.
+     */
+    public DataObject(final Table table, final String location, final String playerId, final String object1, final String object2) {
+        this.table = table;
+        this.location = location;
+        this.playerId = playerId;
+        this.state = object1;
         this.timeStamp = new Timestamp(System.currentTimeMillis()).toString();
     }
 
@@ -127,12 +146,30 @@ public class DataObject {
     }
 
     /**
+     * Gets the Location of the DataObject.
+     *
+     * @return The Location.
+     */
+    public String getLocation() {
+        return this.location;
+    }
+
+    /**
      * Gets the Player ID of the DataObject.
      *
      * @return The Player ID.
      */
     public String getPlayerId() {
         return this.playerId;
+    }
+
+    /**
+     * Gets the State of the DataObject.
+     *
+     * @return The State.
+     */
+    public String getState() {
+        return this.state;
     }
 
     /**
@@ -294,10 +331,12 @@ public class DataObject {
         }
         if (object1.getTable().equals(Table.HOTBAR)) {
             return object1.getPlayerId().equalsIgnoreCase(object2.getPlayerId()) && (object1.getPosition().equalsIgnoreCase(object2.getPosition()));
+        } else if (object1.getTable().equals(Table.OWNERSHIP_DATA)) {
+            return (object1.getLocation().equalsIgnoreCase(object2.getLocation()));
         } else if (object1.getTable().equals(Table.ALLOW_FLIGHT) || object1.getTable().equals(Table.SPEED_FLIGHT) || object1.getTable().equals(Table.SPEED_BREAK) || object1.getTable().equals(Table.SET_FOOD) ||
                 object1.getTable().equals(Table.SET_HEALTH) || object1.getTable().equals(Table.SET_SCALE) || object1.getTable().equals(Table.ALLOW_HUNGER) || object1.getTable().equals(Table.ALLOW_BURN) ||
                 object1.getTable().equals(Table.UNBREAKABLE_ITEMS) || object1.getTable().equals(Table.DROPS_BLOCK) || object1.getTable().equals(Table.SWORD_BLOCK) || object1.getTable().equals(Table.AUTO_RESTORE) ||
-                object1.getTable().equals(Table.SET_GOD) || object1.getTable().equals(Table.DELAY_GOD) || object1.getTable().equals(Table.STORE_INVENTORY) || object1.getTable().equals(Table.DESTROY_PICKUPS) || object1.getTable().equals(Table.SELF_DROPS) || object1.getTable().equals(Table.ITEM_STORE) || object1.getTable().equals(Table.PLAYERSTATS)) {
+                object1.getTable().equals(Table.SET_GOD) || object1.getTable().equals(Table.DELAY_GOD) || object1.getTable().equals(Table.STORE_INVENTORY) || object1.getTable().equals(Table.DESTROY_PICKUPS) || object1.getTable().equals(Table.SELF_DROPS) || object1.getTable().equals(Table.ITEM_STORE) || object1.getTable().equals(Table.PROTECT_PLACEMENTS) || object1.getTable().equals(Table.DROP_PLACEMENTS) || object1.getTable().equals(Table.PLAYERSTATS)) {
             return object1.getPlayerId().equalsIgnoreCase(object2.getPlayerId());
         }
         return false;
@@ -309,12 +348,14 @@ public class DataObject {
      * @return The Removal Values.
      */
     public String getRemovalValues() {
-        StringBuilder removal = new StringBuilder();
-        for (String column : this.table.removal().split(", ")) {
+        final StringBuilder removal = new StringBuilder();
+        for (final String column : this.table.removal().split(", ")) {
             if (column.equalsIgnoreCase("Player_UUID")) {
                 removal.append("'").append(this.getPlayerId()).append("',");
             } else if (column.equalsIgnoreCase("Position")) {
                 removal.append("'").append(this.getPosition()).append("',");
+            } else if (column.equalsIgnoreCase("Location")) {
+                removal.append("'").append(this.getLocation()).append("',");
             }
         }
         return removal.substring(0, removal.length() - 1);
@@ -326,18 +367,45 @@ public class DataObject {
      * @return The Insert Values.
      */
     public String getInsertValues() {
-        return
-                (this.getPlayerId() != null && !this.getPlayerId().isEmpty() ? "'" + this.getPlayerId() + "'," : "")
-                        + (this.getPosition() != null && !this.getPosition().isEmpty() ? "'" + this.getPosition() + "'," : "")
-                        + (this.getBoolean() != null ? "'" + this.getBoolean() + "'," : "")
-                        + (this.getDouble() != null && this.getDouble() >= 0 ? "'" + this.getDouble() + "'," : "")
-                        + (this.getInt() != null && this.getInt() >= 0 ? "'" + this.getInt() + "'," : "")
-                        + (this.getHealth() >= 0 ? "'" + this.getHealth() + "'," : "")
-                        + (this.getMaxHealth() >= 0 ? "'" + this.getMaxHealth() + "'," : "")
-                        + (this.getFood() >= 0 ? "'" + this.getFood() + "'," : "")
-                        + (this.getFireTicks() != -101 ? "'" + this.getFireTicks() + "'," : "")
-                        + (this.getInventory64() != null && !this.getInventory64().isEmpty() ? "'" + this.getInventory64() + "'," : "")
-                        + "'" + new Timestamp(System.currentTimeMillis()) + "'";
+        final StringBuilder result = new StringBuilder();
+        if (this.getLocation() != null && !this.getLocation().isEmpty()) {
+            result.append("'").append(this.getLocation()).append("',");
+        }
+        if (this.getPlayerId() != null && !this.getPlayerId().isEmpty()) {
+            result.append("'").append(this.getPlayerId()).append("',");
+        }
+        if (this.getState() != null && !this.getState().isEmpty()) {
+            result.append("'").append(this.getState()).append("',");
+        }
+        if (this.getPosition() != null && !this.getPosition().isEmpty()) {
+            result.append("'").append(this.getPosition()).append("',");
+        }
+        if (this.getBoolean() != null) {
+            result.append("'").append(this.getBoolean()).append("',");
+        }
+        if (this.getDouble() != null && this.getDouble() >= 0) {
+            result.append("'").append(this.getDouble()).append("',");
+        }
+        if (this.getInt() != null && this.getInt() >= 0) {
+            result.append("'").append(this.getInt()).append("',");
+        }
+        if (this.getHealth() >= 0) {
+            result.append("'").append(this.getHealth()).append("',");
+        }
+        if (this.getMaxHealth() >= 0) {
+            result.append("'").append(this.getMaxHealth()).append("',");
+        }
+        if (this.getFood() >= 0) {
+            result.append("'").append(this.getFood()).append("',");
+        }
+        if (this.getFireTicks() != -101) {
+            result.append("'").append(this.getFireTicks()).append("',");
+        }
+        if (this.getInventory64() != null && !this.getInventory64().isEmpty()) {
+            result.append("'").append(this.getInventory64()).append("',");
+        }
+        result.append("'").append(new Timestamp(System.currentTimeMillis())).append("'");
+        return result.toString();
     }
 
     /**
@@ -362,7 +430,10 @@ public class DataObject {
         DESTROY_PICKUPS("destroy_pickups", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
         SELF_DROPS("self_drops", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
         ITEM_STORE("item_store", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        PROTECT_PLACEMENTS("protect_placements", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        DROP_PLACEMENTS("drop_placements", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
         HOTBAR("hotbar", "`Player_UUID`, `Position`, `Inventory64`, `Time_Stamp`", "Player_UUID, Position"),
+        OWNERSHIP_DATA("ownership_data", "`Location`, `Player_UUID`, `State`, `Time_Stamp`", "Location"),
         PLAYERSTATS("playerstats", "`Player_UUID`, `Health`, `Scale`, `Food`, `Fire_Ticks`, `Inventory64`, `Time_Stamp`", "Player_UUID");
 
         private final String tableName;

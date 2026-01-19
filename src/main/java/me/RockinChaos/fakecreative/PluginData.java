@@ -60,6 +60,7 @@ public class PluginData {
         Objects.requireNonNull(FakeCreative.getCore().getPlugin().getCommand("gamemode")).setTabCompleter(new ChatTab());
         Objects.requireNonNull(FakeCreative.getCore().getPlugin().getCommand("fakecreative")).setExecutor(new ChatExecutor());
         Objects.requireNonNull(FakeCreative.getCore().getPlugin().getCommand("fakecreative")).setTabCompleter(new ChatTab());
+        FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Placement(), FakeCreative.getCore().getPlugin());
         FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Blocks(), FakeCreative.getCore().getPlugin());
         FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Clicking(), FakeCreative.getCore().getPlugin());
         FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Crafting(), FakeCreative.getCore().getPlugin());
@@ -92,7 +93,7 @@ public class PluginData {
         FakeCreative.getCore().getData().refresh();
         FakeCreative.getCore().getData().setStarted(false);
         FakeCreative.getCore().getData().setPluginPrefix("&7[&6FakeCreative&7]");
-        FakeCreative.getCore().getData().setConfig(ImmutableMap.of("config.yml", 0, "lang.yml", 1));
+        FakeCreative.getCore().getData().setConfig(ImmutableMap.of("config.yml", 1, "lang.yml", 2));
         FakeCreative.getCore().getData().setLanguages(Arrays.asList("English", "German", "Spanish"));
         FakeCreative.getCore().getData().setPermissions(Arrays.asList("FakeCreative.use", "FakeCreative.dump", "FakeCreative.reload", "FakeCreative.updates", "FakeCreative.upgrade", "FakeCreative.permissions", "FakeCreative.purge", "FakeCreative.preferences",
                 "FakeCreative.mode.creative", "FakeCreative.mode.survival", "FakeCreative.mode.adventure", "FakeCreative.mode.spectator"));
@@ -166,7 +167,7 @@ public class PluginData {
                 for (final HashMap<String, String> sl1 : selectTable) {
                     DataObject dataObject = null;
                     if (tableEnum.equals(Table.ALLOW_FLIGHT) || tableEnum.equals(Table.ALLOW_HUNGER) || tableEnum.equals(Table.ALLOW_BURN) || tableEnum.equals(Table.UNBREAKABLE_ITEMS) || tableEnum.equals(Table.DROPS_BLOCK)
-                            || tableEnum.equals(Table.SWORD_BLOCK) || tableEnum.equals(Table.AUTO_RESTORE) || tableEnum.equals(Table.SET_GOD) || tableEnum.equals(Table.STORE_INVENTORY) || tableEnum.equals(Table.DESTROY_PICKUPS) || tableEnum.equals(Table.SELF_DROPS) || tableEnum.equals(Table.ITEM_STORE)) {
+                            || tableEnum.equals(Table.SWORD_BLOCK) || tableEnum.equals(Table.AUTO_RESTORE) || tableEnum.equals(Table.SET_GOD) || tableEnum.equals(Table.STORE_INVENTORY) || tableEnum.equals(Table.DESTROY_PICKUPS) || tableEnum.equals(Table.SELF_DROPS) || tableEnum.equals(Table.ITEM_STORE) || tableEnum.equals(Table.PROTECT_PLACEMENTS) || tableEnum.equals(Table.DROP_PLACEMENTS)) {
                         dataObject = new DataObject(tableEnum, sl1.get("Player_UUID"), Boolean.parseBoolean(sl1.get("Value")));
                     } else if (tableEnum.equals(Table.SPEED_FLIGHT) || tableEnum.equals(Table.SPEED_BREAK) || tableEnum.equals(Table.SET_SCALE)) {
                         dataObject = new DataObject(tableEnum, sl1.get("Player_UUID"), Double.parseDouble(sl1.get("Value")));
@@ -174,6 +175,8 @@ public class PluginData {
                         dataObject = new DataObject(tableEnum, sl1.get("Player_UUID"), Integer.parseInt(sl1.get("Value")));
                     } else if (tableEnum.equals(Table.HOTBAR)) {
                         dataObject = new DataObject(tableEnum, sl1.get("Player_UUID"), sl1.get("Position"), sl1.get("Inventory64"));
+                    }  else if (tableEnum.equals(Table.OWNERSHIP_DATA)) {
+                        dataObject = new DataObject(tableEnum, sl1.get("Location"), sl1.get("Player_UUID"), sl1.get("State"), "");
                     } else if (tableEnum.equals(Table.PLAYERSTATS)) {
                         dataObject = new DataObject(tableEnum, sl1.get("Player_UUID"), sl1.get("Health"), sl1.get("Scale"), sl1.get("Food"), sl1.get("Fire_Ticks"), sl1.get("Inventory64"));
                     }
@@ -222,7 +225,10 @@ public class PluginData {
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "destroy_pickups (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "self_drops (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "item_store (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "protect_placements (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "drop_placements (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "hotbar (`Player_UUID` varchar(64), `Position` varchar(12), `Inventory64` text, `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "ownership_data (`Location` varchar(128), `Player_UUID` varchar(64), `State` varchar(64), `Time_Stamp` varchar(64));");
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "playerstats (`Player_UUID` varchar(64), `Health` varchar(64), `Scale` varchar(64), `Food` varchar(64), `Fire_Ticks` varchar(128), `Inventory64` text, `Time_Stamp` varchar(64));");
         };
     }

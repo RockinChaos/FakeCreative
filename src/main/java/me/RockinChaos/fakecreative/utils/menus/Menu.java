@@ -505,14 +505,16 @@ public class Menu {
      */
     public static void userMenu(final CommandSender sender) {
         final Player player = (Player) sender;
-        Interface pagedPane = new Interface(false, 3, exitButton, userGUIName, player);
+        Interface pagedPane = new Interface(false, 4, exitButton, userGUIName, player);
         SchedulerUtils.runAsync(() -> {
+            pagedPane.addButton(new Button(fillerPaneBItem), 3);
             pagedPane.addButton(new Button(ItemHandler.getItem("FEATHER", 1, Creative.get(player).getStats().allowFlight(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.allowFlight.name"),
                     FakeCreative.getCore().getLang().getStringList("menus.preferences.items.allowFlight.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().allowFlight()))).toArray(String[]::new)),
                     event -> {
                         Creative.get(player).getStats().setFlight(player, !Creative.get(player).getStats().allowFlight());
                         userMenu(player);
                     }));
+            pagedPane.addButton(new Button(fillerPaneBItem));
             pagedPane.addButton(new Button(ItemHandler.getItem("SUGAR", 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.flightSpeed.name"),
                     FakeCreative.getCore().getLang().getStringList("menus.preferences.items.flightSpeed.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().flySpeed()))).toArray(String[]::new)), event -> {
                 final InventoryHolder inventoryHolder = event.getInventory().getHolder();
@@ -540,13 +542,14 @@ public class Menu {
                     .itemLeft(ItemHandler.getItem("NAME_TAG", 1, false, true, " ", "&7"))
                     .itemRight(ItemHandler.getItem("GOLD_NUGGET", 1, true, true, FakeCreative.getCore().getLang().getString("menus.general.items.tips.name"),
                             Stream.concat(Stream.concat(
-                                                Stream.of(FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputType").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number")),
-                                                Stream.of("&7", FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputExample").replace("%input_example%", "20").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"))
-                                            ),
-                                            FakeCreative.getCore().getLang().getStringList("menus.preferences.items.flightSpeed.tipLore").stream().filter(s -> !s.isEmpty()).map(lore -> lore.replace("%value%", String.valueOf(((int) Creative.get(player).getStats().flySpeed()) * 2)))
-                                          ).toArray(String[]::new)))
+                                            Stream.of(FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputType").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number")),
+                                            Stream.of("&7", FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputExample").replace("%input_example%", "20").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"))
+                                    ),
+                                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.flightSpeed.tipLore").stream().filter(s -> !s.isEmpty()).map(lore -> lore.replace("%value%", String.valueOf(((int) Creative.get(player).getStats().flySpeed()) * 2)))
+                            ).toArray(String[]::new)))
                     .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, FakeCreative.getCore().getLang().getString("menus.general.items.typing.name"), FakeCreative.getCore().getLang().getStringList("menus.general.items.typing.lore").toArray(new String[0])))
                     .title(FakeCreative.getCore().getLang().getString("menus.preferences.items.flightSpeed.name") + ":"), 0));
+            pagedPane.addButton(new Button(fillerPaneBItem), 3);
             pagedPane.addButton(new Button(ItemHandler.getItem("DIAMOND_PICKAXE", 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.breakSpeed.name"),
                     FakeCreative.getCore().getLang().getStringList("menus.preferences.items.breakSpeed.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().breakSpeed()))).toArray(String[]::new)), event -> {
                 final InventoryHolder inventoryHolder = event.getInventory().getHolder();
@@ -692,7 +695,7 @@ public class Menu {
                         Creative.get(player).getStats().setBlockDrops(player, !Creative.get(player).getStats().blockDrops());
                         userMenu(player);
                     }));
-            pagedPane.addButton(new Button(ItemHandler.getItem("DISPENSER", 1, Creative.get(player).getStats().destroyPickups(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.destroyPickups.name"),
+            pagedPane.addButton(new Button(ItemHandler.getItem("CACTUS", 1, Creative.get(player).getStats().destroyPickups(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.destroyPickups.name"),
                     FakeCreative.getCore().getLang().getStringList("menus.preferences.items.destroyPickups.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().destroyPickups()))).toArray(String[]::new)),
                     event -> {
                         Creative.get(player).getStats().setPickups(player, !Creative.get(player).getStats().destroyPickups());
@@ -752,6 +755,20 @@ public class Menu {
                     FakeCreative.getCore().getLang().getStringList("menus.preferences.items.storeInventory.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().storeInventory()))).toArray(String[]::new)),
                     event -> {
                         Creative.get(player).getStats().setStore(player, !Creative.get(player).getStats().storeInventory());
+                        userMenu(player);
+                    }));
+            pagedPane.addButton(new Button(ItemHandler.getItem("DIAMOND_HELMET", 1, Creative.get(player).getStats().protectPlacements(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.protectPlacements.name"),
+                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.protectPlacements.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().protectPlacements()))).toArray(String[]::new)),
+                    event -> {
+                        Creative.get(player).getStats().setProtectPlacements(player, !Creative.get(player).getStats().protectPlacements());
+                        userMenu(player);
+                    }));
+            final List<String> dropPlacementsLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.dropPlacements.lore");
+            if (!Creative.get(player).getStats().blockDrops() && Creative.get(player).getStats().dropPlacements()) dropPlacementsLore.addAll(FakeCreative.getCore().getLang().getStringList("menus.preferences.items.dropPlacements.loreCondition"));
+            pagedPane.addButton(new Button(ItemHandler.getItem("DROPPER", 1, Creative.get(player).getStats().dropPlacements(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.dropPlacements.name"),
+                    dropPlacementsLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().dropPlacements()))).toArray(String[]::new)),
+                    event -> {
+                        Creative.get(player).getStats().setDropPlacements(player, !Creative.get(player).getStats().dropPlacements());
                         userMenu(player);
                     }));
             pagedPane.addButton(new Button(exitItem, event -> player.closeInventory()));

@@ -3,7 +3,7 @@
 # Join the discord for easy plugin support; https://discord.gg/D5FnJ7C
 
 # Modifying the Version will cause this file to break and regenerate.
-config-Version: 0
+config-Version: 1
 
 # At the moment, the available language translations are; English, German, Spanish
 # If you want to contribute to a language translation please create a pull request; https://github.com/RockinChaos/FakeCreative/tree/master/src/main/resources/files/locales
@@ -58,3 +58,5 @@ Preferences:
   Destroy-Pickups: true
   Self-Drops: true
   Item-Store: true
+  Protect-Placements: false
+  Drop-Placements: false

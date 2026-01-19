@@ -22,11 +22,13 @@ import me.RockinChaos.core.utils.CompatUtils;
 import me.RockinChaos.core.utils.SchedulerUtils;
 import me.RockinChaos.core.utils.ServerUtils;
 import me.RockinChaos.core.utils.api.LegacyAPI;
+import me.RockinChaos.core.utils.api.VaultAPI;
 import me.RockinChaos.fakecreative.FakeCreative;
 import me.RockinChaos.fakecreative.modes.Mode;
 import me.RockinChaos.fakecreative.modes.creative.Creative;
 import me.RockinChaos.fakecreative.utils.sql.DataObject;
 import me.RockinChaos.fakecreative.utils.sql.DataObject.Table;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 
@@ -54,6 +56,9 @@ public class PlayerStats {
     private boolean destroyPickups = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Destroy-Pickups");
     private boolean selfDrops = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Self-Drops");
     private boolean itemStore = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Item-Store");
+    private boolean protectPlacements = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Protect-Placements");
+    private boolean dropPlacements = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Placement-Drops");
+    private String playerName = null;
 
     /**
      * Creates a new PlayerStats instance
@@ -61,104 +66,140 @@ public class PlayerStats {
      * @param player - The Player being accessed.
      */
     public PlayerStats(final Player player) {
+        if (player != null) this.playerName = player.getName();
+        final String playerId = PlayerHandler.getPlayerID(player);
         if (player != null && this.isLocalePreferences(player)) {
-            final DataObject allowFlight = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ALLOW_FLIGHT, PlayerHandler.getPlayerID(player), true));
-            if (allowFlight != null) {
-                this.allowFlight = allowFlight.getBoolean();
-            }
-
-            final DataObject flySpeed = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SPEED_FLIGHT, PlayerHandler.getPlayerID(player), 0.0));
-            if (flySpeed != null) {
-                this.flySpeed = flySpeed.getDouble();
-            }
-
-            final DataObject breakSpeed = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SPEED_BREAK, PlayerHandler.getPlayerID(player), 0.0));
-            if (breakSpeed != null) {
-                this.breakSpeed = breakSpeed.getDouble();
-            }
-
-            final DataObject foodLevel = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_FOOD, PlayerHandler.getPlayerID(player), 0));
-            if (foodLevel != null) {
-                this.foodLevel = foodLevel.getInt();
-            }
-
-            final DataObject health = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_HEALTH, PlayerHandler.getPlayerID(player), 0));
-            if (health != null) {
-                this.health = health.getInt();
-            }
-
-            final DataObject heartScale = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_SCALE, PlayerHandler.getPlayerID(player), 0.0));
-            if (heartScale != null) {
-                this.heartScale = heartScale.getDouble();
-            }
-
-            final DataObject allowHunger = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ALLOW_HUNGER, PlayerHandler.getPlayerID(player), true));
-            if (allowHunger != null) {
-                this.allowHunger = allowHunger.getBoolean();
-            }
-
-            final DataObject allowBurn = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ALLOW_BURN, PlayerHandler.getPlayerID(player), true));
-            if (allowBurn != null) {
-                this.allowBurn = allowBurn.getBoolean();
-            }
-
-            final DataObject unbreakableItems = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.UNBREAKABLE_ITEMS, PlayerHandler.getPlayerID(player), true));
-            if (unbreakableItems != null) {
-                this.unbreakableItems = unbreakableItems.getBoolean();
-            }
-
-            final DataObject blockDrops = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.DROPS_BLOCK, PlayerHandler.getPlayerID(player), true));
-            if (blockDrops != null) {
-                this.blockDrops = blockDrops.getBoolean();
-            }
-
-            final DataObject swordBlock = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SWORD_BLOCK, PlayerHandler.getPlayerID(player), true));
-            if (swordBlock != null) {
-                this.swordBlock = swordBlock.getBoolean();
-            }
-
-            final DataObject autoRestore = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.AUTO_RESTORE, PlayerHandler.getPlayerID(player), true));
-            if (autoRestore != null) {
-                this.autoRestore = autoRestore.getBoolean();
-            }
-
-            final DataObject god = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_GOD, PlayerHandler.getPlayerID(player), true));
-            if (god != null) {
-                this.god = god.getBoolean();
-            }
-
-            final DataObject godDelay = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.DELAY_GOD, PlayerHandler.getPlayerID(player), 0));
-            if (godDelay != null) {
-                this.godDelay = godDelay.getInt();
-            }
-
-            final DataObject storeInventory = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.STORE_INVENTORY, PlayerHandler.getPlayerID(player), true));
-            if (storeInventory != null) {
-                this.storeInventory = storeInventory.getBoolean();
-            }
-
-            final DataObject destroyPickups = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.DESTROY_PICKUPS, PlayerHandler.getPlayerID(player), true));
-            if (destroyPickups != null) {
-                this.destroyPickups = destroyPickups.getBoolean();
-            }
-
-            final DataObject selfDrops = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SELF_DROPS, PlayerHandler.getPlayerID(player), true));
-            if (selfDrops != null) {
-                this.selfDrops = selfDrops.getBoolean();
-            }
-
-            final DataObject itemStore = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ITEM_STORE, PlayerHandler.getPlayerID(player), true));
-            if (itemStore != null) {
-                this.itemStore = itemStore.getBoolean();
-            }
-
+            loadStats(playerId);
         }
 
+        loadHotbars(playerId);
+    }
+
+    /**
+     * Creates a new PlayerStats instance
+     *
+     * @param offlinePlayer - The OfflinePlayer being accessed.
+     */
+    public PlayerStats(final OfflinePlayer offlinePlayer) {
+        if (offlinePlayer != null) this.playerName = offlinePlayer.getName();
+        final String playerId = PlayerHandler.getOfflinePlayerID(offlinePlayer);
+        final boolean PermissionNeeded = FakeCreative.getCore().getConfig("config.yml").getBoolean("Permissions.Preferences");
+        final boolean OPPermissionNeeded = FakeCreative.getCore().getConfig("config.yml").getBoolean("Permissions.Preferences-OP");
+        if ((offlinePlayer != null && offlinePlayer.isOp() && (!OPPermissionNeeded || VaultAPI.getVault(false).hasPermission(offlinePlayer, "fakecreative.preferences")))
+                || (!PermissionNeeded || (offlinePlayer != null && VaultAPI.getVault(false).hasPermission(offlinePlayer, "fakecreative.preferences")))) {
+            loadStats(playerId);
+        }
+        loadHotbars(playerId);
+    }
+
+    public void loadHotbars(final String playerId) {
         for (int i = 1; i <= 9; i++) {
-            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.HOTBAR, PlayerHandler.getPlayerID(player), Integer.toString(i), "64"));
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.HOTBAR, playerId, Integer.toString(i), "64"));
             if (dataObject != null) {
                 this.hotbars.put(Integer.valueOf(dataObject.getPosition()), dataObject.getInventory64());
             }
+        }
+    }
+
+    public void loadStats(final String playerId) {
+        final DataObject allowFlight = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ALLOW_FLIGHT, playerId, true));
+        if (allowFlight != null) {
+            this.allowFlight = allowFlight.getBoolean();
+        }
+
+        final DataObject flySpeed = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SPEED_FLIGHT, playerId, 0.0));
+        if (flySpeed != null) {
+            this.flySpeed = flySpeed.getDouble();
+        }
+
+        final DataObject breakSpeed = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SPEED_BREAK, playerId, 0.0));
+        if (breakSpeed != null) {
+            this.breakSpeed = breakSpeed.getDouble();
+        }
+
+        final DataObject foodLevel = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_FOOD, playerId, 0));
+        if (foodLevel != null) {
+            this.foodLevel = foodLevel.getInt();
+        }
+
+        final DataObject health = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_HEALTH, playerId, 0));
+        if (health != null) {
+            this.health = health.getInt();
+        }
+
+        final DataObject heartScale = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_SCALE, playerId, 0.0));
+        if (heartScale != null) {
+            this.heartScale = heartScale.getDouble();
+        }
+
+        final DataObject allowHunger = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ALLOW_HUNGER, playerId, true));
+        if (allowHunger != null) {
+            this.allowHunger = allowHunger.getBoolean();
+        }
+
+        final DataObject allowBurn = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ALLOW_BURN, playerId, true));
+        if (allowBurn != null) {
+            this.allowBurn = allowBurn.getBoolean();
+        }
+
+        final DataObject unbreakableItems = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.UNBREAKABLE_ITEMS, playerId, true));
+        if (unbreakableItems != null) {
+            this.unbreakableItems = unbreakableItems.getBoolean();
+        }
+
+        final DataObject blockDrops = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.DROPS_BLOCK, playerId, true));
+        if (blockDrops != null) {
+            this.blockDrops = blockDrops.getBoolean();
+        }
+
+        final DataObject swordBlock = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SWORD_BLOCK, playerId, true));
+        if (swordBlock != null) {
+            this.swordBlock = swordBlock.getBoolean();
+        }
+
+        final DataObject autoRestore = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.AUTO_RESTORE, playerId, true));
+        if (autoRestore != null) {
+            this.autoRestore = autoRestore.getBoolean();
+        }
+
+        final DataObject god = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_GOD, playerId, true));
+        if (god != null) {
+            this.god = god.getBoolean();
+        }
+
+        final DataObject godDelay = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.DELAY_GOD, playerId, 0));
+        if (godDelay != null) {
+            this.godDelay = godDelay.getInt();
+        }
+
+        final DataObject storeInventory = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.STORE_INVENTORY, playerId, true));
+        if (storeInventory != null) {
+            this.storeInventory = storeInventory.getBoolean();
+        }
+
+        final DataObject destroyPickups = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.DESTROY_PICKUPS, playerId, true));
+        if (destroyPickups != null) {
+            this.destroyPickups = destroyPickups.getBoolean();
+        }
+
+        final DataObject selfDrops = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SELF_DROPS, playerId, true));
+        if (selfDrops != null) {
+            this.selfDrops = selfDrops.getBoolean();
+        }
+
+        final DataObject itemStore = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ITEM_STORE, playerId, true));
+        if (itemStore != null) {
+            this.itemStore = itemStore.getBoolean();
+        }
+
+        final DataObject protectPlacements = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.PROTECT_PLACEMENTS, playerId, false));
+        if (protectPlacements != null) {
+            this.protectPlacements = protectPlacements.getBoolean();
+        }
+
+        final DataObject dropPlacements = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.DROP_PLACEMENTS, playerId, false));
+        if (dropPlacements != null) {
+            this.dropPlacements = dropPlacements.getBoolean();
         }
     }
 
@@ -658,6 +699,58 @@ public class PlayerStats {
     }
 
     /**
+     * Checks if the Player is protecting blocks and entities they placed while in creative from being destroyed by other players.
+     *
+     * @return If the Player is protecting blocks and entities they placed while in creative from being destroyed by other players.
+     */
+    public boolean protectPlacements() {
+        return this.protectPlacements;
+    }
+
+    /**
+     * Sets the current state of Protecting Placements.
+     *
+     * @param player    - The Player being referenced.
+     * @param protectPlacements - If the Player has their blocks and entities placed in creative mode protected.
+     */
+    public void setProtectPlacements(final Player player, final boolean protectPlacements) {
+        synchronized ("FK_SQL") {
+            this.protectPlacements = protectPlacements;
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.PROTECT_PLACEMENTS, PlayerHandler.getPlayerID(player), protectPlacements));
+            if (dataObject != null) {
+                FakeCreative.getCore().getSQL().removeData(dataObject);
+            }
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.PROTECT_PLACEMENTS, PlayerHandler.getPlayerID(player), protectPlacements));
+        }
+    }
+
+    /**
+     * Checks if the Player allows block and entities they placed while in creative to drop items.
+     *
+     * @return If the Player allows block and entities they placed while in creative to drop items.
+     */
+    public boolean dropPlacements() {
+        return this.dropPlacements;
+    }
+
+    /**
+     * Sets the current state of Preventing Drops.
+     *
+     * @param player    - The Player being referenced.
+     * @param dropPlacements - If the Player allows blocks and entities they placed to drop items.
+     */
+    public void setDropPlacements(final Player player, final boolean dropPlacements) {
+        synchronized ("FK_SQL") {
+            this.dropPlacements = dropPlacements;
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.DROP_PLACEMENTS, PlayerHandler.getPlayerID(player), dropPlacements));
+            if (dataObject != null) {
+                FakeCreative.getCore().getSQL().removeData(dataObject);
+            }
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.DROP_PLACEMENTS, PlayerHandler.getPlayerID(player), dropPlacements));
+        }
+    }
+
+    /**
      * Gets the current list of hotbars.
      *
      * @return The current list of hotbars.
@@ -698,5 +791,9 @@ public class PlayerStats {
         } else {
             return (!PermissionNeeded || (player.isPermissionSet("fakecreative.preferences") && player.hasPermission("fakecreative.preferences")));
         }
+    }
+
+    public String getPlayerName() {
+        return this.playerName;
     }
 }

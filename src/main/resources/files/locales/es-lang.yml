@@ -2,10 +2,14 @@
 # Si no desea que se envíe un mensaje, elimínelo completamente de abajo o póngalo en blanco.
 
 # Si se modifica, el archivo se romperá y se regenerará.
-es-Version: 1
+es-Version: 2
 
 # Este es el prefijo que se enviará al principio de cada mensaje enviado en el archivo de idioma.
 Prefix: '&7[&6FakeCreative&7]'
+
+# Estos son simplemente mensajes generales enviados desde el plugin.
+general:
+  protectionDenied: '&cNo puedes %action% %object% colocado por %owner% en modo creativo falso!'
 
 # Estos mensajes son específicos de los comandos del plugin.
 commands:
@@ -333,3 +337,23 @@ menus:
           - '&7tras salir del modo creativo.'
           - '&7'
           - '&a&lActivado: &b&l%value%'
+      protectPlacements:
+        name: 'Proteger colocaciones'
+        lore:
+          - '&7*Evita que otros jugadores destruyan'
+          - '&7o muevan bloques que colocas'
+          - '&7en modo creativo.'
+          - '&7'
+          - '&a&lActivado: &b&l%value%'
+      dropPlacements:
+        name: 'Dropear colocaciones'
+        lore:
+          - '&7*Permite que los bloques que colocas'
+          - '&7sean dropeados cuando son destruidos'
+          - '&7por ti o por otros jugadores.'
+          - '&7'
+          - '&a&lActivado: &b&l%value%'
+        loreCondition:
+          - '&c&lNota: &7Tienes los drops de bloques'
+          - '&7desactivados, no recibirás items'
+          - '&7de tus bloques colocados.'

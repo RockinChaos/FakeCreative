@@ -2,10 +2,14 @@
 # Wenn du nicht möchtest dass eine Nachricht gesendet wird, entferne sie vollständig oder lasse sie leer.
 
 # Änderungen an dieser Zeile setzen die Datei zurück.
-de-Version: 1
+de-Version: 2
 
 # Der Prefix, der am Anfang jeder Nachricht gesendet wird.
 Prefix: '&7[&6FakeCreative&7]'
+
+# Dies sind einfach allgemeine Nachrichten, die vom Plugin gesendet werden.
+general:
+  protectionDenied: '&cDu kannst %object% nicht %action%, die von %owner% im Fake-Kreativmodus platziert wurden!'
 
 # Diese Nachrichten sind spezifisch für die Plugin-Befehle.
 commands:
@@ -334,3 +338,23 @@ menus:
           - '&7sobald der Kreativ-Modus verlassen wird'
           - '&7'
           - '&a&lAktiviert: &b&l%value%'
+      protectPlacements:
+        name: 'Platzierungen schützen'
+        lore:
+          - '&7*Verhindert, dass andere Spieler'
+          - '&7Blöcke zerstören oder bewegen, die du'
+          - '&7im Kreativmodus platziert hast.'
+          - '&7'
+          - '&a&lAktiviert: &b&l%value%'
+      dropPlacements:
+        name: 'Platzierungen droppen'
+        lore:
+          - '&7*Ermöglicht, dass die von dir platzierten'
+          - '&7Blöcke gedroppt werden, wenn sie von'
+          - '&7dir oder anderen Spielern zerstört werden.'
+          - '&7'
+          - '&a&lAktiviert: &b&l%value%'
+        loreCondition:
+          - '&c&lHinweis: &7Du hast Block-Drops'
+          - '&7deaktiviert, du erhältst keine Items'
+          - '&7von deinen platzierten Blöcken.'

@@ -17,26 +17,37 @@
  */
 package me.RockinChaos.fakecreative.listeners;
 
+import me.RockinChaos.core.handlers.ItemHandler;
 import me.RockinChaos.core.handlers.PlayerHandler;
-import me.RockinChaos.core.utils.StringUtils;
+import me.RockinChaos.core.utils.ServerUtils;
 import me.RockinChaos.fakecreative.modes.creative.Creative;
+import me.RockinChaos.fakecreative.modes.instance.PlayerStats;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.vehicle.VehicleDamageEvent;
+import org.bukkit.event.vehicle.VehicleDestroyEvent;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
+import java.util.List;
 
 public class Blocks implements Listener {
 
@@ -127,6 +138,80 @@ public class Blocks implements Listener {
                 this.swingDelay.put(PlayerHandler.getPlayerID(player), System.currentTimeMillis());
                 Bukkit.getPluginManager().callEvent(new BlockBreakEvent(block, player));
             }
+        }
+        }
+    }
+
+
+    /**
+     *
+     */
+                    }
+                        }
+                    }
+                }
+            } else {
+                }
+                entity.remove();
+            }
+        }
+    }
+
+    /**
+     *
+     * @param event - HangingBreakByEntityEvent
+     */
+        final Entity remover = event.getRemover();
+        final Entity entity = event.getEntity();
+        if (remover instanceof Player) {
+            final Player player = (Player) remover;
+                event.setCancelled(true);
+                entity.remove();
+            }
+        }
+    }
+
+    /**
+     *
+     */
+            event.setCancelled(true);
+            final VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, player);
+            Bukkit.getPluginManager().callEvent(destroyEvent);
+            if (!destroyEvent.isCancelled()) {
+                if (Creative.get(player).getStats().blockDrops()) {
+                    final Placement.OwnerData ownerData = Placement.getEntityOwner(vehicle);
+                    PlayerStats playerStats = null;
+                    if (ownerData != null && ownerData.state.equals(String.valueOf(vehicle.getEntityId()))) playerStats = Creative.getOfflineStats(ownerData.playerId);
+                    if (playerStats == null || playerStats.dropPlacements()) {
+                        vehicle.getWorld().dropItemNaturally(vehicle.getLocation().add(0, 0.2, 0), item);
+                    }
+                }
+                vehicle.remove();
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    }
+
+    /**
+     * Checks if the player can break based on rate limiting.
+     *
+     * @param player - The player to check
+     * @return True if they can break, false if rate limited
+     */
+    public static boolean canBreak(final Player player) {
+        final String playerId = PlayerHandler.getPlayerID(player);
+        final long now = System.currentTimeMillis();
+        if (now - (lastBreakTime.getOrDefault(playerId, 0L)) < (Creative.get(player).getStats().breakSpeed() * 45)) return false;
+        lastBreakTime.put(playerId, now);
+        return true;
+    }
+
+    /**
+     */
         }
     }
 }

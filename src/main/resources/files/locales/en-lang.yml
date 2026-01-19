@@ -2,10 +2,14 @@
 # If you don't want a message to be sent, fully remove it from below or make it blank.
 
 # Modifying this will cause the file to break and regenerate.
-en-Version: 1
+en-Version: 2
 
 # This is the prefix that will be sent at the beginning of every single message sent in the language file.
 Prefix: '&7[&6FakeCreative&7]'
+
+# These are simply general messages sent from the plugin.
+general:
+  protectionDenied: '&cYou cannot %action% %object% placed by %owner% in fake creative mode!'
 
 # These messages are specific to the plugin commands.
 commands:
@@ -334,3 +338,22 @@ menus:
           - '&7be restored when exiting creative.'
           - '&7'
           - '&a&lEnabled: &b&l%value%'
+      protectPlacements:
+        name: 'Protect Placements'
+        lore:
+          - '&7*Prevents other players from destroying'
+          - '&7or moving blocks you place in creative.'
+          - '&7'
+          - '&a&lEnabled: &b&l%value%'
+      dropPlacements:
+        name: 'Drop Placements'
+        lore:
+          - '&7*Allows the blocks you place to'
+          - '&7be dropped when destroyed by'
+          - '&7you or other players.'
+          - '&7'
+          - '&a&lEnabled: &b&l%value%'
+        loreCondition:
+          - '&c&lNote: &7You have Block-Drops'
+          - '&7disabled, you will not get items'
+          - '&7from your place blocks.'

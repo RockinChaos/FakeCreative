@@ -58,18 +58,12 @@ public class FakeCreative extends JavaPlugin {
     public void onEnable() {
         if (core.isEnabled()) {
             PluginData.getData().registerEvents();
-            {
-                PluginData.getData().registerClasses(false);
-                {
-                    Creative.restart(true);
-                    SchedulerUtils.runAsync(() -> {
-                        core.getUpdater();
-                        {
-                            ServerUtils.logDebug("has been Enabled.");
-                        }
-                    });
-                }
-            }
+            PluginData.getData().registerClasses(false);
+            Creative.restart(true);
+            SchedulerUtils.runAsync(() -> {
+                core.getUpdater();
+                ServerUtils.logDebug("has been Enabled.");
+            });
         }
     }
 
@@ -79,16 +73,14 @@ public class FakeCreative extends JavaPlugin {
     @Override
     public void onDisable() {
         Creative.save();
-        {
-            PlayerHandler.forOnlinePlayers(player -> {
-                if (Creative.isCreativeMode(player, true)) {
-                    Mode.setMode(player, null, player.getGameMode(), true, true);
-                }
-            });
-            SchedulerUtils.cancelTasks();
-            Menu.closeMenu();
-            ProtocolManager.closeProtocol();
-            ServerUtils.logInfo("has been Disabled.");
-        }
+        PlayerHandler.forOnlinePlayers(player -> {
+            if (Creative.isCreativeMode(player, true)) {
+                Mode.setMode(player, null, player.getGameMode(), true, true);
+            }
+        });
+        SchedulerUtils.cancelTasks();
+        Menu.closeMenu();
+        ProtocolManager.closeProtocol();
+        ServerUtils.logInfo("has been Disabled.");
     }
 }

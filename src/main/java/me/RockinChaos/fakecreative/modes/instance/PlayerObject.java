@@ -48,8 +48,7 @@ public class PlayerObject {
         this.fireTicks = fireTicks;
     }
 
-    public PlayerObject() {
-    }
+    public PlayerObject() {}
 
     /**
      * Gets the Player UUID of the PlayerObject.
