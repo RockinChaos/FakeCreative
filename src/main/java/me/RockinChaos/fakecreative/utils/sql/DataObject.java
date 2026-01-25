@@ -61,12 +61,12 @@ public class DataObject {
      */
     public DataObject(final Table table, final String playerId, final String object1, final String object2, final String object3, final String object4, final String object5) {
         this.table = table;
-        this.playerId = playerId;
-        this.health = Double.parseDouble(object1);
-        this.maxHealth = Double.parseDouble(object2);
-        this.food = Integer.parseInt(object3);
-        this.fireTicks = Integer.parseInt(object4);
-        this.inventory64 = object5;
+        if (playerId != null && !playerId.isEmpty()) this.playerId = playerId;
+        if (object1 != null && !object1.isEmpty()) this.health = Double.parseDouble(object1);
+        if (object2 != null && !object2.isEmpty()) this.maxHealth = Double.parseDouble(object2);
+        if (object3 != null && !object3.isEmpty()) this.food = Integer.parseInt(object3);
+        if (object4 != null && !object4.isEmpty()) this.fireTicks = Integer.parseInt(object4);
+        if (object5 != null && !object5.isEmpty()) this.inventory64 = object5;
         this.timeStamp = new Timestamp(System.currentTimeMillis()).toString();
     }
 
@@ -80,9 +80,9 @@ public class DataObject {
      */
     public DataObject(final Table table, final String playerId, final String object1, final String object2) {
         this.table = table;
-        this.playerId = playerId;
-        this.position = object1;
-        this.inventory64 = object2;
+        if (playerId != null && !playerId.isEmpty()) this.playerId = playerId;
+        if (object1 != null && !object1.isEmpty()) this.position = object1;
+        if (object2 != null && !object2.isEmpty()) this.inventory64 = object2;
         this.timeStamp = new Timestamp(System.currentTimeMillis()).toString();
     }
 
@@ -99,7 +99,7 @@ public class DataObject {
         this.table = table;
         this.location = location;
         this.playerId = playerId;
-        this.state = object1;
+        if (object1 != null && !object1.isEmpty()) this.state = object1;
         this.timeStamp = new Timestamp(System.currentTimeMillis()).toString();
     }
 
