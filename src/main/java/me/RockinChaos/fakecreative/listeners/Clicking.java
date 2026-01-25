@@ -48,7 +48,7 @@ public class Clicking implements Listener {
      * Listeners are conditionally registered to avoid NoClassDefFoundError on older versions.
      */
     public Clicking() {
-        if (ServerUtils.hasPreciseUpdate("1_9") && StringUtils.isRegistered(Clicking_1_9.class.getSimpleName())) {
+        if (ServerUtils.hasSpecificUpdate("1_9") && StringUtils.isRegistered(Clicking_1_9.class.getSimpleName())) {
             FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Clicking_1_9(), FakeCreative.getCore().getPlugin());
         }
     }
@@ -141,36 +141,38 @@ public class Clicking implements Listener {
             if (Tabs.CREATIVE.isTab(event.getCurrentItem())) {
                 event.setCancelled(true);
                 SchedulerUtils.run(() -> Menu.creativeMenu(player, 0, null));
-            } else if (Tabs.PICK_ITEM.isTab(event.getCurrentItem())) {
+            } else if (Tabs.PICK.getItem().getType() != Material.BARRIER && Tabs.PICK_ITEM.isTab(event.getCurrentItem())) {
                 event.setCancelled(true);
             } else if (Tabs.PICK.isTab(event.getCurrentItem())) {
                 event.setCancelled(true);
-                SchedulerUtils.run(() -> {
-                    boolean removed = false;
-                    for (ItemStack item : player.getInventory()) {
-                        if (Tabs.PICK_ITEM.isTab(item)) {
-                            player.getInventory().remove(item);
-                            Creative.removePick(player);
-                            removed = true;
-                        }
-                    }
-                    if (!removed) {
-                        if (player.getInventory().getItem(8) != null && Objects.requireNonNull(player.getInventory().getItem(8)).getType() != Material.AIR) {
-                            ItemStack drop = Objects.requireNonNull(player.getInventory().getItem(8)).clone();
-                            player.getInventory().setItem(8, new ItemStack(Material.AIR));
-                            player.getInventory().setItem(8, Tabs.PICK_ITEM.getItem());
-                            Creative.addPick(player);
-                            if (player.getInventory().firstEmpty() != -1) {
-                                player.getInventory().addItem(drop);
-                            } else {
-                                PlayerHandler.dropItem(player, drop);
+                if (Tabs.PICK.getItem().getType() != Material.BARRIER) {
+                    SchedulerUtils.run(() -> {
+                        boolean removed = false;
+                        for (ItemStack item : player.getInventory()) {
+                            if (Tabs.PICK_ITEM.isTab(item)) {
+                                player.getInventory().remove(item);
+                                Creative.removePick(player);
+                                removed = true;
                             }
-                        } else {
-                            player.getInventory().setItem(8, Tabs.PICK_ITEM.getItem());
-                            Creative.addPick(player);
                         }
-                    }
-                });
+                        if (!removed) {
+                            if (player.getInventory().getItem(8) != null && Objects.requireNonNull(player.getInventory().getItem(8)).getType() != Material.AIR) {
+                                ItemStack drop = Objects.requireNonNull(player.getInventory().getItem(8)).clone();
+                                player.getInventory().setItem(8, new ItemStack(Material.AIR));
+                                player.getInventory().setItem(8, Tabs.PICK_ITEM.getItem());
+                                Creative.addPick(player);
+                                if (player.getInventory().firstEmpty() != -1) {
+                                    player.getInventory().addItem(drop);
+                                } else {
+                                    PlayerHandler.dropItem(player, drop);
+                                }
+                            } else {
+                                player.getInventory().setItem(8, Tabs.PICK_ITEM.getItem());
+                                Creative.addPick(player);
+                            }
+                        }
+                    });
+                }
             } else if (Tabs.HOTBARS.isTab(event.getCurrentItem())) {
                 event.setCancelled(true);
                 SchedulerUtils.run(() -> Menu.hotbarMenu(player));

@@ -293,8 +293,8 @@ public class Creative {
 
     @SuppressWarnings("unused")
     public enum Tabs {
-        PICK_ITEM(ItemHandler.getItem("STICK", 1, true, true, "&d&1&c&2&a" + FakeCreative.getCore().getLang().getString("tabs.pickItem.name"), FakeCreative.getCore().getLang().getStringList("tabs.pickItem.itemLore").toArray(new String[0]))),
-        PICK(ItemHandler.getItem("STICK", 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.pickItem.name"), FakeCreative.getCore().getLang().getStringList("tabs.pickItem.lore").toArray(new String[0]))),
+        PICK_ITEM(ServerUtils.hasPreciseUpdate("1_21_4") ? ItemHandler.getItem("BARRIER", 1, false, true, "&d&1&c&2&a") : ItemHandler.getItem("STICK", 1, true, true, "&d&1&c&2&a" + FakeCreative.getCore().getLang().getString("tabs.pickItem.name"), FakeCreative.getCore().getLang().getStringList("tabs.pickItem.itemLore").toArray(new String[0]))),
+        PICK(ServerUtils.hasPreciseUpdate("1_21_4") ? ItemHandler.getItem("BARRIER", 1, false, true, "&a&1&c&2&d") : ItemHandler.getItem("STICK", 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.pickItem.name"), FakeCreative.getCore().getLang().getStringList("tabs.pickItem.lore").toArray(new String[0]))),
         CREATIVE(ItemHandler.getItem("APPLE", 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.creative.name"), FakeCreative.getCore().getLang().getStringList("tabs.creative.lore").toArray(new String[0]))),
         HOTBARS(ItemHandler.getItem("PAPER", 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.hotbars.name"), FakeCreative.getCore().getLang().getStringList("tabs.hotbars.lore").toArray(new String[0]))),
         PREFERENCES(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "PLAYER_HEAD" : "SKULL_ITEM:3"), 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.preferences.name"), FakeCreative.getCore().getLang().getStringList("tabs.preferences.lore").toArray(new String[0]))),
