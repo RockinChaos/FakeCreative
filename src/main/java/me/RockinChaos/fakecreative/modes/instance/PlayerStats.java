@@ -556,7 +556,9 @@ public class PlayerStats {
                 FakeCreative.getCore().getSQL().removeData(dataObject);
             }
             FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SET_GOD, PlayerHandler.getPlayerID(player), god));
-            player.setInvulnerable(god);
+            if (ServerUtils.hasSpecificUpdate("1_9")) {
+                player.setInvulnerable(god);
+            }
         }
     }
 
