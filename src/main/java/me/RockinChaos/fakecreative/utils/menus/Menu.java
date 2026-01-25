@@ -814,19 +814,31 @@ public class Menu {
      * @param event - InventoryClickEvent
      */
     private static void handleEvent(final InventoryClickEvent event) {
-        Player clickPlayer = (Player) event.getWhoClicked();
-        ItemStack clickItem = (event.getCurrentItem() != null ? event.getCurrentItem().clone() : event.getCurrentItem());
-        ItemStack cursorItem = event.getCursor();
+        final Player clickPlayer = (Player) event.getWhoClicked();
+        final ItemStack clickItem = (event.getCurrentItem() != null ? event.getCurrentItem().clone() : event.getCurrentItem());
+        final ItemStack cursorItem = event.getCursor();
         if (event.getClick() == ClickType.LEFT || event.getClick() == ClickType.RIGHT) {
             if (cursorItem == null || cursorItem.getType() == Material.AIR) {
                 clickPlayer.setItemOnCursor(clickItem);
+            } else if (cursorItem.isSimilar(clickItem)) {
+                final int cursorAmount = cursorItem.getAmount();
+                if (event.getClick() == ClickType.LEFT && cursorAmount < 64) {
+                    cursorItem.setAmount(cursorAmount + 1);
+                } else if (event.getClick() == ClickType.RIGHT && cursorItem.getAmount() > 1) {
+                    cursorItem.setAmount(cursorAmount - 1);
+                }
             } else {
                 clickPlayer.setItemOnCursor(new ItemStack(Material.AIR));
             }
         } else if (event.getClick() == ClickType.SHIFT_LEFT || event.getClick() == ClickType.SHIFT_RIGHT || event.getClick() == ClickType.MIDDLE) {
-            if (cursorItem == null || cursorItem.getType() == Material.AIR) {
-                clickItem.setAmount(clickItem.getMaxStackSize());
-                clickPlayer.setItemOnCursor(clickItem);
+            final boolean cursorEmpty = cursorItem == null || cursorItem.getType() == Material.AIR;
+            if (cursorEmpty || cursorItem.isSimilar(clickItem)) {
+                if (event.getClick() != ClickType.SHIFT_RIGHT || cursorEmpty || cursorItem.getAmount() <= 1) {
+                    clickItem.setAmount(clickItem.getMaxStackSize());
+                    clickPlayer.setItemOnCursor(clickItem);
+                } else {
+                    cursorItem.setAmount(cursorItem.getAmount() - 1);
+                }
             } else {
                 clickPlayer.setItemOnCursor(new ItemStack(Material.AIR));
             }
