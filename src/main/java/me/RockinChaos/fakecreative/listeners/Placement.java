@@ -786,7 +786,7 @@ public class Placement implements Listener {
      * @param blockState - The material name of the block
      */
     private void setBlockOwner(final Block block, final String playerId, final String blockState) {
-        if (ServerUtils.hasSpecificUpdate("1_14")) {
+        if (ServerUtils.hasSpecificUpdate("1_17")) {
             final BlockState state = block.getState();
             if (state instanceof TileState) {
                 final PersistentDataContainer container = ((TileState) state).getPersistentDataContainer();
@@ -814,7 +814,7 @@ public class Placement implements Listener {
      * @return OwnerData containing playerId and material, or null if not owned
      */
     private static OwnerData getBlockOwner(final Block block) {
-        if (ServerUtils.hasSpecificUpdate("1_14")) {
+        if (ServerUtils.hasSpecificUpdate("1_17")) {
             final BlockState state = block.getState();
             if (block.getType() != Material.MOVING_PISTON && state instanceof TileState) {
                 final PersistentDataContainer container = ((TileState) state).getPersistentDataContainer();
@@ -854,7 +854,7 @@ public class Placement implements Listener {
      * @param block - The block to remove ownership from
      */
     private static void removeBlockOwner(final Block block) {
-        if (ServerUtils.hasSpecificUpdate("1_14")) {
+        if (ServerUtils.hasSpecificUpdate("1_17")) {
             final BlockState state = block.getState();
             if (state instanceof TileState) {
                 final PersistentDataContainer container = ((TileState) state).getPersistentDataContainer();
