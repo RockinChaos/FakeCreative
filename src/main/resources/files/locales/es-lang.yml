@@ -81,16 +81,16 @@ tabs:
       - '&7'
       - '&7&o*Ajustes del modo Creativo'
       - '&7&oespecificas para tu gusto.'
-  pickBlock:
-    name: '&b&l&nEscoge un bloque'
+  pickItem:
+    name: '&b&l&nSeleccionar item'
     lore:
       - '&7'
-      - '&7&o*Te permite clonar'
-      - '&7&oun bloque existente.'
+      - '&7&o*Te permite obtener el item'
+      - '&7&ode la entidad o bloque.'
     itemLore:
       - '&7'
-      - '&7&o*Click Derecho sobre un bloque'
-      - '&7&opara añadirlo a tu inventario.'
+      - '&7&o*Haz clic derecho en una entidad o bloque'
+      - '&7&opara agregarlo a tu inventario.'
 
 # Estos mensajes son específicos de los menús.
 menus:

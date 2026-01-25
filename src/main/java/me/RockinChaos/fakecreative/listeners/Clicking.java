@@ -20,7 +20,10 @@ package me.RockinChaos.fakecreative.listeners;
 import me.RockinChaos.core.handlers.PlayerHandler;
 import me.RockinChaos.core.utils.CompatUtils;
 import me.RockinChaos.core.utils.SchedulerUtils;
+import me.RockinChaos.core.utils.ServerUtils;
+import me.RockinChaos.core.utils.StringUtils;
 import me.RockinChaos.core.utils.protocol.events.PlayerCloneItemEvent;
+import me.RockinChaos.fakecreative.FakeCreative;
 import me.RockinChaos.fakecreative.modes.creative.Creative;
 import me.RockinChaos.fakecreative.modes.creative.Creative.Tabs;
 import me.RockinChaos.fakecreative.utils.menus.Menu;
@@ -32,12 +35,23 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 
 public class Clicking implements Listener {
+
+    /**
+     * Registers version-specific clicking event listeners based on server version.
+     * Listeners are conditionally registered to avoid NoClassDefFoundError on older versions.
+     */
+    public Clicking() {
+        if (ServerUtils.hasPreciseUpdate("1_9") && StringUtils.isRegistered(Clicking_1_9.class.getSimpleName())) {
+            FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Clicking_1_9(), FakeCreative.getCore().getPlugin());
+        }
+    }
 
     /**
      * Copies any item the Player selects from their inventory or creative tab using their creative actions.
@@ -127,6 +141,8 @@ public class Clicking implements Listener {
             if (Tabs.CREATIVE.isTab(event.getCurrentItem())) {
                 event.setCancelled(true);
                 SchedulerUtils.run(() -> Menu.creativeMenu(player, 0, null));
+            } else if (Tabs.PICK_ITEM.isTab(event.getCurrentItem())) {
+                event.setCancelled(true);
             } else if (Tabs.PICK.isTab(event.getCurrentItem())) {
                 event.setCancelled(true);
                 SchedulerUtils.run(() -> {
@@ -177,6 +193,27 @@ public class Clicking implements Listener {
                     player.getInventory().setLeggings(new ItemStack(Material.AIR));
                     player.getInventory().setBoots(new ItemStack(Material.AIR));
                 }
+            }
+        }
+    }
+
+    /**
+     * Listeners for item movement.
+     * Automatically registered when the parent Clicking class is instantiated on 1.9+ servers.
+     *
+     * @since 1.9
+     */
+    private static class Clicking_1_9 implements Listener {
+
+        /**
+         * Prevents the Player from moving the Pick Item to their offhand.
+         *
+         * @param event - InventoryClickEvent
+         */
+        @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+        private void onSwapPickItem(final PlayerSwapHandItemsEvent event) {
+            if (Tabs.PICK_ITEM.isTab(event.getOffHandItem())) {
+                event.setCancelled(true);
             }
         }
     }

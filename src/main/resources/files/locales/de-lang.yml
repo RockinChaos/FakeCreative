@@ -81,16 +81,16 @@ tabs:
       - '&7'
       - '&7&o*Nutzerspezifische'
       - '&7&oKreativ-Modus-Einstellungen'
-  pickBlock:
-    name: '&b&l&nBlock aufheben'
+  pickItem:
+    name: '&b&l&nItem auswählen'
     lore:
       - '&7'
-      - '&7&o*Erlaubt es dir,'
-      - '&7&ovorhandene Blöcke zu klonen'
+      - '&7&o*Ermöglicht es dir, das Item'
+      - '&7&oeiner Entität oder eines Blocks zu erhalten.'
     itemLore:
       - '&7'
-      - '&7&o*Rechtsklick auf einen Block, um'
-      - '&7&oihn zu deinem Inventar hinzuzufügen'
+      - '&7&o*Rechtsklicke auf eine Entität oder einen Block,'
+      - '&7&oum es zu deinem Inventar hinzuzufügen.'
 
 # Die folgenden Nachrichten sind spezifisch für die GUI-Menüs.
 menus:

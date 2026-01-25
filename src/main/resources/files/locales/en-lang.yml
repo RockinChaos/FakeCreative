@@ -81,16 +81,16 @@ tabs:
       - '&7'
       - '&7&o*Creative mode settings'
       - '&7&othat are specific to you.'
-  pickBlock:
-    name: '&b&l&nPick Block'
+  pickItem:
+    name: '&b&l&nPick Item'
     lore:
       - '&7'
-      - '&7&o*Allows you to clone'
-      - '&7&oa existing block item.'
+      - '&7&o*Allows you to get the'
+      - '&7&oitem of the entity or block.'
     itemLore:
       - '&7'
-      - '&7&o*Right-click a block to'
-      - '&7&oadd to your inventory.'
+      - '&7&o*Right-click an entity or block'
+      - '&7&oto add it to your inventory.'
 
 # These are specific to the gui menus.
 menus:
