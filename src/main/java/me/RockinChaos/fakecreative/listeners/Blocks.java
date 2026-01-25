@@ -51,8 +51,8 @@ import java.util.List;
 
 public class Blocks implements Listener {
 
-    private final HashMap<String, Action> handMap = new HashMap<>();
-    private final HashMap<String, Long> swingDelay = new HashMap<>();
+    public static final HashMap<String, Long> lastBreakTime = new HashMap<>();
+    public static final HashMap<String, InteractionData> lastInteraction = new HashMap<>();
 
     /**
      * Prevents the player from damaging blocks.
@@ -74,83 +74,109 @@ public class Blocks implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onBreak(final BlockBreakEvent event) {
         if (Creative.isCreativeMode(event.getPlayer(), true)) {
-            event.getBlock().getWorld().playEffect(event.getBlock().getLocation(), Effect.STEP_SOUND, event.getBlock().getType(), 6);
+            final Block block = event.getBlock();
+            block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getType(), 6);
             if (!Creative.get(event.getPlayer()).getStats().blockDrops()) {
-                event.getBlock().setType(Material.AIR);
-            } else {
-                event.getBlock().breakNaturally();
+                block.setType(Material.AIR);
+            } else if (block.getType() != Material.AIR) {
+                block.breakNaturally();
             }
         }
     }
 
     /**
-     * Prevents glitching with the PlayerAnimationEvent when dropping items.
-     *
-     * @param event - PlayerDropItemEvent
-     */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onDrop(final PlayerDropItemEvent event) {
-        final Player player = event.getPlayer();
-        if (Creative.isCreativeMode(player, true) && this.handMap.get(PlayerHandler.getPlayerID(player)) != null) {
-            this.handMap.remove(PlayerHandler.getPlayerID(player));
-        }
-    }
-
-    /**
-     * Prevents glitching with the PlayerAnimationEvent when interacting with blocks.
+     * Tracks player interactions to prevent false positives in animation event.
      *
      * @param event - PlayerInteractEvent
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onClick(final PlayerInteractEvent event) {
+    public void onInteract(final PlayerInteractEvent event) {
         final Player player = event.getPlayer();
-        if (Creative.isCreativeMode(player, true) && !PlayerHandler.isMenuClick(player, event.getAction())) {
-            final Block block = PlayerHandler.getTargetBlock(player, 6);
-            if (this.handMap.get(PlayerHandler.getPlayerID(player)) == null || !this.handMap.get(PlayerHandler.getPlayerID(player)).equals(event.getAction())) {
-                if ((event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR) && (block != null && block.getType() != Material.AIR)) {
-                    this.handMap.put(PlayerHandler.getPlayerID(player), Action.RIGHT_CLICK_AIR);
-                } else {
-                    this.handMap.put(PlayerHandler.getPlayerID(player), event.getAction());
-                }
-            } else if (this.handMap.get(PlayerHandler.getPlayerID(player)) != event.getAction()) {
-                this.handMap.remove(PlayerHandler.getPlayerID(player));
-                if ((event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_AIR) && (block != null && block.getType() != Material.AIR)) {
-                    this.handMap.put(PlayerHandler.getPlayerID(player), Action.RIGHT_CLICK_AIR);
-                } else {
-                    this.handMap.put(PlayerHandler.getPlayerID(player), event.getAction());
-                }
-            }
+        if (Creative.isCreativeMode(player, true)) {
+            lastInteraction.put(PlayerHandler.getPlayerID(player), new InteractionData(event.getAction(), event.getClickedBlock()));
         }
     }
 
     /**
-     * Allows the Player to instantly break any block.
+     * Allows the player to instantly break blocks continuously in creative mode.
      *
      * @param event - PlayerAnimationEvent
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onInstantBreak(final PlayerAnimationEvent event) {
+    public void onInstantBreakBlock(final PlayerAnimationEvent event) {
         final Player player = event.getPlayer();
-        if (Creative.isCreativeMode(player, true) && this.handMap.get(PlayerHandler.getPlayerID(player)) != null && StringUtils.containsIgnoreCase(this.handMap.get(PlayerHandler.getPlayerID(player)).name(), "LEFT") && (!Objects.requireNonNull(PlayerHandler.getMainHandItem(player)).getType().name().contains("SWORD") || !Creative.get(player).getStats().swordBlock())) {
-            final Block block = PlayerHandler.getTargetBlock(player, 6);
-            long dupeDuration = !this.swingDelay.isEmpty() && this.swingDelay.get(PlayerHandler.getPlayerID(player)) != null ? System.currentTimeMillis() - this.swingDelay.get(PlayerHandler.getPlayerID(player)) : -1;
-            if ((dupeDuration == -1 || dupeDuration > Creative.get(player).getStats().breakSpeed() * 45) && Creative.isCreativeMode(player, true) && block != null) {
-                this.swingDelay.put(PlayerHandler.getPlayerID(player), System.currentTimeMillis());
-                Bukkit.getPluginManager().callEvent(new BlockBreakEvent(block, player));
+        if (!Creative.isCreativeMode(player, true)) return;
+        final String playerId = PlayerHandler.getPlayerID(player);
+        final InteractionData interaction = lastInteraction.get(playerId);
+        if (interaction == null || interaction.action != Action.LEFT_CLICK_BLOCK) return;
+        final long now = System.currentTimeMillis();
+        if (interaction.lastSwingTime != null) {
+            final long timeBetweenSwings = now - interaction.lastSwingTime;
+            if (timeBetweenSwings > 80) {
+                lastInteraction.remove(playerId);
+                return;
             }
         }
+        interaction.lastSwingTime = now;
+        if (PlayerHandler.getMainHandItem(player).getType().name().contains("SWORD") && Creative.get(player).getStats().swordBlock()) return;
+        final Block block = interaction.block;
+        if (block != null && block.getType() != Material.AIR && canBreak(player)) {
+            Bukkit.getPluginManager().callEvent(new BlockBreakEvent(block, player));
         }
     }
 
 
     /**
+     * Allows the player to instantly break entities (armor stands, item frames, paintings, etc.) in creative mode.
      *
+     * @param event - EntityDamageByEntityEvent
      */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onInstantBreakEntity(final EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player) || !Creative.isCreativeMode((Player) event.getDamager(), true)) return;
+        final Player player = (Player) event.getDamager();
+        final Entity entity = event.getEntity();
+        final ItemStack item = ItemHandler.getEntityItem(entity);
+        if (item.getType() != Material.AIR && !item.getType().name().contains("EGG") && canBreak(player)) {
+            event.setCancelled(true);
+            if (entity instanceof LivingEntity) {
+                List<ItemStack> drops = new ArrayList<>();
+                drops.add(item);
+                EntityDeathEvent deathEvent = null;
+                if (ServerUtils.hasSpecificUpdate("1_20")) {
+                    deathEvent = new EntityDeathEvent((LivingEntity) entity, event.getDamageSource(), drops, 0);
+                } else {
+                    try {
+                        final LivingEntity livingEntity = (LivingEntity) entity;
+                        //noinspection JavaReflectionMemberAccess
+                        deathEvent = EntityDeathEvent.class.getConstructor(LivingEntity.class, List.class, int.class).newInstance(livingEntity, drops, 0);
+                    } catch (Exception e) {
+                        ServerUtils.logWarn("Failed to create EntityDeathEvent");
+                        ServerUtils.sendDebugTrace(e);
                     }
+                }
+                if (deathEvent != null) {
+                    Bukkit.getPluginManager().callEvent(deathEvent);
+                    if (Creative.get(player).getStats().blockDrops()) {
+                        final Placement.OwnerData ownerData = Placement.getEntityOwner(entity);
+                        PlayerStats playerStats = null;
+                        if (ownerData != null && ownerData.state.equals(String.valueOf(entity.getEntityId()))) playerStats = Creative.getOfflineStats(ownerData.playerId);
+                        if (playerStats == null || playerStats.dropPlacements()){
+                            for (ItemStack drop : deathEvent.getDrops()) {
+                                entity.getWorld().dropItemNaturally(entity.getLocation().add(0, 0.2, 0), drop);
+                            }
                         }
                     }
                 }
+                entity.remove();
             } else {
+                if (Creative.get(player).getStats().blockDrops()) {
+                    final Placement.OwnerData ownerData = Placement.getEntityOwner(entity);
+                    PlayerStats playerStats = null;
+                    if (ownerData != null && ownerData.state.equals(String.valueOf(entity.getEntityId()))) playerStats = Creative.getOfflineStats(ownerData.playerId);
+                    if (playerStats == null || playerStats.dropPlacements()) {
+                        entity.getWorld().dropItemNaturally(entity.getLocation().add(0, 0.2, 0), item);
+                    }
                 }
                 entity.remove();
             }
@@ -158,13 +184,18 @@ public class Blocks implements Listener {
     }
 
     /**
+     * Instantly removes hanging entities (paintings, item frames) when broken by fake creative players.
      *
      * @param event - HangingBreakByEntityEvent
      */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onInstantBreakHangingEntity(final HangingBreakByEntityEvent event) {
         final Entity remover = event.getRemover();
         final Entity entity = event.getEntity();
         if (remover instanceof Player) {
             final Player player = (Player) remover;
+            setBreakTime(player);
+            if (!Creative.get(player).getStats().blockDrops()) {
                 event.setCancelled(true);
                 entity.remove();
             }
@@ -172,8 +203,17 @@ public class Blocks implements Listener {
     }
 
     /**
+     * Allows the player to instantly destroy vehicles (boats, minecarts, etc.) in creative mode.
      *
+     * @param event - VehicleDamageEvent
      */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onInstantBreakVehicle(final VehicleDamageEvent event) {
+        if (!(event.getAttacker() instanceof Player) || !Creative.isCreativeMode((Player) event.getAttacker(), true)) return;
+        final Player player = (Player) event.getAttacker();
+        final Vehicle vehicle = event.getVehicle();
+        final ItemStack item = ItemHandler.getEntityItem(vehicle);
+        if (item.getType() != Material.AIR && canBreak(player)) {
             event.setCancelled(true);
             final VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, player);
             Bukkit.getPluginManager().callEvent(destroyEvent);
@@ -192,8 +232,14 @@ public class Blocks implements Listener {
     }
 
     /**
+     * Sets the players last break time.
      *
+     * @param player - The player to be rate limited
      */
+    public static void setBreakTime(final Player player) {
+        final String playerId = PlayerHandler.getPlayerID(player);
+        final long now = System.currentTimeMillis();
+        lastBreakTime.put(playerId, now);
     }
 
     /**
@@ -211,7 +257,16 @@ public class Blocks implements Listener {
     }
 
     /**
+     * Simple data class to hold interaction information.
      */
+    public static class InteractionData {
+        final Action action;
+        final Block block;
+        Long lastSwingTime;
+        InteractionData(final Action action, final Block block) {
+            this.action = action;
+            this.block = block;
+            this.lastSwingTime = null;
         }
     }
 }
