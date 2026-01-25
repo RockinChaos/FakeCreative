@@ -27,9 +27,8 @@ import me.RockinChaos.core.utils.api.LegacyAPI;
 import me.RockinChaos.core.utils.interfaces.Interface;
 import me.RockinChaos.core.utils.interfaces.Query;
 import me.RockinChaos.core.utils.interfaces.types.Button;
-import me.RockinChaos.core.utils.types.PlaceHolder;
-import me.RockinChaos.core.utils.types.PlaceHolder.Holder;
 import me.RockinChaos.core.utils.types.*;
+import me.RockinChaos.core.utils.types.PlaceHolder.Holder;
 import me.RockinChaos.fakecreative.FakeCreative;
 import me.RockinChaos.fakecreative.modes.creative.Creative;
 import org.bukkit.Bukkit;
@@ -81,15 +80,17 @@ public class Menu {
             boolean failure = true;
             Inventory inventoryCheck = FakeCreative.getCore().getPlugin().getServer().createInventory(null, 9, GUIName);
             for (Material material : Material.values()) {
-                if (!material.name().contains("LEGACY") && !material.name().equalsIgnoreCase("AIR") && ((search != null && !search.isEmpty() && StringUtils.containsIgnoreCase(material.name(), search))
+                if (!material.name().contains("LEGACY") && material != Material.AIR && ((search != null && !search.isEmpty() && StringUtils.containsIgnoreCase(material.name(), search))
                         || (search == null || search.isEmpty())) && safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
                     for (ItemStack item : spliceMaterial(material, 0)) {
-                        pagedPane.addButton(new Button(item, Menu::handleEvent));
-                        currentCount++;
-                        failure = false;
-                        if (currentCount == 27) {
-                            currentCount = 0;
-                            addSections(pagedPane, currentCount, selected);
+                        if (item != null && item.getType() != Material.AIR) {
+                            pagedPane.addButton(new Button(item, Menu::handleEvent));
+                            currentCount++;
+                            failure = false;
+                            if (currentCount == 27) {
+                                currentCount = 0;
+                                addSections(pagedPane, currentCount, selected);
+                            }
                         }
                     }
                 }
@@ -119,14 +120,16 @@ public class Menu {
             int currentCount = 0;
             Inventory inventoryCheck = FakeCreative.getCore().getPlugin().getServer().createInventory(null, 9, GUIName);
             for (Material material : Material.values()) {
-                if (!material.name().contains("LEGACY") && !material.name().equalsIgnoreCase("AIR") && Miscellaneous.isMiscellaneous(material)
+                if (!material.name().contains("LEGACY") && material != Material.AIR && Miscellaneous.isMiscellaneous(material)
                         && safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
                     for (ItemStack item : spliceMaterial(material, 0)) {
-                        pagedPane.addButton(new Button(item, Menu::handleEvent));
-                        currentCount++;
-                        if (currentCount == 27) {
-                            currentCount = 0;
-                            addSections(pagedPane, currentCount, 1);
+                        if (item != null && item.getType() != Material.AIR) {
+                            pagedPane.addButton(new Button(item, Menu::handleEvent));
+                            currentCount++;
+                            if (currentCount == 27) {
+                                currentCount = 0;
+                                addSections(pagedPane, currentCount, 1);
+                            }
                         }
                     }
                 }
@@ -154,13 +157,15 @@ public class Menu {
             int currentCount = 0;
             Inventory inventoryCheck = FakeCreative.getCore().getPlugin().getServer().createInventory(null, 9, GUIName);
             for (Material material : Material.values()) {
-                if (!material.name().contains("LEGACY") && !material.name().equalsIgnoreCase("AIR") && material.isEdible() && safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
+                if (!material.name().contains("LEGACY") && material != Material.AIR && material.isEdible() && safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
                     for (ItemStack item : spliceMaterial(material, 0)) {
-                        pagedPane.addButton(new Button(item, Menu::handleEvent));
-                        currentCount++;
-                        if (currentCount == 27) {
-                            currentCount = 0;
-                            addSections(pagedPane, currentCount, 2);
+                        if (item != null && item.getType() != Material.AIR) {
+                            pagedPane.addButton(new Button(item, Menu::handleEvent));
+                            currentCount++;
+                            if (currentCount == 27) {
+                                currentCount = 0;
+                                addSections(pagedPane, currentCount, 2);
+                            }
                         }
                     }
                 }
@@ -188,13 +193,15 @@ public class Menu {
             int currentCount = 0;
             Inventory inventoryCheck = FakeCreative.getCore().getPlugin().getServer().createInventory(null, 9, GUIName);
             for (Material material : Material.values()) {
-                if (!material.name().contains("LEGACY") && !material.name().equalsIgnoreCase("AIR") && Tools.isTools(material) && safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
+                if (!material.name().contains("LEGACY") && material != Material.AIR && Tools.isTools(material) && safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
                     for (ItemStack item : spliceMaterial(material, 2)) {
-                        pagedPane.addButton(new Button(item, Menu::handleEvent));
-                        currentCount++;
-                        if (currentCount == 27) {
-                            currentCount = 0;
-                            addSections(pagedPane, currentCount, 3);
+                        if (item != null && item.getType() != Material.AIR) {
+                            pagedPane.addButton(new Button(item, Menu::handleEvent));
+                            currentCount++;
+                            if (currentCount == 27) {
+                                currentCount = 0;
+                                addSections(pagedPane, currentCount, 3);
+                            }
                         }
                     }
                 }
@@ -222,13 +229,15 @@ public class Menu {
             int currentCount = 0;
             Inventory inventoryCheck = FakeCreative.getCore().getPlugin().getServer().createInventory(null, 9, GUIName);
             for (Material material : Material.values()) {
-                if (!material.name().contains("LEGACY") && !material.name().equalsIgnoreCase("AIR") && Combat.isCombat(material) && safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
+                if (!material.name().contains("LEGACY") && material != Material.AIR && Combat.isCombat(material) && safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
                     for (ItemStack item : spliceMaterial(material, 1)) {
-                        pagedPane.addButton(new Button(item, Menu::handleEvent));
-                        currentCount++;
-                        if (currentCount == 27) {
-                            currentCount = 0;
-                            addSections(pagedPane, currentCount, 4);
+                        if (item != null && item.getType() != Material.AIR) {
+                            pagedPane.addButton(new Button(item, Menu::handleEvent));
+                            currentCount++;
+                            if (currentCount == 27) {
+                                currentCount = 0;
+                                addSections(pagedPane, currentCount, 4);
+                            }
                         }
                     }
                 }
@@ -260,13 +269,15 @@ public class Menu {
             int currentCount = 0;
             Inventory inventoryCheck = FakeCreative.getCore().getPlugin().getServer().createInventory(null, 9, GUIName);
             for (Material material : Material.values()) {
-                if (!material.name().contains("LEGACY") && !material.name().equalsIgnoreCase("AIR") && Brewing.isBrewing(material) && safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
+                if (!material.name().contains("LEGACY") && material != Material.AIR && Brewing.isBrewing(material) && safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
                     for (ItemStack item : spliceMaterial(material, 0)) {
-                        pagedPane.addButton(new Button(item, Menu::handleEvent));
-                        currentCount++;
-                        if (currentCount == 27) {
-                            currentCount = 0;
-                            addSections(pagedPane, currentCount, 5);
+                        if (item != null && item.getType() != Material.AIR) {
+                            pagedPane.addButton(new Button(item, Menu::handleEvent));
+                            currentCount++;
+                            if (currentCount == 27) {
+                                currentCount = 0;
+                                addSections(pagedPane, currentCount, 5);
+                            }
                         }
                     }
                 }
@@ -294,13 +305,15 @@ public class Menu {
             int currentCount = 0;
             Inventory inventoryCheck = FakeCreative.getCore().getPlugin().getServer().createInventory(null, 9, GUIName);
             for (Material material : Material.values()) {
-                if (!material.name().contains("LEGACY") && !material.name().equalsIgnoreCase("AIR") && BuildingBlocks.isBuildingBlocks(material) && safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
+                if (!material.name().contains("LEGACY") && material != Material.AIR && BuildingBlocks.isBuildingBlocks(material) && safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
                     for (ItemStack item : spliceMaterial(material, 0)) {
-                        pagedPane.addButton(new Button(item, Menu::handleEvent));
-                        currentCount++;
-                        if (currentCount == 27) {
-                            currentCount = 0;
-                            addSections(pagedPane, currentCount, 6);
+                        if (item != null && item.getType() != Material.AIR) {
+                            pagedPane.addButton(new Button(item, Menu::handleEvent));
+                            currentCount++;
+                            if (currentCount == 27) {
+                                currentCount = 0;
+                                addSections(pagedPane, currentCount, 6);
+                            }
                         }
                     }
                 }
@@ -328,13 +341,15 @@ public class Menu {
             int currentCount = 0;
             Inventory inventoryCheck = FakeCreative.getCore().getPlugin().getServer().createInventory(null, 9, GUIName);
             for (Material material : Material.values()) {
-                if (!material.name().contains("LEGACY") && !material.name().equalsIgnoreCase("AIR") && Decoration.isDecoration(material) && safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
+                if (!material.name().contains("LEGACY") && material != Material.AIR && Decoration.isDecoration(material) && safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
                     for (ItemStack item : spliceMaterial(material, 0)) {
-                        pagedPane.addButton(new Button(item, Menu::handleEvent));
-                        currentCount++;
-                        if (currentCount == 27) {
-                            currentCount = 0;
-                            addSections(pagedPane, currentCount, 7);
+                        if (item != null && item.getType() != Material.AIR) {
+                            pagedPane.addButton(new Button(item, Menu::handleEvent));
+                            currentCount++;
+                            if (currentCount == 27) {
+                                currentCount = 0;
+                                addSections(pagedPane, currentCount, 7);
+                            }
                         }
                     }
                 }
@@ -362,13 +377,15 @@ public class Menu {
             int currentCount = 0;
             Inventory inventoryCheck = FakeCreative.getCore().getPlugin().getServer().createInventory(null, 9, GUIName);
             for (Material material : Material.values()) {
-                if (!material.name().contains("LEGACY") && !material.name().equalsIgnoreCase("AIR") && Redstone.isRedstone(material) && safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
+                if (!material.name().contains("LEGACY") && material != Material.AIR && Redstone.isRedstone(material) && safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
                     for (ItemStack item : spliceMaterial(material, 0)) {
-                        pagedPane.addButton(new Button(item, Menu::handleEvent));
-                        currentCount++;
-                        if (currentCount == 27) {
-                            currentCount = 0;
-                            addSections(pagedPane, currentCount, 8);
+                        if (item != null && item.getType() != Material.AIR) {
+                            pagedPane.addButton(new Button(item, Menu::handleEvent));
+                            currentCount++;
+                            if (currentCount == 27) {
+                                currentCount = 0;
+                                addSections(pagedPane, currentCount, 8);
+                            }
                         }
                     }
                 }
@@ -788,7 +805,7 @@ public class Menu {
     private static boolean safeMaterial(final ItemStack item, final Inventory inventoryCheck) {
         inventoryCheck.setItem(0, item);
         final ItemStack itemStack = inventoryCheck.getItem(0);
-        return itemStack != null && !itemStack.getType().name().equalsIgnoreCase("AIR") && !Creative.isBlackListed(item);
+        return itemStack != null && itemStack.getType() != Material.AIR && !Creative.isBlackListed(item);
     }
 
     /**
@@ -928,14 +945,15 @@ public class Menu {
                     }
                 }
             }
-        } else if (material.name().contains("MONSTER_EGG")) {
+        } else if (material.name().equals("MONSTER_EGG")) {
             custom = true;
             for (EntityType entity : EntityType.values()) {
-                try {
-                    items.add(new ItemStack(ItemHandler.getMaterial(entity.name().toUpperCase() + "_SPAWN_EGG", null)));
-                } catch (Exception e) {
-                    final short entityId = (short) Monster.getId(entity);
-                    if (entityId > 0) {
+                final short entityId = (short) Monster.getId(entity);
+                if (entityId > 0) {
+                    final Material monsterMaterial = ItemHandler.getMaterial(entity.name().toUpperCase() + "_SPAWN_EGG", null);
+                    if (monsterMaterial != Material.AIR) {
+                        items.add(new ItemStack(monsterMaterial));
+                    } else {
                         items.add(LegacyAPI.newItemStack(ItemHandler.getMaterial("MONSTER_EGG", null), 1, entityId));
                     }
                 }
@@ -1051,8 +1069,4 @@ public class Menu {
                 || (HotbarGUIName != null && CompatUtils.getInventoryTitle(player).equalsIgnoreCase(StringUtils.colorFormat(HotbarGUIName)))
                 || (userGUIName != null && CompatUtils.getInventoryTitle(player).equalsIgnoreCase(StringUtils.colorFormat(userGUIName))));
     }
-
-
-
-
 }
