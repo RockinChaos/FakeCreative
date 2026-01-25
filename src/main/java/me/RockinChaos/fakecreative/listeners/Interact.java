@@ -120,6 +120,7 @@ public class Interact implements Listener {
             final Player player = event.getPlayer();
             final Block block = event.getClickedBlock();
             if (block == null || block.getType() == Material.AIR) return;
+            event.setCancelled(true);
             Material blockType = block.getType();
             if (blockType.name().equals("PISTON_HEAD") || blockType.name().equals("PISTON_EXTENSION")) {
                 if (ServerUtils.hasSpecificUpdate("1_13")) {
@@ -217,6 +218,7 @@ public class Interact implements Listener {
         final Player player = event.getPlayer();
         final Entity entity = event.getRightClicked();
         final ItemStack item = ItemHandler.getEntityItem(entity);
+        event.setCancelled(true);
         if (item.getType() != Material.AIR && !Creative.isBlackListed(item)) {
             addItemToHotbar(player, item);
         }
