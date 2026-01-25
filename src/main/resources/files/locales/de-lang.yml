@@ -181,6 +181,11 @@ menus:
   hotbars:
     title: '&7            &0&nHotbar-Menü'
     items:
+      return:
+        name: '&c&l&nZurück'
+        lore:
+          - '&7'
+          - '&7*Zurück zur Ansicht der gespeicherten Hotbars.'
       information:
         name: '&e&l&nInformation'
         lore:

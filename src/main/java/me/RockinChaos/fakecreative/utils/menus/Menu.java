@@ -57,6 +57,8 @@ public class Menu {
     private static final ItemStack fillerPaneBItem = ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "BLACK_STAINED_GLASS_PANE" : "STAINED_GLASS_PANE:15"), 1, false, false, "&7", "");
     private static final ItemStack fillerPaneGItem = ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "GRAY_STAINED_GLASS_PANE" : "STAINED_GLASS_PANE:7"), 1, false, false, "&7", "");
     private static final ItemStack exitItem = ItemHandler.getItem("BARRIER", 1, false, false, FakeCreative.getCore().getLang().getString("menus.general.items.exit.name"), FakeCreative.getCore().getLang().getStringList("menus.general.items.exit.lore").toArray(new String[0]));
+    private static final ItemStack hotbarsReturnItem = ItemHandler.getItem("BARRIER", 1, false, false, FakeCreative.getCore().getLang().getString("menus.hotbars.items.return.name"), FakeCreative.getCore().getLang().getStringList("menus.hotbars.items.return.lore").toArray(new String[0]));
+    private static final Button exitButton = new Button(exitItem, event -> Menu.creativeMenu(event.getWhoClicked(), 0, null));
     private static final List<String> modifyMenu = new ArrayList<>();
     private static final Map<String, Interface> typingMenu = new HashMap<>();
     private static String GUIName = StringUtils.colorFormat(!FakeCreative.getCore().getLang().getString("menus.creative.title").isEmpty() ? FakeCreative.getCore().getLang().getString("menus.creative.title") : "&7           &0&nCreative Menu");
@@ -249,7 +251,7 @@ public class Menu {
             inventoryCheck.clear();
         });
         pagedPane.open(player);
-    }    private static final Button exitButton = new Button(exitItem, event -> Menu.creativeMenu(event.getWhoClicked(), 0, null));
+    }
 
 //  ============================================== //
 //  			   Selection Menus      	       //
@@ -508,9 +510,9 @@ public class Menu {
                     }
                 }
             }
-            pagedPane.addButton(new Button(exitItem, event -> hotbarMenu(player)));
+            pagedPane.addButton(new Button(hotbarsReturnItem, event -> hotbarMenu(player)));
             pagedPane.addButton(new Button(fillerPaneBItem), 7);
-            pagedPane.addButton(new Button(exitItem, event -> hotbarMenu(player)));
+            pagedPane.addButton(new Button(hotbarsReturnItem, event -> hotbarMenu(player)));
         });
         pagedPane.open(player);
     }
