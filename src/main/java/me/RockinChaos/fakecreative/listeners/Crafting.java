@@ -78,7 +78,6 @@ public class Crafting implements Listener {
             ServerUtils.logDebug("{CRAFTING} Bukkit inventory was opened for the player " + event.getPlayer().getName() + ".");
             PlayerHandler.addOpenCraftItems(player, PlayerHandler.getTopContents(player));
             ItemHandler.removeCraftItems(player);
-            PlayerHandler.updateInventory(player, 1L);
         }
     }
 
@@ -229,7 +228,7 @@ public class Crafting implements Listener {
                 }
                 if (isCrafting) {
                     if (!slotZero || Tabs.isItem(inventory[0])) {
-                        this.returnCrafting(player, inventory, 1L, !slotZero);
+                        this.returnCrafting(player, inventory, 1L, slotZero);
                     } else {
                         SchedulerUtils.runLater(1L, () -> {
                             CompatUtils.getTopInventory(player).setItem(0, new ItemStack(Material.AIR));
@@ -277,6 +276,7 @@ public class Crafting implements Listener {
                 for (int i = 4; i >= 0; i--) {
                     if (contents[i] != null && Tabs.isItem(contents[i])) {
                         CompatUtils.getTopInventory(player).setItem(i, contents[i]);
+                        if (i != 0) PlayerHandler.updateInventory(player, contents[i].clone(), 0L);
                         PlayerHandler.updateInventory(player, contents[0].clone(), 1L);
                     }
                 }
