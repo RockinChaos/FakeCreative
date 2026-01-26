@@ -74,17 +74,18 @@ public class Menu {
      */
     public static void creativeMenu(final CommandSender sender, final int selected, final String search) {
         final Player player = (Player) sender;
-        Interface pagedPane = new Interface(true, 6, exitButton, GUIName, player);
+        final Interface pagedPane = new Interface(true, 6, exitButton, GUIName, player);
         pagedPane.setReturnButton(new Button(exitItem, event -> player.closeInventory()));
+        Menu.setTypingMenu(false, player, null);
         pagedPane.allowClick(true);
         SchedulerUtils.runAsync(() -> {
             int currentCount = 0;
             boolean failure = true;
-            Inventory inventoryCheck = FakeCreative.getCore().getPlugin().getServer().createInventory(null, 9, GUIName);
-            for (Material material : Material.values()) {
+            final Inventory inventoryCheck = FakeCreative.getCore().getPlugin().getServer().createInventory(null, 9, GUIName);
+            for (final Material material : Material.values()) {
                 if (!material.name().contains("LEGACY") && material != Material.AIR && ((search != null && !search.isEmpty() && StringUtils.containsIgnoreCase(material.name(), search))
                         || (search == null || search.isEmpty())) && safeMaterial(ItemHandler.getItem(material.toString(), 1, false, false, "", ""), inventoryCheck)) {
-                    for (ItemStack item : spliceMaterial(material, 0)) {
+                    for (final ItemStack item : spliceMaterial(material, 0)) {
                         if (item != null && item.getType() != Material.AIR) {
                             pagedPane.addButton(new Button(item, Menu::handleEvent));
                             currentCount++;
@@ -117,6 +118,7 @@ public class Menu {
         final Player player = (Player) sender;
         Interface pagedPane = new Interface(true, 6, exitButton, GUIName, player);
         pagedPane.setReturnButton(new Button(exitItem, event -> player.closeInventory()));
+        Menu.setTypingMenu(false, player, null);
         pagedPane.allowClick(true);
         SchedulerUtils.runAsync(() -> {
             int currentCount = 0;
@@ -154,6 +156,7 @@ public class Menu {
         final Player player = (Player) sender;
         Interface pagedPane = new Interface(true, 6, exitButton, GUIName, player);
         pagedPane.setReturnButton(new Button(exitItem, event -> player.closeInventory()));
+        Menu.setTypingMenu(false, player, null);
         pagedPane.allowClick(true);
         SchedulerUtils.runAsync(() -> {
             int currentCount = 0;
@@ -190,6 +193,7 @@ public class Menu {
         final Player player = (Player) sender;
         Interface pagedPane = new Interface(true, 6, exitButton, GUIName, player);
         pagedPane.setReturnButton(new Button(exitItem, event -> player.closeInventory()));
+        Menu.setTypingMenu(false, player, null);
         pagedPane.allowClick(true);
         SchedulerUtils.runAsync(() -> {
             int currentCount = 0;
@@ -226,6 +230,7 @@ public class Menu {
         final Player player = (Player) sender;
         Interface pagedPane = new Interface(true, 6, exitButton, GUIName, player);
         pagedPane.setReturnButton(new Button(exitItem, event -> player.closeInventory()));
+        Menu.setTypingMenu(false, player, null);
         pagedPane.allowClick(true);
         SchedulerUtils.runAsync(() -> {
             int currentCount = 0;
@@ -266,6 +271,7 @@ public class Menu {
         final Player player = (Player) sender;
         Interface pagedPane = new Interface(true, 6, exitButton, GUIName, player);
         pagedPane.setReturnButton(new Button(exitItem, event -> player.closeInventory()));
+        Menu.setTypingMenu(false, player, null);
         pagedPane.allowClick(true);
         SchedulerUtils.runAsync(() -> {
             int currentCount = 0;
@@ -302,6 +308,7 @@ public class Menu {
         final Player player = (Player) sender;
         Interface pagedPane = new Interface(true, 6, exitButton, GUIName, player);
         pagedPane.setReturnButton(new Button(exitItem, event -> player.closeInventory()));
+        Menu.setTypingMenu(false, player, null);
         pagedPane.allowClick(true);
         SchedulerUtils.runAsync(() -> {
             int currentCount = 0;
@@ -338,6 +345,7 @@ public class Menu {
         final Player player = (Player) sender;
         Interface pagedPane = new Interface(true, 6, exitButton, GUIName, player);
         pagedPane.setReturnButton(new Button(exitItem, event -> player.closeInventory()));
+        Menu.setTypingMenu(false, player, null);
         pagedPane.allowClick(true);
         SchedulerUtils.runAsync(() -> {
             int currentCount = 0;
@@ -374,6 +382,7 @@ public class Menu {
         final Player player = (Player) sender;
         Interface pagedPane = new Interface(true, 6, exitButton, GUIName, player);
         pagedPane.setReturnButton(new Button(exitItem, event -> player.closeInventory()));
+        Menu.setTypingMenu(false, player, null);
         pagedPane.allowClick(true);
         SchedulerUtils.runAsync(() -> {
             int currentCount = 0;
@@ -410,6 +419,7 @@ public class Menu {
         final Player player = (Player) sender;
         Interface pagedPane = new Interface(false, 2, exitButton, HotbarGUIName, player);
         pagedPane.setReturnButton(new Button(exitItem, event -> player.closeInventory()));
+        Menu.setTypingMenu(false, player, null);
         pagedPane.allowClick(true);
         SchedulerUtils.runAsync(() -> {
             for (int i = 1; i <= 9; i++) {
@@ -492,6 +502,7 @@ public class Menu {
      */
     public static void viewHotbar(final Player player, final int hotbar) {
         Interface pagedPane = new Interface(false, 2, exitButton, HotbarGUIName, player);
+        Menu.setTypingMenu(false, player, null);
         pagedPane.allowClick(true);
         SchedulerUtils.runAsync(() -> {
             if (Creative.isCreativeMode(player, true)) {
@@ -536,13 +547,12 @@ public class Menu {
             pagedPane.addButton(new Button(fillerPaneBItem));
             pagedPane.addButton(new Button(ItemHandler.getItem("SUGAR", 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.flightSpeed.name"),
                     FakeCreative.getCore().getLang().getStringList("menus.preferences.items.flightSpeed.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().flySpeed()))).toArray(String[]::new)), event -> {
-                final InventoryHolder inventoryHolder = event.getInventory().getHolder();
-                if (inventoryHolder != null) {
-                    ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
-                    Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
-                }
-            }
-                    , query -> query.onClose(stateSnapshot -> userMenu(player))
+                        final InventoryHolder inventoryHolder = event.getInventory().getHolder();
+                        if (inventoryHolder != null) {
+                            ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
+                            Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
+                        }
+                    }, query -> query.onClose(stateSnapshot -> userMenu(player))
                     .onClick((slot, stateSnapshot) -> {
                         if (slot != Query.Slot.OUTPUT) {
                             return Collections.emptyList();
@@ -550,7 +560,6 @@ public class Menu {
                         final String input = ChatColor.stripColor(stateSnapshot.getText().replace(" ", ""));
                         if (StringUtils.isInt(input) && Integer.parseInt(input) <= 10) {
                             Creative.get(player).getStats().setFlySpeed(player, Integer.parseInt(input));
-                            Menu.setTypingMenu(false, stateSnapshot.getPlayer(), null);
                             return Collections.singletonList(Query.ResponseAction.close());
                         } else if (StringUtils.isInt(input)) {
                             return Collections.singletonList(Query.ResponseAction.replaceInputText(" ", "&cInteger too Large"));
@@ -571,13 +580,12 @@ public class Menu {
             pagedPane.addButton(new Button(fillerPaneBItem), 3);
             pagedPane.addButton(new Button(ItemHandler.getItem("DIAMOND_PICKAXE", 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.breakSpeed.name"),
                     FakeCreative.getCore().getLang().getStringList("menus.preferences.items.breakSpeed.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().breakSpeed()))).toArray(String[]::new)), event -> {
-                final InventoryHolder inventoryHolder = event.getInventory().getHolder();
-                if (inventoryHolder != null) {
-                    ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
-                    Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
-                }
-            }
-                    , query -> query.onClose(stateSnapshot -> userMenu(player))
+                        final InventoryHolder inventoryHolder = event.getInventory().getHolder();
+                        if (inventoryHolder != null) {
+                            ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
+                            Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
+                        }
+                    }, query -> query.onClose(stateSnapshot -> userMenu(player))
                     .onClick((slot, stateSnapshot) -> {
                         if (slot != Query.Slot.OUTPUT) {
                             return Collections.emptyList();
@@ -585,7 +593,6 @@ public class Menu {
                         final String input = ChatColor.stripColor(stateSnapshot.getText().replace(" ", ""));
                         if (StringUtils.isInt(input)) {
                             Creative.get(player).getStats().setBreakSpeed(player, Integer.parseInt(input));
-                            Menu.setTypingMenu(false, stateSnapshot.getPlayer(), null);
                             return Collections.singletonList(Query.ResponseAction.close());
                         } else {
                             return Collections.singletonList(Query.ResponseAction.replaceInputText(" ", "&cInvalid Integer"));
@@ -603,13 +610,12 @@ public class Menu {
                     }));
             pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "COOKED_BEEF" : "364"), 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.food.name"),
                     FakeCreative.getCore().getLang().getStringList("menus.preferences.items.food.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().foodLevel()))).toArray(String[]::new)), event -> {
-                final InventoryHolder inventoryHolder = event.getInventory().getHolder();
-                if (inventoryHolder != null) {
-                    ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
-                    Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
-                }
-            }
-                    , query -> query.onClose(stateSnapshot -> userMenu(player))
+                        final InventoryHolder inventoryHolder = event.getInventory().getHolder();
+                        if (inventoryHolder != null) {
+                            ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
+                            Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
+                        }
+                    }, query -> query.onClose(stateSnapshot -> userMenu(player))
                     .onClick((slot, stateSnapshot) -> {
                         if (slot != Query.Slot.OUTPUT) {
                             return Collections.emptyList();
@@ -617,7 +623,6 @@ public class Menu {
                         final String input = ChatColor.stripColor(stateSnapshot.getText().replace(" ", ""));
                         if (StringUtils.isInt(input)) {
                             Creative.get(player).getStats().setFoodLevel(player, Integer.parseInt(input));
-                            Menu.setTypingMenu(false, stateSnapshot.getPlayer(), null);
                             return Collections.singletonList(Query.ResponseAction.close());
                         } else {
                             return Collections.singletonList(Query.ResponseAction.replaceInputText(" ", "&cInvalid Integer"));
@@ -629,13 +634,12 @@ public class Menu {
                     .title(FakeCreative.getCore().getLang().getString("menus.preferences.items.food.name") + ":"), 0));
             pagedPane.addButton(new Button(ItemHandler.getItem("APPLE", 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.health.name"),
                     FakeCreative.getCore().getLang().getStringList("menus.preferences.items.health.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().health()))).toArray(String[]::new)), event -> {
-                final InventoryHolder inventoryHolder = event.getInventory().getHolder();
-                if (inventoryHolder != null) {
-                    ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
-                    Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
-                }
-            }
-                    , query -> query.onClose(stateSnapshot -> userMenu(player))
+                        final InventoryHolder inventoryHolder = event.getInventory().getHolder();
+                        if (inventoryHolder != null) {
+                            ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
+                            Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
+                        }
+                    }, query -> query.onClose(stateSnapshot -> userMenu(player))
                     .onClick((slot, stateSnapshot) -> {
                         if (slot != Query.Slot.OUTPUT) {
                             return Collections.emptyList();
@@ -643,7 +647,6 @@ public class Menu {
                         final String input = ChatColor.stripColor(stateSnapshot.getText().replace(" ", ""));
                         if (StringUtils.isInt(input) && Integer.parseInt(input) <= (((int) Creative.get(player).getStats().heartScale()) * 2)) {
                             Creative.get(player).getStats().setHealth(player, Integer.parseInt(input), false);
-                            Menu.setTypingMenu(false, stateSnapshot.getPlayer(), null);
                             return Collections.singletonList(Query.ResponseAction.close());
                         } else if (StringUtils.isInt(input)) {
                             return Collections.singletonList(Query.ResponseAction.replaceInputText(" ", "&cInteger too Large"));
@@ -663,13 +666,12 @@ public class Menu {
                     .title(FakeCreative.getCore().getLang().getString("menus.preferences.items.heart.name") + ":"), 0));
             pagedPane.addButton(new Button(ItemHandler.getItem("REDSTONE", 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.heartScale.name"),
                     FakeCreative.getCore().getLang().getStringList("menus.preferences.items.heartScale.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().heartScale()))).toArray(String[]::new)), event -> {
-                final InventoryHolder inventoryHolder = event.getInventory().getHolder();
-                if (inventoryHolder != null) {
-                    ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
-                    Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
-                }
-            }
-                    , query -> query.onClose(stateSnapshot -> userMenu(player))
+                        final InventoryHolder inventoryHolder = event.getInventory().getHolder();
+                        if (inventoryHolder != null) {
+                            ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
+                            Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
+                        }
+                    }, query -> query.onClose(stateSnapshot -> userMenu(player))
                     .onClick((slot, stateSnapshot) -> {
                         if (slot != Query.Slot.OUTPUT) {
                             return Collections.emptyList();
@@ -680,7 +682,6 @@ public class Menu {
                                 Creative.get(player).getStats().setHealth(player, Integer.parseInt(input) * 2, true);
                             }
                             Creative.get(player).getStats().setScale(player, Integer.parseInt(input));
-                            Menu.setTypingMenu(false, stateSnapshot.getPlayer(), null);
                             return Collections.singletonList(Query.ResponseAction.close());
                         } else {
                             return Collections.singletonList(Query.ResponseAction.replaceInputText(" ", "&cInvalid Integer"));
@@ -746,13 +747,12 @@ public class Menu {
                     }));
             pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "CLOCK" : "347"), 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.invulnerableDelay.name"),
                     FakeCreative.getCore().getLang().getStringList("menus.preferences.items.invulnerableDelay.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().godDelay()))).toArray(String[]::new)), event -> {
-                final InventoryHolder inventoryHolder = event.getInventory().getHolder();
-                if (inventoryHolder != null) {
-                    ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
-                    Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
-                }
-            }
-                    , query -> query.onClose(stateSnapshot -> userMenu(player))
+                        final InventoryHolder inventoryHolder = event.getInventory().getHolder();
+                        if (inventoryHolder != null) {
+                            ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
+                            Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
+                        }
+                    }, query -> query.onClose(stateSnapshot -> userMenu(player))
                     .onClick((slot, stateSnapshot) -> {
                         if (slot != Query.Slot.OUTPUT) {
                             return Collections.emptyList();
@@ -760,7 +760,6 @@ public class Menu {
                         final String input = ChatColor.stripColor(stateSnapshot.getText().replace(" ", ""));
                         if (StringUtils.isInt(input)) {
                             Creative.get(player).getStats().setGodDelay(player, Integer.parseInt(input));
-                            Menu.setTypingMenu(false, stateSnapshot.getPlayer(), null);
                             return Collections.singletonList(Query.ResponseAction.close());
                         } else {
                             return Collections.singletonList(Query.ResponseAction.replaceInputText(" ", "&cInvalid Integer"));
@@ -883,7 +882,6 @@ public class Menu {
                     if (slot != Query.Slot.OUTPUT) {
                         return Collections.emptyList();
                     }
-                    Menu.setTypingMenu(false, stateSnapshot.getPlayer(), null);
                     return Collections.singletonList(Query.ResponseAction.close());
                 })
                 .itemLeft(ItemHandler.getItem("NAME_TAG", 1, false, true, " ", "&7"))
@@ -1008,8 +1006,7 @@ public class Menu {
                     modifyMenu.remove(PlayerHandler.getPlayerID(player));
                 }
             });
-        } catch (ArrayIndexOutOfBoundsException ignored) {
-        }
+        } catch (ArrayIndexOutOfBoundsException ignored) {}
     }
 
 //  ===================================================================================================================================================================================================================
@@ -1033,8 +1030,7 @@ public class Menu {
                     typingMenu.remove(PlayerHandler.getPlayerID(player));
                 }
             });
-        } catch (ArrayIndexOutOfBoundsException ignored) {
-        }
+        } catch (ArrayIndexOutOfBoundsException ignored) {}
     }
 
     /**
