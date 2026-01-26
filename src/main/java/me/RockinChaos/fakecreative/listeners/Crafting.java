@@ -51,7 +51,7 @@ public class Crafting implements Listener {
      * @param event - PlayerAutoCraftEvent
      */
     @EventHandler(priority = EventPriority.LOW)
-    private void onAutoCraft(PlayerAutoCraftEvent event) {
+    private void onAutoCraft(final PlayerAutoCraftEvent event) {
         if (event.getContents() == null) {
             return;
         }
@@ -72,7 +72,7 @@ public class Crafting implements Listener {
      * @param event - InventoryOpenEvent
      */
     @EventHandler(priority = EventPriority.LOW)
-    private void onCraftingOpen(InventoryOpenEvent event) {
+    private void onCraftingOpen(final InventoryOpenEvent event) {
         final Player player = (Player) event.getPlayer();
         if (Creative.isCreativeMode(player, true) && !PlayerHandler.getOpenCraftItems().containsKey(PlayerHandler.getPlayerID(player))) {
             ServerUtils.logDebug("{CRAFTING} Bukkit inventory was opened for the player " + event.getPlayer().getName() + ".");
@@ -87,11 +87,11 @@ public class Crafting implements Listener {
      * @param event - InventoryCloseEvent
      */
     @EventHandler(priority = EventPriority.LOW)
-    private void onCraftingClose(org.bukkit.event.inventory.InventoryCloseEvent event) {
+    private void onCraftingClose(final org.bukkit.event.inventory.InventoryCloseEvent event) {
         long dupeDuration = !this.closeDupe.isEmpty() && this.closeDupe.get(PlayerHandler.getPlayerID((Player) event.getPlayer())) != null ? System.currentTimeMillis() - this.closeDupe.get(PlayerHandler.getPlayerID((Player) event.getPlayer())) : -1;
         if (Creative.isCreativeMode(((Player) event.getPlayer()), true) && (!PlayerHandler.isCraftingInv(event.getView()) || (PlayerHandler.isCraftingInv(event.getView()) && (dupeDuration == -1 || dupeDuration > 30)))) {
             ServerUtils.logDebug("{CRAFTING} Bukkit inventory was closed for the player " + event.getPlayer().getName() + ".");
-            ItemStack[] topContents = ItemHandler.cloneContents(CompatUtils.getTopInventory(event.getView()).getContents());
+            final ItemStack[] topContents = ItemHandler.cloneContents(CompatUtils.getTopInventory(event.getView()).getContents());
             this.handleClose(slot -> CompatUtils.getTopInventory(event.getView()).setItem(slot, new ItemStack(Material.AIR)), (Player) event.getPlayer(), event.getView(), topContents, true);
         }
     }
@@ -102,7 +102,7 @@ public class Crafting implements Listener {
      * @param event - InventoryCloseEvent
      */
     @EventHandler(priority = EventPriority.LOW)
-    private void onCraftingClose(me.RockinChaos.core.utils.protocol.events.InventoryCloseEvent event) {
+    private void onCraftingClose(final me.RockinChaos.core.utils.protocol.events.InventoryCloseEvent event) {
         if (Creative.isCreativeMode(event.getPlayer(), true) && PlayerHandler.isCraftingInv(event.getView())) {
             ServerUtils.logDebug("{CRAFTING} Protocol-Packet inventory was closed for the player " + event.getPlayer().getName() + ".");
             this.closeDupe.put(PlayerHandler.getPlayerID(event.getPlayer()), System.currentTimeMillis());
@@ -122,7 +122,7 @@ public class Crafting implements Listener {
      * @param event - PlayerDropItemEvent
      */
     @EventHandler(priority = EventPriority.LOW)
-    private void onCraftingDrop(PlayerDropItemEvent event) {
+    private void onCraftingDrop(final PlayerDropItemEvent event) {
         final Player player = event.getPlayer();
         final ItemStack itemCopy = event.getItemDrop().getItemStack().clone();
         double health;
@@ -148,7 +148,7 @@ public class Crafting implements Listener {
      * @param event - PlayerChangedWorldEvent
      */
     @EventHandler(ignoreCancelled = true)
-    private void onCraftingWorldSwitch(PlayerChangedWorldEvent event) {
+    private void onCraftingWorldSwitch(final PlayerChangedWorldEvent event) {
         final Player player = event.getPlayer();
         final ItemStack[] inventory = player.getInventory().getContents();
         if (!ItemHandler.isContentsEmpty(inventory)) {
@@ -166,7 +166,7 @@ public class Crafting implements Listener {
      * @param event - PlayerGameModeChangeEvent
      */
     @EventHandler(priority = EventPriority.LOW)
-    private void onSwitchGamemode(PlayerGameModeChangeEvent event) {
+    private void onSwitchGamemode(final PlayerGameModeChangeEvent event) {
         final Player player = event.getPlayer();
         if (event.getNewGameMode() == GameMode.CREATIVE) {
             PlayerHandler.addCreativeCraftItems(player, PlayerHandler.getCraftItems().get(PlayerHandler.getPlayerID(player)));
@@ -228,7 +228,7 @@ public class Crafting implements Listener {
                 }
                 if (isCrafting) {
                     if (!slotZero || Tabs.isItem(inventory[0])) {
-                        this.returnCrafting(player, inventory, 1L, slotZero);
+                        this.returnCrafting(player, inventory, 1L, !slotZero);
                     } else {
                         SchedulerUtils.runLater(1L, () -> {
                             CompatUtils.getTopInventory(player).setItem(0, new ItemStack(Material.AIR));

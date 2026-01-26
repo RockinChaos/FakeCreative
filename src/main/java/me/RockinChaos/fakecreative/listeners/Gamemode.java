@@ -18,6 +18,7 @@
 package me.RockinChaos.fakecreative.listeners;
 
 import me.RockinChaos.core.handlers.PlayerHandler;
+import me.RockinChaos.core.utils.SchedulerUtils;
 import me.RockinChaos.core.utils.ServerUtils;
 import me.RockinChaos.core.utils.protocol.events.PlayerEnterCreativeEvent;
 import me.RockinChaos.core.utils.protocol.events.PlayerExitCreativeEvent;
@@ -27,6 +28,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 
 public class Gamemode implements Listener {
@@ -70,5 +72,21 @@ public class Gamemode implements Listener {
         } else if (Creative.isCreativeMode(event.getPlayer(), true)) {
             ServerUtils.logDebug("Event was cancelled, " + event.getPlayer().getName() + " still remains set as fake creative.");
         }
+    }
+
+    /**
+     * Called when a player switches worlds.
+     * Restores flight capabilities to the fake creative player if they were lost during the world change.
+     *
+     * @param event - PlayerChangedWorldEvent
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    private void onPlayerWorldSwitch(final PlayerChangedWorldEvent event) {
+        final Player player = event.getPlayer();
+        SchedulerUtils.run(() -> {
+            if (Creative.isCreativeMode(player, true) && !player.getAllowFlight()) {
+                Mode.setFlight(player, true);
+            }
+        });
     }
 }

@@ -119,7 +119,6 @@ public class Mode {
         }
     }
 
-
     /**
      * Sets the Player's Flight (Mode).
      *
@@ -130,7 +129,9 @@ public class Mode {
         if (Creative.get(player).getStats().allowFlight()) {
             if (setFly) {
                 player.setAllowFlight(true);
-                player.setFlying(true);
+                if (PlayerHandler.isAirborne(player, 1.5)) {
+                    player.setFlying(true);
+                }
                 final double speed = (Creative.get(player).getStats().flySpeed());
                 player.setFlySpeed(Float.parseFloat((Double.toString(speed / 10))));
             } else {
