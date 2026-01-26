@@ -25,7 +25,6 @@ import me.RockinChaos.core.utils.protocol.ProtocolManager;
 import me.RockinChaos.fakecreative.modes.Mode;
 import me.RockinChaos.fakecreative.modes.creative.Creative;
 import me.RockinChaos.fakecreative.utils.menus.Menu;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class FakeCreative extends JavaPlugin {

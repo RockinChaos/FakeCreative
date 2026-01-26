@@ -113,6 +113,12 @@ public class ChatExecutor implements CommandExecutor {
         } else if (Execute.RELOAD.accept(sender, args, 0)) {
             PluginData.getData().hardReload(false);
             FakeCreative.getCore().getLang().sendLangMessage("commands.default.configReload", sender);
+            SchedulerUtils.runLater(4L, () -> PlayerHandler.forOnlinePlayers(player -> {
+                if (Creative.isCreativeMode(player, true)) {
+                    PlayerHandler.setMode(player, null, player.getGameMode(), true, false);
+                    PlayerHandler.setCreative(player, null, true);
+                }
+            }));
         } else if (Execute.PERMISSIONS.accept(sender, args, 0)) {
             FakeCreative.getCore().getLang().dispatchMessage(sender, "&6&l&m]----------------&6&l[&c FakeCreative &6&l]&6&l&m---------------[");
             FakeCreative.getCore().getLang().dispatchMessage(sender, (PermissionsHandler.hasPermission(sender, "fakecreative.*") ? "&a[✔]" : "&c[✘]") + " FakeCreative.*");
@@ -260,33 +266,25 @@ public class ChatExecutor implements CommandExecutor {
                         final Player playerString = PlayerHandler.getPlayerString(args);
                         if (playerString != null && Creative.isCreativeMode(playerString, true)) {
                             PlayerHandler.setMode(playerString, null, playerString.getGameMode(), true, false);
-                            {
-                                PlayerHandler.setCreative(playerString, null, true);
-                            }
+                            PlayerHandler.setCreative(playerString, null, true);
                         }
                     });
                 }
             } else {
                 FakeCreative.getCore().getData().setStarted(false);
                 FakeCreative.getCore().getSQL().purgeDatabase();
-                {
-                    SchedulerUtils.runAsyncLater(20L, () -> {
-                        FakeCreative.getCore().getSQL().refresh();
-                        {
-                            SchedulerUtils.runAsyncLater(2L, () -> {
-                                SchedulerUtils.runSingleAsync(() -> FakeCreative.getCore().getData().setStarted(true));
-                                SchedulerUtils.run(() -> PlayerHandler.forOnlinePlayers(player -> {
-                                    if (Creative.isCreativeMode(player, true)) {
-                                        PlayerHandler.setMode(player, null, player.getGameMode(), true, false);
-                                        {
-                                            PlayerHandler.setCreative(player, null, true);
-                                        }
-                                    }
-                                }));
-                            });
-                        }
+                SchedulerUtils.runAsyncLater(20L, () -> {
+                    FakeCreative.getCore().getSQL().refresh();
+                    SchedulerUtils.runAsyncLater(2L, () -> {
+                        SchedulerUtils.runSingleAsync(() -> FakeCreative.getCore().getData().setStarted(true));
+                        SchedulerUtils.run(() -> PlayerHandler.forOnlinePlayers(player -> {
+                            if (Creative.isCreativeMode(player, true)) {
+                                PlayerHandler.setMode(player, null, player.getGameMode(), true, false);
+                                PlayerHandler.setCreative(player, null, true);
+                            }
+                        }));
                     });
-                }
+                });
             }
             FakeCreative.getCore().getLang().sendLangMessage("commands.database.purgeSuccess", sender, placeHolders);
             this.confirmationRequests.remove(table + sender.getName());
