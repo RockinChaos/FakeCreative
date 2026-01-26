@@ -277,13 +277,26 @@ public class Crafting implements Listener {
                     if (contents[i] != null && Tabs.isItem(contents[i])) {
                         CompatUtils.getTopInventory(player).setItem(i, contents[i]);
                         if (i != 0) PlayerHandler.updateInventory(player, contents[i].clone(), 0L);
-                        PlayerHandler.updateInventory(player, contents[0].clone(), 1L);
+                        SchedulerUtils.runLater(1L, () -> {
+                            if (PlayerHandler.isCraftingInv(player)) {
+                                PlayerHandler.updateInventory(player, contents[0].clone(), 0L);
+                            }
+                        });
                     }
                 }
             } else {
                 if (contents[0] != null && Tabs.isItem(contents[0])) {
                     CompatUtils.getTopInventory(player).setItem(0, contents[0]);
-                    PlayerHandler.updateInventory(player, contents[0].clone(), 1L);
+                    for (int i = 4; i >= 1; i--) {
+                        if (contents[i] != null && Tabs.isItem(contents[i])) {
+                            PlayerHandler.updateInventory(player, contents[i].clone(), 0L);
+                        }
+                    }
+                    SchedulerUtils.runLater(1L, () -> {
+                        if (PlayerHandler.isCraftingInv(player)) {
+                            PlayerHandler.updateInventory(player, contents[0].clone(), 0L);
+                        }
+                    });
                 }
             }
         });
