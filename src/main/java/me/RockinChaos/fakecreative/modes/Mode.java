@@ -55,7 +55,7 @@ public class Mode {
             argsPlayer.setHealth(safeHealth);
             Creative.Tabs.clearTabs(argsPlayer);
             restoreInventory(argsPlayer);
-            dropInvulnerable(argsPlayer);
+            dropInvulnerable(argsPlayer, doSave);
             if (!doSave || !playerObject.getStats().autoRestore()) {
                 ServerUtils.logDebug(argsPlayer.getName() + " is no longer set as fake creative.");
                 Creative.remove(argsPlayer);
@@ -144,16 +144,23 @@ public class Mode {
     /**
      * Disables invulnerability from the Player after x seconds have passed.
      *
-     * @param player - The Player being referenced.
+     * @param player  - The Player being referenced.
+     * @param noDelay - If the god delay should be ignored or not.
      */
-    private static void dropInvulnerable(final Player player) {
-        SchedulerUtils.runLater((Creative.get(player).getStats().godDelay()) * 20L, () -> {
-            if (!Creative.isCreativeMode(player, true)) {
-                if (ServerUtils.hasSpecificUpdate("1_9")) {
-                    player.setInvulnerable(false);
+    private static void dropInvulnerable(final Player player, final boolean noDelay) {
+        if (!noDelay) {
+            SchedulerUtils.runLater((Creative.get(player).getStats().godDelay()) * 20L, () -> {
+                if (!Creative.isCreativeMode(player, true)) {
+                    if (ServerUtils.hasSpecificUpdate("1_9")) {
+                        player.setInvulnerable(false);
+                    }
                 }
+            });
+        } else {
+            if (ServerUtils.hasSpecificUpdate("1_9")) {
+                player.setInvulnerable(false);
             }
-        });
+        }
     }
 
     /**
