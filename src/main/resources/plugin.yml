@@ -7,7 +7,7 @@ api-version: 1.13
 nms-version: ${spigot.version}
 description: A creative mode emulation.
 website: https://www.spigotmc.org/resources/fakecreative.95959/
-softdepend: [ Citizens, NickAPI, PlaceholderAPI, ProtocolLib, SkinsRestorer, WorldGuard, WorldEdit, Vault ]
+softdepend: [ Citizens, NickAPI, PlaceholderAPI, SkinsRestorer, WorldGuard, WorldEdit, Vault ]
 
 permissions:
   fakecreative.*:

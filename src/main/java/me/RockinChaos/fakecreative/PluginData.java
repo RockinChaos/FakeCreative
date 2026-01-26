@@ -24,7 +24,6 @@ import me.RockinChaos.core.utils.SchedulerUtils;
 import me.RockinChaos.core.utils.ServerUtils;
 import me.RockinChaos.core.utils.StringUtils;
 import me.RockinChaos.core.utils.api.MetricsAPI;
-import me.RockinChaos.core.utils.api.ProtocolAPI;
 import me.RockinChaos.core.utils.protocol.ProtocolManager;
 import me.RockinChaos.core.utils.sql.Database;
 import me.RockinChaos.fakecreative.listeners.*;
@@ -115,10 +114,8 @@ public class PluginData {
         FakeCreative.getCore().getData().setAlterTables(this.getAlterTables());
         FakeCreative.getCore().getData().setCreateTables(this.getCreateTables());
         FakeCreative.getCore().getDependencies().refresh();
-        if (!FakeCreative.getCore().getDependencies().protocolEnabled() && ProtocolManager.isDead()) {
+        if (ProtocolManager.isDead()) {
             ProtocolManager.handleProtocols();
-        } else if (FakeCreative.getCore().getDependencies().protocolEnabled() && !ProtocolAPI.isHandling()) {
-            ProtocolAPI.handleProtocols();
         }
         SchedulerUtils.runAsync(() -> {
             final String compileVersion = Objects.requireNonNull(YamlConfiguration.loadConfiguration(new InputStreamReader(Objects.requireNonNull(FakeCreative.getCore().getPlugin().getResource("plugin.yml")))).getString("nms-version")).split("-")[0].replace(".", "_");
