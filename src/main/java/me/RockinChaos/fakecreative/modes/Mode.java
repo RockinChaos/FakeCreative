@@ -43,6 +43,7 @@ public class Mode {
         final Player argsPlayer = (altWho != null ? altWho : (Player) who);
         if (Creative.isCreativeMode(argsPlayer, true)) {
             final PlayerObject playerObject = Creative.get(argsPlayer);
+            final double safeHealth = Math.min(playerObject.getHealth(), Math.min(playerObject.getMaxHealth() * 2, 2048.0));
             setFlight(argsPlayer, false);
             if (ServerUtils.hasSpecificUpdate("1_9")) {
                 Objects.requireNonNull(argsPlayer.getAttribute((Attribute)CompatUtils.valueOf(Attribute.class, "GENERIC_MAX_HEALTH"))).setBaseValue(playerObject.getMaxHealth());
@@ -51,7 +52,7 @@ public class Mode {
             }
             argsPlayer.setFoodLevel(playerObject.getFood());
             argsPlayer.setFireTicks(playerObject.getFireTicks());
-            SchedulerUtils.runLater(4L, () -> argsPlayer.setHealth(Math.min(playerObject.getHealth(), playerObject.getMaxHealth() * 2)));
+            argsPlayer.setHealth(safeHealth);
             Creative.Tabs.clearTabs(argsPlayer);
             restoreInventory(argsPlayer);
             dropInvulnerable(argsPlayer);

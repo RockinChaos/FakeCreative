@@ -20,7 +20,6 @@ package me.RockinChaos.fakecreative.modes.creative;
 import me.RockinChaos.core.handlers.ItemHandler;
 import me.RockinChaos.core.handlers.PlayerHandler;
 import me.RockinChaos.core.utils.CompatUtils;
-import me.RockinChaos.core.utils.SchedulerUtils;
 import me.RockinChaos.core.utils.ServerUtils;
 import me.RockinChaos.core.utils.StringUtils;
 import me.RockinChaos.core.utils.api.LegacyAPI;
@@ -107,12 +106,11 @@ public class Creative {
             if (!PlayerHandler.isSurvivalMode(argsPlayer)) {
                 argsPlayer.setGameMode(GameMode.SURVIVAL);
             }
-            double health = argsPlayer.getHealth();
+            final double health = argsPlayer.getHealth();
             double maxHealth = 20;
             try {
                 maxHealth = (ServerUtils.hasSpecificUpdate("1_9") ? Objects.requireNonNull(argsPlayer.getAttribute((Attribute)CompatUtils.valueOf(Attribute.class, "GENERIC_MAX_HEALTH"))).getBaseValue() : (double) argsPlayer.getClass().getMethod("getMaxHealth").invoke(argsPlayer));
-            } catch (Exception ignored) {
-            }
+            } catch (Exception ignored) {}
             if (!refresh && !restore) {
                 creativePlayers.add(new PlayerObject(PlayerHandler.getPlayerID(argsPlayer), (Math.min(maxHealth * 2, health)), maxHealth, argsPlayer.getFoodLevel(), argsPlayer.getFireTicks()));
             }
@@ -124,26 +122,26 @@ public class Creative {
             }
             if (!refresh) {
                 try {
-                    argsPlayer.setHealth(playerObject.getStats().health());
+                    argsPlayer.setHealth(Math.min(playerObject.getStats().health(), 2048.0));
                 } catch (IllegalArgumentException e) {
                     LegacyAPI.setHealth(argsPlayer, playerObject.getStats().health());
-                    SchedulerUtils.run(() -> argsPlayer.setHealth(playerObject.getStats().health()));
+                    argsPlayer.setHealth(playerObject.getStats().health());
                 }
             }
-            SchedulerUtils.run(() -> {
-                if (!refresh) {
-                    if (ServerUtils.hasSpecificUpdate("1_9")) {
-                        Objects.requireNonNull(argsPlayer.getAttribute((Attribute)CompatUtils.valueOf(Attribute.class, "GENERIC_MAX_HEALTH"))).setBaseValue(((playerObject.getStats().heartScale()) * 2));
-                    } else {
-                        LegacyAPI.setMaxHealth(argsPlayer, ((playerObject.getStats().heartScale()) * 2));
-                    }
+            if (!refresh) {
+                final double heartScale = playerObject.getStats().heartScale();
+                final double clampedScale = Math.min(Math.max(heartScale, 1.0), 1024.0);
+                if (ServerUtils.hasSpecificUpdate("1_9")) {
+                    Objects.requireNonNull(argsPlayer.getAttribute((Attribute)CompatUtils.valueOf(Attribute.class, "GENERIC_MAX_HEALTH"))).setBaseValue(clampedScale * 2);
+                } else {
+                    LegacyAPI.setMaxHealth(argsPlayer, clampedScale * 2);
                 }
-                if (!playerObject.getStats().allowBurn()) {
-                    argsPlayer.setFireTicks(0);
-                }
-                argsPlayer.setFoodLevel(playerObject.getStats().foodLevel());
-                Mode.dropTargets(argsPlayer);
-            });
+            }
+            if (!playerObject.getStats().allowBurn()) {
+                argsPlayer.setFireTicks(0);
+            }
+            argsPlayer.setFoodLevel(playerObject.getStats().foodLevel());
+            Mode.dropTargets(argsPlayer);
             Tabs.setTabs(argsPlayer);
             if (!restore) {
                 ServerUtils.logDebug(argsPlayer.getName() + " was set to fake creative.");
