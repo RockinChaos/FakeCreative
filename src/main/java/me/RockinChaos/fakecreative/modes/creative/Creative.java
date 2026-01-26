@@ -149,7 +149,7 @@ public class Creative {
                 ServerUtils.logDebug(argsPlayer.getName() + " had their fake creative restored.");
             }
         }
-        if ((!refresh && !restore) || (!silent)) {
+        if (!refresh && !restore && !silent) {
             Mode.sendStatus(who, argsPlayer, GameMode.CREATIVE, false);
         }
     }
