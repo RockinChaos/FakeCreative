@@ -151,7 +151,7 @@ public class Crafting implements Listener {
     private void onCraftingWorldSwitch(PlayerChangedWorldEvent event) {
         final Player player = event.getPlayer();
         final ItemStack[] inventory = player.getInventory().getContents();
-        if (ItemHandler.isContentsEmpty(inventory)) {
+        if (!ItemHandler.isContentsEmpty(inventory)) {
             for (int i = 0; i < inventory.length; i++) {
                 if (Creative.isCreativeMode(player, true) && Tabs.isItem(inventory[i])) {
                     player.getInventory().setItem(i, new ItemStack(Material.AIR));
@@ -190,7 +190,7 @@ public class Crafting implements Listener {
      */
     private void handleClose(final Consumer<Integer> input, final Player player, final Object view, final ItemStack[] inventory, final boolean slotZero) {
         if (PlayerHandler.isCraftingInv(view)) {
-            if (ItemHandler.isContentsEmpty(inventory)) {
+            if (!ItemHandler.isContentsEmpty(inventory)) {
                 boolean isCrafting = false;
                 for (int i = 0; i <= 4; i++) {
                     if (Tabs.isItem(inventory[i])) {
