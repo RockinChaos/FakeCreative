@@ -1041,12 +1041,14 @@ public class Menu {
         } else if (material.name().equals("MONSTER_EGG")) {
             custom = true;
             for (EntityType entity : EntityType.values()) {
-                final short entityId = (short) Monster.getId(entity);
-                if (entityId > 0) {
+                if (ServerUtils.hasSpecificUpdate("1_13")) {
                     final Material monsterMaterial = ItemHandler.getMaterial(entity.name().toUpperCase() + "_SPAWN_EGG", null);
                     if (monsterMaterial != Material.AIR) {
                         items.add(new ItemStack(monsterMaterial));
-                    } else {
+                    }
+                } else {
+                    final short entityId = (short) Monster.getId(entity);
+                    if (entityId > 0) {
                         items.add(LegacyAPI.newItemStack(ItemHandler.getMaterial("MONSTER_EGG", null), 1, entityId));
                     }
                 }
