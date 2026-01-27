@@ -179,7 +179,7 @@ public class Clicking implements Listener {
             } else if (Tabs.PREFERENCES.isTab(event.getCurrentItem())) {
                 event.setCancelled(true);
                 SchedulerUtils.run(() -> {
-                    if (Creative.get(player).getStats().isLocalePreferences(player)) {
+                    if (Creative.get(player).getStats().isLocalePreferences(player) || Creative.get(player).getStats().isAnyPreferenceOverride(player)) {
                         Menu.userMenu(player);
                     }
                 });

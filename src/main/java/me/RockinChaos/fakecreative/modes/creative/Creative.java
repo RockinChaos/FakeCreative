@@ -340,14 +340,27 @@ public class Creative {
                 }
                 final ItemStack userClone = Tabs.PREFERENCES.getItem().clone();
                 userClone.setItemMeta(ItemHandler.setSkullOwner(Objects.requireNonNull(userClone.getItemMeta()), player, player.getName()));
-                if (!get(player).getStats().isLocalePreferences(player)) {
+                if (!get(player).getStats().isLocalePreferences(player) && !get(player).getStats().isAnyPreferenceOverride(player)) {
                     final ItemMeta userMeta = userClone.getItemMeta();
-                    List<String> userLore = new ArrayList<>();
-                    userLore.add(StringUtils.colorFormat("&7"));
-                    userLore.add(StringUtils.colorFormat("&7*Creative mode settings"));
-                    userLore.add(StringUtils.colorFormat("&7that are specific to you."));
-                    userLore.add(StringUtils.colorFormat("&7"));
-                    userLore.add(StringUtils.colorFormat("&c[✘] You do not have permission."));
+                    final List<String> userLore = userMeta.getLore();
+                    final List<String> noPermission = FakeCreative.getCore().getLang().getStringList("tabs.preferences.noPermission");
+                    if (userLore != null && !noPermission.isEmpty()) {
+                        final ArrayList<String> loreList = new ArrayList<>();
+                        for (String loreString : noPermission) {
+                            if (!loreString.isEmpty()) {
+                                loreString = loreString.replace("//n", "/n").replace("\\n", "/n").replace("\n", "/n");
+                                if (loreString.contains(" /n ")) {
+                                    String[] loreSplit = loreString.split(" /n ");
+                                    for (String loreStringSplit : loreSplit) {
+                                        loreList.add(StringUtils.colorFormat(loreStringSplit));
+                                    }
+                                } else {
+                                    loreList.add(StringUtils.colorFormat(loreString));
+                                }
+                            }
+                        }
+                        userLore.addAll(loreList);
+                    }
                     userMeta.setLore(userLore);
                     userClone.setItemMeta(userMeta);
                 }

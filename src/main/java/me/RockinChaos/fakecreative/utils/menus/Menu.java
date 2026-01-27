@@ -535,22 +535,32 @@ public class Menu {
      */
     public static void userMenu(final CommandSender sender) {
         final Player player = (Player) sender;
-        Interface pagedPane = new Interface(false, 4, exitButton, userGUIName, player);
+        final Interface pagedPane = new Interface(false, 4, exitButton, userGUIName, player);
+        final boolean allPerferencesAllowed = Creative.get(player).getStats().isLocalePreferences(player);
+        final List<String> noPermission = FakeCreative.getCore().getLang().getStringList("tabs.preferences.noPermission");
         SchedulerUtils.runAsync(() -> {
             pagedPane.addButton(new Button(fillerPaneBItem), 3);
+            final List<String> flightLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.allowFlight.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.flight")) flightLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem("FEATHER", 1, Creative.get(player).getStats().allowFlight(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.allowFlight.name"),
-                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.allowFlight.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().allowFlight()))).toArray(String[]::new)),
+                    flightLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().allowFlight()))).toArray(String[]::new)),
                     event -> {
-                        Creative.get(player).getStats().setFlight(player, !Creative.get(player).getStats().allowFlight());
-                        userMenu(player);
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.flight")) {
+                            Creative.get(player).getStats().setFlight(player, !Creative.get(player).getStats().allowFlight());
+                            userMenu(player);
+                        }
                     }));
             pagedPane.addButton(new Button(fillerPaneBItem));
+            final List<String> flightSpeedLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.flightSpeed.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.flightspeed")) flightSpeedLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem("SUGAR", 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.flightSpeed.name"),
-                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.flightSpeed.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().flySpeed()))).toArray(String[]::new)), event -> {
-                        final InventoryHolder inventoryHolder = event.getInventory().getHolder();
-                        if (inventoryHolder != null) {
-                            ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
-                            Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
+                    flightSpeedLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().flySpeed()))).toArray(String[]::new)), event -> {
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.flightspeed")) {
+                            final InventoryHolder inventoryHolder = event.getInventory().getHolder();
+                            if (inventoryHolder != null) {
+                                ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
+                                Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
+                            }
                         }
                     }, query -> query.onClose(stateSnapshot -> userMenu(player))
                     .onClick((slot, stateSnapshot) -> {
@@ -578,12 +588,16 @@ public class Menu {
                     .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, FakeCreative.getCore().getLang().getString("menus.general.items.typing.name"), FakeCreative.getCore().getLang().getStringList("menus.general.items.typing.lore").toArray(new String[0])))
                     .title(FakeCreative.getCore().getLang().getString("menus.preferences.items.flightSpeed.name") + ":"), 0));
             pagedPane.addButton(new Button(fillerPaneBItem), 3);
+            final List<String> breakSpeedLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.breakSpeed.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.breakspeed")) breakSpeedLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem("DIAMOND_PICKAXE", 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.breakSpeed.name"),
-                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.breakSpeed.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().breakSpeed()))).toArray(String[]::new)), event -> {
-                        final InventoryHolder inventoryHolder = event.getInventory().getHolder();
-                        if (inventoryHolder != null) {
-                            ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
-                            Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
+                    breakSpeedLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().breakSpeed()))).toArray(String[]::new)), event -> {
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.breakspeed")) {
+                            final InventoryHolder inventoryHolder = event.getInventory().getHolder();
+                            if (inventoryHolder != null) {
+                                ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
+                                Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
+                            }
                         }
                     }, query -> query.onClose(stateSnapshot -> userMenu(player))
                     .onClick((slot, stateSnapshot) -> {
@@ -602,18 +616,26 @@ public class Menu {
                     .itemRight(ItemHandler.getItem("GOLD_NUGGET", 1, true, true, FakeCreative.getCore().getLang().getString("menus.general.items.tips.name"), FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputType").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"), "&7", FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputExample").replace("%input_example%", "20").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number")))
                     .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, FakeCreative.getCore().getLang().getString("menus.general.items.typing.name"), FakeCreative.getCore().getLang().getStringList("menus.general.items.typing.lore").toArray(new String[0])))
                     .title(FakeCreative.getCore().getLang().getString("menus.preferences.items.breakSpeed.name") + ":"), 0));
+            final List<String> swordBlockLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.swordBlock.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.swordblock")) swordBlockLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem("DIAMOND_SWORD", 1, Creative.get(player).getStats().swordBlock(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.swordBlock.name"),
-                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.swordBlock.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().swordBlock()))).toArray(String[]::new)),
+                    swordBlockLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().swordBlock()))).toArray(String[]::new)),
                     event -> {
-                        Creative.get(player).getStats().setSwordBlock(player, !Creative.get(player).getStats().swordBlock());
-                        userMenu(player);
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.swordblock")) {
+                            Creative.get(player).getStats().setSwordBlock(player, !Creative.get(player).getStats().swordBlock());
+                            userMenu(player);
+                        }
                     }));
+            final List<String> foodLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.food.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.food")) foodLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "COOKED_BEEF" : "364"), 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.food.name"),
-                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.food.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().foodLevel()))).toArray(String[]::new)), event -> {
-                        final InventoryHolder inventoryHolder = event.getInventory().getHolder();
-                        if (inventoryHolder != null) {
-                            ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
-                            Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
+                    foodLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().foodLevel()))).toArray(String[]::new)), event -> {
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.food")) {
+                            final InventoryHolder inventoryHolder = event.getInventory().getHolder();
+                            if (inventoryHolder != null) {
+                                ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
+                                Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
+                            }
                         }
                     }, query -> query.onClose(stateSnapshot -> userMenu(player))
                     .onClick((slot, stateSnapshot) -> {
@@ -632,12 +654,16 @@ public class Menu {
                     .itemRight(ItemHandler.getItem("GOLD_NUGGET", 1, true, true, FakeCreative.getCore().getLang().getString("menus.general.items.tips.name"), FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputType").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"), "&7", FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputExample").replace("%input_example%", "20").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number")))
                     .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, FakeCreative.getCore().getLang().getString("menus.general.items.typing.name"), FakeCreative.getCore().getLang().getStringList("menus.general.items.typing.lore").toArray(new String[0])))
                     .title(FakeCreative.getCore().getLang().getString("menus.preferences.items.food.name") + ":"), 0));
+            final List<String> healthLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.health.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.health")) healthLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem("APPLE", 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.health.name"),
-                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.health.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().health()))).toArray(String[]::new)), event -> {
-                        final InventoryHolder inventoryHolder = event.getInventory().getHolder();
-                        if (inventoryHolder != null) {
-                            ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
-                            Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
+                    healthLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().health()))).toArray(String[]::new)), event -> {
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.health")) {
+                            final InventoryHolder inventoryHolder = event.getInventory().getHolder();
+                            if (inventoryHolder != null) {
+                                ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
+                                Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
+                            }
                         }
                     }, query -> query.onClose(stateSnapshot -> userMenu(player))
                     .onClick((slot, stateSnapshot) -> {
@@ -664,12 +690,16 @@ public class Menu {
                                           ).toArray(String[]::new)))
                     .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, FakeCreative.getCore().getLang().getString("menus.general.items.typing.name"), FakeCreative.getCore().getLang().getStringList("menus.general.items.typing.lore").toArray(new String[0])))
                     .title(FakeCreative.getCore().getLang().getString("menus.preferences.items.heart.name") + ":"), 0));
+            final List<String> heartLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.heartScale.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.hearts")) heartLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem("REDSTONE", 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.heartScale.name"),
-                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.heartScale.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().heartScale()))).toArray(String[]::new)), event -> {
-                        final InventoryHolder inventoryHolder = event.getInventory().getHolder();
-                        if (inventoryHolder != null) {
-                            ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
-                            Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
+                    heartLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().heartScale()))).toArray(String[]::new)), event -> {
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.hearts")) {
+                            final InventoryHolder inventoryHolder = event.getInventory().getHolder();
+                            if (inventoryHolder != null) {
+                                ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
+                                Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
+                            }
                         }
                     }, query -> query.onClose(stateSnapshot -> userMenu(player))
                     .onClick((slot, stateSnapshot) -> {
@@ -691,66 +721,106 @@ public class Menu {
                     .itemRight(ItemHandler.getItem("GOLD_NUGGET", 1, true, true, FakeCreative.getCore().getLang().getString("menus.general.items.tips.name"), FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputType").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"), "&7", FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputExample").replace("%input_example%", "20").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number")))
                     .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, FakeCreative.getCore().getLang().getString("menus.general.items.typing.name"), FakeCreative.getCore().getLang().getStringList("menus.general.items.typing.lore").toArray(new String[0])))
                     .title(FakeCreative.getCore().getLang().getString("menus.preferences.items.heartScale.name") + ":"), 0));
+            final List<String> hungerLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.allowHunger.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.hunger")) hungerLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "ROTTEN_FLESH" : "367"), 1, Creative.get(player).getStats().allowHunger(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.allowHunger.name"),
-                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.allowHunger.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().allowHunger()))).toArray(String[]::new)),
+                    hungerLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().allowHunger()))).toArray(String[]::new)),
                     event -> {
-                        Creative.get(player).getStats().setAllowHunger(player, !Creative.get(player).getStats().allowHunger());
-                        userMenu(player);
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.hunger")) {
+                            Creative.get(player).getStats().setAllowHunger(player, !Creative.get(player).getStats().allowHunger());
+                            userMenu(player);
+                        }
                     }));
+            final List<String> burnLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.allowBurn.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.burn")) burnLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem("LAVA_BUCKET", 1, Creative.get(player).getStats().allowBurn(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.allowBurn.name"),
-                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.allowBurn.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().allowBurn()))).toArray(String[]::new)),
+                    burnLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().allowBurn()))).toArray(String[]::new)),
                     event -> {
-                        Creative.get(player).getStats().setAllowBurn(player, !Creative.get(player).getStats().allowBurn());
-                        userMenu(player);
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.burn")) {
+                            Creative.get(player).getStats().setAllowBurn(player, !Creative.get(player).getStats().allowBurn());
+                            userMenu(player);
+                        }
                     }));
+            final List<String> unbreakableLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.unbreakableItems.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.unbreakable")) unbreakableLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem("BEDROCK", 1, Creative.get(player).getStats().unbreakableItems(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.unbreakableItems.name"),
-                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.unbreakableItems.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().unbreakableItems()))).toArray(String[]::new)),
+                    unbreakableLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().unbreakableItems()))).toArray(String[]::new)),
                     event -> {
-                        Creative.get(player).getStats().setUnbreakableItems(player, !Creative.get(player).getStats().unbreakableItems());
-                        userMenu(player);
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.unbreakable")) {
+                            Creative.get(player).getStats().setUnbreakableItems(player, !Creative.get(player).getStats().unbreakableItems());
+                            userMenu(player);
+                        }
                     }));
+            final List<String> blockDropsLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.blockDrops.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.blockdrops")) blockDropsLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "GRASS_BLOCK" : "2"), 1, Creative.get(player).getStats().blockDrops(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.blockDrops.name"),
-                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.blockDrops.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().blockDrops()))).toArray(String[]::new)),
+                    blockDropsLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().blockDrops()))).toArray(String[]::new)),
                     event -> {
-                        Creative.get(player).getStats().setBlockDrops(player, !Creative.get(player).getStats().blockDrops());
-                        userMenu(player);
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.blockdrops")) {
+                            Creative.get(player).getStats().setBlockDrops(player, !Creative.get(player).getStats().blockDrops());
+                            userMenu(player);
+                        }
                     }));
+            final List<String> pickupsLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.destroyPickups.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.pickups")) pickupsLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem("CACTUS", 1, Creative.get(player).getStats().destroyPickups(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.destroyPickups.name"),
-                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.destroyPickups.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().destroyPickups()))).toArray(String[]::new)),
+                    pickupsLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().destroyPickups()))).toArray(String[]::new)),
                     event -> {
-                        Creative.get(player).getStats().setPickups(player, !Creative.get(player).getStats().destroyPickups());
-                        userMenu(player);
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.pickups")) {
+                            Creative.get(player).getStats().setPickups(player, !Creative.get(player).getStats().destroyPickups());
+                            userMenu(player);
+                        }
                     }));
+            final List<String> selfDropsLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.selfDrops.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.selfdrops")) selfDropsLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "HOPPER" : "154"), 1, Creative.get(player).getStats().selfDrops(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.selfDrops.name"),
-                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.selfDrops.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().selfDrops()))).toArray(String[]::new)),
+                    selfDropsLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().selfDrops()))).toArray(String[]::new)),
                     event -> {
-                        Creative.get(player).getStats().setSelfDrops(player, !Creative.get(player).getStats().selfDrops());
-                        userMenu(player);
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.selfdrops")) {
+                            Creative.get(player).getStats().setSelfDrops(player, !Creative.get(player).getStats().selfDrops());
+                            userMenu(player);
+                        }
                     }));
+            final List<String> storageLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.itemStore.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.storage")) storageLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "CHEST_MINECART" : "342"), 1, Creative.get(player).getStats().itemStore(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.itemStore.name"),
-                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.itemStore.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().itemStore()))).toArray(String[]::new)),
+                    storageLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().itemStore()))).toArray(String[]::new)),
                     event -> {
-                        Creative.get(player).getStats().setItemStore(player, !Creative.get(player).getStats().itemStore());
-                        userMenu(player);
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.storage")) {
+                            Creative.get(player).getStats().setItemStore(player, !Creative.get(player).getStats().itemStore());
+                            userMenu(player);
+                        }
                     }));
+            final List<String> restoreLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.autoRestore.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.restore")) restoreLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem("BEACON", 1, Creative.get(player).getStats().autoRestore(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.autoRestore.name"),
-                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.autoRestore.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().autoRestore()))).toArray(String[]::new)),
+                    restoreLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().autoRestore()))).toArray(String[]::new)),
                     event -> {
-                        Creative.get(player).getStats().setRestore(player, !Creative.get(player).getStats().autoRestore());
-                        userMenu(player);
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.restore")) {
+                            Creative.get(player).getStats().setRestore(player, !Creative.get(player).getStats().autoRestore());
+                            userMenu(player);
+                        }
                     }));
+            final List<String> godLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.invulnerable.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.god")) godLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "ENCHANTED_GOLDEN_APPLE" : "322:1"), 1, Creative.get(player).getStats().god(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.invulnerable.name"),
-                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.invulnerable.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().god()))).toArray(String[]::new)),
+                    godLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().god()))).toArray(String[]::new)),
                     event -> {
-                        Creative.get(player).getStats().setGod(player, !Creative.get(player).getStats().god());
-                        userMenu(player);
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.god")) {
+                            Creative.get(player).getStats().setGod(player, !Creative.get(player).getStats().god());
+                            userMenu(player);
+                        }
                     }));
+            final List<String> godDelayLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.invulnerableDelay.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.goddelay")) godDelayLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "CLOCK" : "347"), 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.invulnerableDelay.name"),
-                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.invulnerableDelay.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().godDelay()))).toArray(String[]::new)), event -> {
-                        final InventoryHolder inventoryHolder = event.getInventory().getHolder();
-                        if (inventoryHolder != null) {
-                            ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
-                            Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
+                    godDelayLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().godDelay()))).toArray(String[]::new)), event -> {
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.goddelay")) {
+                            final InventoryHolder inventoryHolder = event.getInventory().getHolder();
+                            if (inventoryHolder != null) {
+                                ((Interface) inventoryHolder).onTyping(CompatUtils.getPlayer(event.getView()));
+                                Menu.setTypingMenu(true, (Player) event.getWhoClicked(), ((Interface) inventoryHolder));
+                            }
                         }
                     }, query -> query.onClose(stateSnapshot -> userMenu(player))
                     .onClick((slot, stateSnapshot) -> {
@@ -769,25 +839,36 @@ public class Menu {
                     .itemRight(ItemHandler.getItem("GOLD_NUGGET", 1, true, true, FakeCreative.getCore().getLang().getString("menus.general.items.tips.name"), FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputType").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number"), "&7", FakeCreative.getCore().getLang().getLangMessage("commands.menu.inputExample").replace("%input_example%", "20").replace("%prefix% ", "").replace("%prefix%", "").replace("%input_example%", "10").replace("%input%", "Custom Number")))
                     .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, FakeCreative.getCore().getLang().getString("menus.general.items.typing.name"), FakeCreative.getCore().getLang().getStringList("menus.general.items.typing.lore").toArray(new String[0])))
                     .title(FakeCreative.getCore().getLang().getString("menus.preferences.items.invulnerableDelay.name") + ":"), 0));
+            final List<String> inventoryLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.storeInventory.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.inventory")) inventoryLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem("CHEST", 1, Creative.get(player).getStats().storeInventory(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.storeInventory.name"),
-                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.storeInventory.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().storeInventory()))).toArray(String[]::new)),
+                    inventoryLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().storeInventory()))).toArray(String[]::new)),
                     event -> {
-                        Creative.get(player).getStats().setStore(player, !Creative.get(player).getStats().storeInventory());
-                        userMenu(player);
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.inventory")) {
+                            Creative.get(player).getStats().setStore(player, !Creative.get(player).getStats().storeInventory());
+                            userMenu(player);
+                        }
                     }));
+            final List<String> protectionLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.protectPlacements.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.protection")) protectionLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem("DIAMOND_HELMET", 1, Creative.get(player).getStats().protectPlacements(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.protectPlacements.name"),
-                    FakeCreative.getCore().getLang().getStringList("menus.preferences.items.protectPlacements.lore").stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().protectPlacements()))).toArray(String[]::new)),
+                    protectionLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().protectPlacements()))).toArray(String[]::new)),
                     event -> {
-                        Creative.get(player).getStats().setProtectPlacements(player, !Creative.get(player).getStats().protectPlacements());
-                        userMenu(player);
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.protection")) {
+                            Creative.get(player).getStats().setProtectPlacements(player, !Creative.get(player).getStats().protectPlacements());
+                            userMenu(player);
+                        }
                     }));
             final List<String> dropPlacementsLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.dropPlacements.lore");
             if (!Creative.get(player).getStats().blockDrops() && Creative.get(player).getStats().dropPlacements()) dropPlacementsLore.addAll(FakeCreative.getCore().getLang().getStringList("menus.preferences.items.dropPlacements.loreCondition"));
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.dropplacements")) dropPlacementsLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem("DROPPER", 1, Creative.get(player).getStats().dropPlacements(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.dropPlacements.name"),
                     dropPlacementsLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().dropPlacements()))).toArray(String[]::new)),
                     event -> {
-                        Creative.get(player).getStats().setDropPlacements(player, !Creative.get(player).getStats().dropPlacements());
-                        userMenu(player);
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.dropplacements")) {
+                            Creative.get(player).getStats().setDropPlacements(player, !Creative.get(player).getStats().dropPlacements());
+                            userMenu(player);
+                        }
                     }));
             pagedPane.addButton(new Button(exitItem, event -> player.closeInventory()));
             pagedPane.addButton(new Button(fillerPaneBItem), 7);

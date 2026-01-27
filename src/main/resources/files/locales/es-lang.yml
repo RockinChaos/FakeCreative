@@ -81,6 +81,9 @@ tabs:
       - '&7'
       - '&7&o*Ajustes del modo Creativo'
       - '&7&oespecificas para tu gusto.'
+    noPermission:
+      - '&7'
+      - '&c[✘] No tienes permiso.'
   pickItem:
     name: '&b&l&nSeleccionar item'
     lore:

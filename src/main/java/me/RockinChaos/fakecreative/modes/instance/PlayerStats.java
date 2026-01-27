@@ -31,8 +31,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.*;
 
 public class PlayerStats {
 
@@ -59,6 +58,29 @@ public class PlayerStats {
     private boolean dropPlacements = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Placement-Drops");
     private String playerName = null;
 
+    private final List<String> PREFERENCE_PERMISSIONS = Arrays.asList(
+            "fakecreative.preference.flight",
+            "fakecreative.preference.flightspeed",
+            "fakecreative.preference.breakspeed",
+            "fakecreative.preference.food",
+            "fakecreative.preference.health",
+            "fakecreative.preference.hearts",
+            "fakecreative.preference.hunger",
+            "fakecreative.preference.burn",
+            "fakecreative.preference.unbreakable",
+            "fakecreative.preference.blockdrops",
+            "fakecreative.preference.swordblock",
+            "fakecreative.preference.restore",
+            "fakecreative.preference.god",
+            "fakecreative.preference.goddelay",
+            "fakecreative.preference.inventory",
+            "fakecreative.preference.pickups",
+            "fakecreative.preference.selfdrops",
+            "fakecreative.preference.storage",
+            "fakecreative.preference.protection",
+            "fakecreative.preference.dropplacements"
+    );
+
     /**
      * Creates a new PlayerStats instance
      *
@@ -67,10 +89,9 @@ public class PlayerStats {
     public PlayerStats(final Player player) {
         if (player != null) this.playerName = player.getName();
         final String playerId = PlayerHandler.getPlayerID(player);
-        if (player != null && this.isLocalePreferences(player)) {
+        if (player != null && (this.isLocalePreferences(player) || this.isAnyPreferenceOverride(player))) {
             loadStats(playerId);
         }
-
         loadHotbars(playerId);
     }
 
@@ -87,6 +108,17 @@ public class PlayerStats {
         if ((offlinePlayer != null && offlinePlayer.isOp() && (!OPPermissionNeeded || VaultAPI.getVault(false).hasPermission(offlinePlayer, "fakecreative.preferences")))
                 || (!PermissionNeeded || (offlinePlayer != null && VaultAPI.getVault(false).hasPermission(offlinePlayer, "fakecreative.preferences")))) {
             loadStats(playerId);
+        } else if (offlinePlayer != null) {
+            if (VaultAPI.getVault(false).hasPermission(offlinePlayer, "fakecreative.preferences.*")) {
+                loadStats(playerId);
+            } else {
+                for (String preferencePermission : this.PREFERENCE_PERMISSIONS) {
+                    if (VaultAPI.getVault(false).hasPermission(offlinePlayer, preferencePermission)) {
+                        loadStats(playerId);
+                        break;
+                    }
+                }
+            }
         }
         loadHotbars(playerId);
     }
@@ -101,101 +133,121 @@ public class PlayerStats {
     }
 
     public void loadStats(final String playerId) {
+        // fakecreative.preference.flight
         final DataObject allowFlight = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ALLOW_FLIGHT, playerId, true));
         if (allowFlight != null) {
             this.allowFlight = allowFlight.getBoolean();
         }
 
+        // fakecreative.preference.flightspeed
         final DataObject flySpeed = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SPEED_FLIGHT, playerId, 0.0));
         if (flySpeed != null) {
             this.flySpeed = flySpeed.getDouble();
         }
 
+        // fakecreative.preference.breakspeed
         final DataObject breakSpeed = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SPEED_BREAK, playerId, 0.0));
         if (breakSpeed != null) {
             this.breakSpeed = breakSpeed.getDouble();
         }
 
+        // fakecreative.preference.food
         final DataObject foodLevel = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_FOOD, playerId, 0));
         if (foodLevel != null) {
             this.foodLevel = foodLevel.getInt();
         }
 
+        // fakecreative.preference.health
         final DataObject health = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_HEALTH, playerId, 0));
         if (health != null) {
             this.health = health.getInt();
         }
 
+        // fakecreative.preference.hearts
         final DataObject heartScale = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_SCALE, playerId, 0.0));
         if (heartScale != null) {
             this.heartScale = heartScale.getDouble();
         }
 
+        // fakecreative.preference.hunger
         final DataObject allowHunger = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ALLOW_HUNGER, playerId, true));
         if (allowHunger != null) {
             this.allowHunger = allowHunger.getBoolean();
         }
 
+        // fakecreative.preference.burn
         final DataObject allowBurn = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ALLOW_BURN, playerId, true));
         if (allowBurn != null) {
             this.allowBurn = allowBurn.getBoolean();
         }
 
+        // fakecreative.preference.unbreakable
         final DataObject unbreakableItems = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.UNBREAKABLE_ITEMS, playerId, true));
         if (unbreakableItems != null) {
             this.unbreakableItems = unbreakableItems.getBoolean();
         }
 
+        // fakecreative.preference.blockdrops
         final DataObject blockDrops = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.DROPS_BLOCK, playerId, true));
         if (blockDrops != null) {
             this.blockDrops = blockDrops.getBoolean();
         }
 
+        // fakecreative.preference.swordblock
         final DataObject swordBlock = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SWORD_BLOCK, playerId, true));
         if (swordBlock != null) {
             this.swordBlock = swordBlock.getBoolean();
         }
 
+        // fakecreative.preference.restore
         final DataObject autoRestore = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.AUTO_RESTORE, playerId, true));
         if (autoRestore != null) {
             this.autoRestore = autoRestore.getBoolean();
         }
 
+        // fakecreative.preference.god
         final DataObject god = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_GOD, playerId, true));
         if (god != null) {
             this.god = god.getBoolean();
         }
 
+        // fakecreative.preference.goddelay
         final DataObject godDelay = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.DELAY_GOD, playerId, 0));
         if (godDelay != null) {
             this.godDelay = godDelay.getInt();
         }
 
+        // fakecreative.preference.inventory
         final DataObject storeInventory = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.STORE_INVENTORY, playerId, true));
         if (storeInventory != null) {
             this.storeInventory = storeInventory.getBoolean();
         }
 
+        // fakecreative.preference.pickups
         final DataObject destroyPickups = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.DESTROY_PICKUPS, playerId, true));
         if (destroyPickups != null) {
             this.destroyPickups = destroyPickups.getBoolean();
         }
 
+        // fakecreative.preference.selfdrops
         final DataObject selfDrops = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SELF_DROPS, playerId, true));
         if (selfDrops != null) {
             this.selfDrops = selfDrops.getBoolean();
         }
 
+        // fakecreative.preference.storage
         final DataObject itemStore = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ITEM_STORE, playerId, true));
         if (itemStore != null) {
             this.itemStore = itemStore.getBoolean();
         }
 
+        // fakecreative.preference.protection
         final DataObject protectPlacements = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.PROTECT_PLACEMENTS, playerId, false));
         if (protectPlacements != null) {
             this.protectPlacements = protectPlacements.getBoolean();
         }
 
+        // fakecreative.preference.dropplacements
         final DataObject dropPlacements = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.DROP_PLACEMENTS, playerId, false));
         if (dropPlacements != null) {
             this.dropPlacements = dropPlacements.getBoolean();
@@ -792,6 +844,32 @@ public class PlayerStats {
         } else {
             return (!PermissionNeeded || (player.isPermissionSet("fakecreative.preferences") && player.hasPermission("fakecreative.preferences")));
         }
+    }
+
+    /**
+     * Checks if the Player is allowed to have a specific custom FakeCreative Preference.
+     *
+     * @param player - The Player being referenced.
+     * @return If the Player is allowed to have a specific custom FakeCreative Preference.
+     */
+    public boolean isPreferenceOverride(final Player player, final String preferencePermission) {
+        return (player.isPermissionSet(preferencePermission) && player.hasPermission(preferencePermission));
+    }
+
+    /**
+     * Checks if the Player has any FakeCreative Preference overrides.
+     *
+     * @param player - The Player being referenced.
+     * @return If the Player has any FakeCreative Preference overrides.
+     */
+    public boolean isAnyPreferenceOverride(final Player player) {
+        if (player.isPermissionSet("fakecreative.preferences.*") && player.hasPermission("fakecreative.preferences.*")) return true;
+        for (String preferencePermission : this.PREFERENCE_PERMISSIONS) {
+            if (this.isPreferenceOverride(player, preferencePermission)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getPlayerName() {
