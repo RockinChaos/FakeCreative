@@ -69,25 +69,29 @@ public class Interact implements Listener {
         final ItemStack item = (event.getItem() != null ? event.getItem().clone() : event.getItem());
         final int slot = player.getInventory().getHeldItemSlot();
         if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) && item != null && item.getType() != Material.AIR && Creative.isCreativeMode(player, true)) {
-            SchedulerUtils.run(() -> {
-                if (ServerUtils.hasSpecificUpdate("1_9") && event.getHand() != null) {
-                    if (event.getHand().equals(EquipmentSlot.HAND)) {
+            if (!Creative.isBlackListed(item)) {
+                SchedulerUtils.run(() -> {
+                    if (ServerUtils.hasSpecificUpdate("1_9") && event.getHand() != null) {
+                        if (event.getHand().equals(EquipmentSlot.HAND)) {
+                            if (player.getInventory().getHeldItemSlot() == slot) {
+                                PlayerHandler.setMainHandItem(player, item);
+                            } else {
+                                player.getInventory().setItem(slot, item);
+                            }
+                        } else if (event.getHand().equals(EquipmentSlot.OFF_HAND)) {
+                            PlayerHandler.setOffHandItem(player, item);
+                        }
+                    } else {
                         if (player.getInventory().getHeldItemSlot() == slot) {
                             PlayerHandler.setMainHandItem(player, item);
                         } else {
                             player.getInventory().setItem(slot, item);
                         }
-                    } else if (event.getHand().equals(EquipmentSlot.OFF_HAND)) {
-                        PlayerHandler.setOffHandItem(player, item);
                     }
-                } else {
-                    if (player.getInventory().getHeldItemSlot() == slot) {
-                        PlayerHandler.setMainHandItem(player, item);
-                    } else {
-                        player.getInventory().setItem(slot, item);
-                    }
-                }
-            });
+                });
+            } else {
+                event.setCancelled(true);
+            }
         }
     }
 
