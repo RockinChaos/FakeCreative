@@ -455,13 +455,25 @@ public class Placement implements Listener {
         final PlayerStats playerStats = Creative.getOfflineStats(ownerData.playerId);
         if (event.getDamager() instanceof Player) {
             final Player player = (Player) event.getDamager();
-            if (playerStats != null && !Objects.equals(ownerData.playerId, PlayerHandler.getPlayerID(player)) && playerStats.protectPlacements()) {
-                event.setCancelled(true);
-                final PlaceHolder placeHolders = new PlaceHolder().with(PlaceHolder.Holder.ACTION, "DAMAGE").with(PlaceHolder.Holder.OBJECT, entity.getType().name()).with(PlaceHolder.Holder.OWNER, playerStats.getPlayerName());
-                FakeCreative.getCore().getLang().sendLangMessage("general.protectionDenied", player, placeHolders);
+            if (playerStats != null) {
+                if (!Objects.equals(ownerData.playerId, PlayerHandler.getPlayerID(player)) && playerStats.protectPlacements()) {
+                    event.setCancelled(true);
+                    final PlaceHolder placeHolders = new PlaceHolder().with(PlaceHolder.Holder.ACTION, "DAMAGE").with(PlaceHolder.Holder.OBJECT, entity.getType().name()).with(PlaceHolder.Holder.OWNER, playerStats.getPlayerName());
+                    FakeCreative.getCore().getLang().sendLangMessage("general.protectionDenied", player, placeHolders);
+                } else if (entity instanceof ItemFrame && !playerStats.dropPlacements() && ((ItemFrame)entity).getItem().getType() != Material.AIR) {
+                    if (!Creative.isCreativeMode(player, true) || Blocks.canBreak(player)) {
+                        entity.remove();
+                    }
+                    event.setCancelled(true);
+                }
             }
-        } else if (playerStats != null && playerStats.protectPlacements()) {
-            event.setCancelled(true);
+        } else if (playerStats != null) {
+            if (playerStats.protectPlacements()) {
+                event.setCancelled(true);
+            } else if ((entity instanceof ItemFrame && !playerStats.dropPlacements())) {
+                event.setCancelled(true);
+                entity.remove();
+            }
         }
     }
 
