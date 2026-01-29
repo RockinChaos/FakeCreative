@@ -153,6 +153,13 @@
             <version>1.4</version>
             <scope>provided</scope>
         </dependency>
+        <!--Google API-->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>33.4.8-jre</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <scm>
