@@ -20,6 +20,7 @@ package me.RockinChaos.fakecreative;
 import com.google.common.collect.ImmutableMap;
 import me.RockinChaos.core.listeners.Interfaces;
 import me.RockinChaos.core.listeners.PlayerLogin;
+import me.RockinChaos.core.utils.ReflectionUtils;
 import me.RockinChaos.core.utils.SchedulerUtils;
 import me.RockinChaos.core.utils.ServerUtils;
 import me.RockinChaos.core.utils.StringUtils;
@@ -89,6 +90,7 @@ public class PluginData {
     public void registerClasses(final boolean silent) {
         final boolean isRunning = FakeCreative.getCore().isStarted();
         ServerUtils.clearErrorStatements();
+        ReflectionUtils.refresh();
         FakeCreative.getCore().getData().refresh();
         FakeCreative.getCore().getData().setStarted(false);
         FakeCreative.getCore().getData().setPluginPrefix("&7[&6FakeCreative&7]");

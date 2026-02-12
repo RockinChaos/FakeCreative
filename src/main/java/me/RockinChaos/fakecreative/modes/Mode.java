@@ -3,6 +3,7 @@ package me.RockinChaos.fakecreative.modes;
 import me.RockinChaos.core.handlers.ItemHandler;
 import me.RockinChaos.core.handlers.PlayerHandler;
 import me.RockinChaos.core.utils.CompatUtils;
+import me.RockinChaos.core.utils.ReflectionUtils;
 import me.RockinChaos.core.utils.SchedulerUtils;
 import me.RockinChaos.core.utils.ServerUtils;
 import me.RockinChaos.core.utils.api.LegacyAPI;
@@ -173,7 +174,7 @@ public class Mode {
         for (final Entity current : player.getNearbyEntities(20, 20, 20)) {
             if (!(current instanceof Item) && !(current instanceof Player) && LegacyAPI.setTargetExists(current)) {
                 try {
-                    current.getClass().getMethod("setTarget", LivingEntity.class).invoke(current, (LivingEntity) null);
+                    ReflectionUtils.getMethod(current.getClass(), "setTarget", LivingEntity.class).invoke(current, (LivingEntity) null);
                 } catch (Exception e) {
                     ServerUtils.sendSevereTrace(e);
                 }

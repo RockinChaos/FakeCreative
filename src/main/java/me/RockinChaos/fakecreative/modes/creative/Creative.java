@@ -19,9 +19,7 @@ package me.RockinChaos.fakecreative.modes.creative;
 
 import me.RockinChaos.core.handlers.ItemHandler;
 import me.RockinChaos.core.handlers.PlayerHandler;
-import me.RockinChaos.core.utils.CompatUtils;
-import me.RockinChaos.core.utils.ServerUtils;
-import me.RockinChaos.core.utils.StringUtils;
+import me.RockinChaos.core.utils.*;
 import me.RockinChaos.core.utils.api.LegacyAPI;
 import me.RockinChaos.core.utils.protocol.events.PlayerEnterCreativeEvent;
 import me.RockinChaos.fakecreative.FakeCreative;
@@ -109,7 +107,7 @@ public class Creative {
             final double health = argsPlayer.getHealth();
             double maxHealth = 20;
             try {
-                maxHealth = (ServerUtils.hasSpecificUpdate("1_9") ? Objects.requireNonNull(argsPlayer.getAttribute((Attribute)CompatUtils.valueOf(Attribute.class, "GENERIC_MAX_HEALTH"))).getBaseValue() : (double) argsPlayer.getClass().getMethod("getMaxHealth").invoke(argsPlayer));
+                maxHealth = (ServerUtils.hasSpecificUpdate("1_9") ? Objects.requireNonNull(argsPlayer.getAttribute((Attribute)CompatUtils.valueOf(Attribute.class, "GENERIC_MAX_HEALTH"))).getBaseValue() : (double) ReflectionUtils.getMethod(argsPlayer.getClass(), "getMaxHealth").invoke(argsPlayer));
             } catch (Exception ignored) {}
             if (!refresh && !restore) {
                 creativePlayers.add(new PlayerObject(PlayerHandler.getPlayerID(argsPlayer), (Math.min(maxHealth * 2, health)), maxHealth, argsPlayer.getFoodLevel(), argsPlayer.getFireTicks()));
