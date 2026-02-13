@@ -337,7 +337,6 @@ public class Creative {
                     }
                 }
                 final ItemStack userClone = Tabs.PREFERENCES.getItem().clone();
-                userClone.setItemMeta(ItemHandler.setSkullOwner(Objects.requireNonNull(userClone.getItemMeta()), player, player.getName()));
                 if (!get(player).getStats().isLocalePreferences(player) && !get(player).getStats().isAnyPreferenceOverride(player)) {
                     final ItemMeta userMeta = userClone.getItemMeta();
                     final List<String> userLore = userMeta.getLore();
@@ -379,9 +378,23 @@ public class Creative {
                 craftInventory.setItem(1, Tabs.CREATIVE.getItem());
                 craftInventory.setItem(2, Tabs.PICK.getItem());
                 craftInventory.setItem(3, Tabs.HOTBARS.getItem());
-                craftInventory.setItem(4, userClone);
-                craftInventory.setItem(0, Tabs.DESTROY.getItem());
-                PlayerHandler.updateInventory(player, 2L);
+                final boolean skinsRestorerEnabled = !FakeCreative.getCore().getDependencies().skinsRestorerEnabled();
+                final Runnable setTask = () -> {
+                    craftInventory.setItem(4, userClone);
+                    craftInventory.setItem(0, Tabs.DESTROY.getItem());
+                    PlayerHandler.updateInventory(player, 2L);
+                };
+                final Runnable metaTask = () -> {
+                    userClone.setItemMeta(ItemHandler.setSkullOwner(Objects.requireNonNull(userClone.getItemMeta()), player, player.getName()));
+                    if (!skinsRestorerEnabled)
+                        setTask.run();
+                    else SchedulerUtils.run(setTask);
+                };
+                if (!skinsRestorerEnabled) {
+                    metaTask.run();
+                } else {
+                    SchedulerUtils.runAsync(metaTask);
+                }
             }
         }
 
