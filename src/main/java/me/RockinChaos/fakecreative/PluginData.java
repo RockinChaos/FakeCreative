@@ -81,30 +81,32 @@ public class PluginData {
         FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Pickups(), FakeCreative.getCore().getPlugin());
         LegacyAPI.registerDepletion();
         LegacyAPI.registerInvulnerable();
-        List<String> aliases;
-        final Object commands = FakeCreative.getCore().getConfig("config.yml").get("Commands.Aliases");
-        if (commands instanceof List) {
-            aliases = FakeCreative.getCore().getConfig("config.yml").getStringList("Commands.Aliases");
-        } else if (commands instanceof String && !((String) commands).trim().isEmpty()) {
-            aliases = Collections.singletonList((String) commands);
-        } else {
-            aliases = Arrays.asList("gamemode", "gm");
-        }
-        SimpleCommandMap commandMap = null;
-        try {
-            commandMap = (SimpleCommandMap) ReflectionUtils.getFieldValue(FakeCreative.getCore().getPlugin().getServer(), "commandMap");
-        } catch (Exception e) {
-            aliases = Arrays.asList("gamemode", "gm");
-            ServerUtils.logWarn("Failed to get command map, registering default gamemode command...");
-            ServerUtils.sendDebugTrace(e);
-        }
-        for (final String alias : aliases) {
-            final PluginCommand command = FakeCreative.getCore().getPlugin().getCommand(alias) != null ? FakeCreative.getCore().getPlugin().getCommand(alias) : createPluginCommand(alias);
-            if (command != null) {
-                command.setExecutor(new ModeExecutor());
-                command.setTabCompleter(new ModeTab());
-                if (commandMap != null) {
-                    commandMap.register(FakeCreative.getCore().getPlugin().getName(), command);
+        if (FakeCreative.getCore().getConfig("config.yml").getBoolean("Commands.Enabled", true)) {
+            List<String> aliases;
+            final Object commands = FakeCreative.getCore().getConfig("config.yml").get("Commands.Aliases");
+            if (commands instanceof List) {
+                aliases = FakeCreative.getCore().getConfig("config.yml").getStringList("Commands.Aliases");
+            } else if (commands instanceof String && !((String) commands).trim().isEmpty()) {
+                aliases = Collections.singletonList((String) commands);
+            } else {
+                aliases = Arrays.asList("gamemode", "gm");
+            }
+            SimpleCommandMap commandMap = null;
+            try {
+                commandMap = (SimpleCommandMap) ReflectionUtils.getFieldValue(FakeCreative.getCore().getPlugin().getServer(), "commandMap");
+            } catch (Exception e) {
+                aliases = Arrays.asList("gamemode", "gm");
+                ServerUtils.logWarn("Failed to get command map, registering default gamemode command...");
+                ServerUtils.sendDebugTrace(e);
+            }
+            for (final String alias : aliases) {
+                final PluginCommand command = FakeCreative.getCore().getPlugin().getCommand(alias) != null ? FakeCreative.getCore().getPlugin().getCommand(alias) : createPluginCommand(alias);
+                if (command != null) {
+                    command.setExecutor(new ModeExecutor());
+                    command.setTabCompleter(new ModeTab());
+                    if (commandMap != null) {
+                        commandMap.register(FakeCreative.getCore().getPlugin().getName(), command);
+                    }
                 }
             }
         }

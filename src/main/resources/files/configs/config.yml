@@ -32,8 +32,9 @@ Permissions:
   Preferences-OP: false
   Commands-OP: false
 
-# These are command aliases that will be registered on server startup (requires restart to take effect).
+# These are gamemode command aliases that will be registered on server startup (requires restart to take effect).
 Commands:
+  Enabled: true
   Aliases:
     - 'gamemode'
     - 'gm'
