@@ -31,7 +31,10 @@ import me.RockinChaos.fakecreative.listeners.*;
 import me.RockinChaos.fakecreative.utils.api.LegacyAPI;
 import me.RockinChaos.fakecreative.utils.sql.DataObject;
 import me.RockinChaos.fakecreative.utils.sql.DataObject.Table;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 
 import java.io.InputStreamReader;
 import java.util.*;
@@ -56,8 +59,6 @@ public class PluginData {
      * Registers the command executors and events.
      */
     public void registerEvents() {
-        Objects.requireNonNull(FakeCreative.getCore().getPlugin().getCommand("gamemode")).setExecutor(new ChatExecutor());
-        Objects.requireNonNull(FakeCreative.getCore().getPlugin().getCommand("gamemode")).setTabCompleter(new ChatTab());
         Objects.requireNonNull(FakeCreative.getCore().getPlugin().getCommand("fakecreative")).setExecutor(new ChatExecutor());
         Objects.requireNonNull(FakeCreative.getCore().getPlugin().getCommand("fakecreative")).setTabCompleter(new ChatTab());
         FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Placement(), FakeCreative.getCore().getPlugin());
@@ -80,6 +81,49 @@ public class PluginData {
         FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Pickups(), FakeCreative.getCore().getPlugin());
         LegacyAPI.registerDepletion();
         LegacyAPI.registerInvulnerable();
+        List<String> aliases;
+        final Object commands = FakeCreative.getCore().getConfig("config.yml").get("Commands.Aliases");
+        if (commands instanceof List) {
+            aliases = FakeCreative.getCore().getConfig("config.yml").getStringList("Commands.Aliases");
+        } else if (commands instanceof String && !((String) commands).trim().isEmpty()) {
+            aliases = Collections.singletonList((String) commands);
+        } else {
+            aliases = Arrays.asList("gamemode", "gm");
+        }
+        SimpleCommandMap commandMap = null;
+        try {
+            commandMap = (SimpleCommandMap) ReflectionUtils.getFieldValue(FakeCreative.getCore().getPlugin().getServer(), "commandMap");
+        } catch (Exception e) {
+            aliases = Arrays.asList("gamemode", "gm");
+            ServerUtils.logWarn("Failed to get command map, registering default gamemode command...");
+            ServerUtils.sendDebugTrace(e);
+        }
+        for (final String alias : aliases) {
+            final PluginCommand command = FakeCreative.getCore().getPlugin().getCommand(alias) != null ? FakeCreative.getCore().getPlugin().getCommand(alias) : createPluginCommand(alias);
+            if (command != null) {
+                command.setExecutor(new ModeExecutor());
+                command.setTabCompleter(new ModeTab());
+                if (commandMap != null) {
+                    commandMap.register(FakeCreative.getCore().getPlugin().getName(), command);
+                }
+            }
+        }
+    }
+
+    /**
+     * Creates a new {@link PluginCommand} instance for the given name.
+     *
+     * @param name - the name of the command to create.
+     * @return The newly created {@link PluginCommand}.
+     */
+    private PluginCommand createPluginCommand(final String name) {
+        try {
+            return (PluginCommand) ReflectionUtils.getConstructor(PluginCommand.class, String.class, Plugin.class).invoke(name, FakeCreative.getCore().getPlugin());
+        } catch (Exception e) {
+            ServerUtils.logSevere("Failed to get create gamemode command, things may not function as expected..");
+            ServerUtils.sendSevereTrace(e);
+            return null;
+        }
     }
 
     /**

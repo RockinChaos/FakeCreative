@@ -71,9 +71,3 @@ commands:
     usage: |
       /fakecreative
       Example: /fakecreative
-  gamemode:
-    description: Switches the executing players gamemode.
-    aliases: [ gm ]
-    usage: |
-      /gamemode
-      Example: /gamemode

@@ -32,6 +32,12 @@ Permissions:
   Preferences-OP: false
   Commands-OP: false
 
+# These are command aliases that will be registered on server startup (requires restart to take effect).
+Commands:
+  Aliases:
+    - 'gamemode'
+    - 'gm'
+
 # These settings will take effect globally throughout the plugins' system.
 Settings:
   Creative-Blacklist:

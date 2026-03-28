@@ -56,8 +56,8 @@ public class FakeCreative extends JavaPlugin {
     @Override
     public void onEnable() {
         if (core.isEnabled()) {
-            PluginData.getData().registerEvents();
             PluginData.getData().registerClasses(false);
+            PluginData.getData().registerEvents();
             Creative.restart(true);
             SchedulerUtils.runAsync(() -> {
                 core.getUpdater();

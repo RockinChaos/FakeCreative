@@ -15,6 +15,7 @@ general:
 commands:
   default:
     unknownCommand: '&cUnbekannter Befehl. Benutze &l/fakecreative help&c für eine Liste von Befehlen.'
+    unknownGamemode: '&cUnbekannter Spielmodus, &6Gültige Spielmodi: &ccreative, survival, adventure, spectator.'
     noPermission: '&cDu hast keine Berechtigung, diesen Befehl zu verwenden!'
     configReload: '%prefix% &6Konfiguration(en) wurden neu geladen!'
     noPlayer: '&cDu musst ein Spieler sein um diesen Befehl auszuführen!'

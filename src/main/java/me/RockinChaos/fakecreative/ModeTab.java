@@ -26,11 +26,10 @@ import org.bukkit.util.StringUtil;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class ChatTab implements TabCompleter {
+public class ModeTab implements TabCompleter {
 
     /**
      * Called when a Player tries to TabComplete.
@@ -45,19 +44,12 @@ public class ChatTab implements TabCompleter {
     public List<String> onTabComplete(final @Nonnull CommandSender sender, final @Nonnull Command command, final @Nonnull String label, final @Nonnull String[] args) {
         final List<String> completions = new ArrayList<>();
         final List<String> commands = new ArrayList<>();
-        if (args.length == 3 && args[0].equalsIgnoreCase("purge") && PermissionsHandler.hasPermission(sender, "fakecreative.purge")) {
-            PlayerHandler.forOfflinePlayers(player -> commands.add(player.getName()));
-            PlayerHandler.forOnlinePlayers(player -> commands.add(player.getName()));
-        } else if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("help") && PermissionsHandler.hasPermission(sender, "fakecreative.use")) {
-                commands.addAll(Arrays.asList("2", "3", "4"));
-            } else if (((args[0].equalsIgnoreCase("creative") && PermissionsHandler.hasPermission(sender, "fakecreative.mode.creative"))
-                    || (args[0].equalsIgnoreCase("survival") && PermissionsHandler.hasPermission(sender, "fakecreative.mode.survival"))
-                    || (args[0].equalsIgnoreCase("adventure") && PermissionsHandler.hasPermission(sender, "fakecreative.mode.adventure"))
-                    || (args[0].equalsIgnoreCase("spectator") && PermissionsHandler.hasPermission(sender, "fakecreative.mode.spectator")))) {
+        if (args.length == 2) {
+            if (((args[0].equalsIgnoreCase("creative") || args[0].equals("cr") || args[0].equals("1")) && PermissionsHandler.hasPermission(sender, "fakecreative.mode.creative"))
+                    || ((args[0].equalsIgnoreCase("survival") || args[0].equals("su") || args[0].equals("0")) && PermissionsHandler.hasPermission(sender, "fakecreative.mode.survival"))
+                    || ((args[0].equalsIgnoreCase("adventure") || args[0].equals("ad") || args[0].equals("2")) && PermissionsHandler.hasPermission(sender, "fakecreative.mode.adventure"))
+                    || ((args[0].equalsIgnoreCase("spectator") || args[0].equals("sp") || args[0].equals("3")) && PermissionsHandler.hasPermission(sender, "fakecreative.mode.spectator"))) {
                 PlayerHandler.forOnlinePlayers(player -> commands.add(player.getName()));
-            } else if (args[0].equalsIgnoreCase("purge") && PermissionsHandler.hasPermission(sender, "fakecreative.purge")) {
-                commands.addAll(Arrays.asList("allow-flight", "speed-flight", "speed-break", "set-food", "set-health", "set-scale", "allow-hunger", "allow-burn", "unbreakable-items", "drops-block", "sword-block", "auto-restore", "set-god", "delay-god", "store-inventory", "destroy-pickups", "self-drops", "item-store", "hotbar", "playerstats"));
             }
         } else if (args.length == 1) {
             if (PermissionsHandler.hasPermission(sender, "fakecreative.mode.creative")) {
@@ -71,27 +63,6 @@ public class ChatTab implements TabCompleter {
             }
             if (PermissionsHandler.hasPermission(sender, "fakecreative.mode.spectator")) {
                 commands.add("spectator");
-            }
-            if (PermissionsHandler.hasPermission(sender, "fakecreative.use")) {
-                commands.add("help");
-            }
-            if (PermissionsHandler.hasPermission(sender, "fakecreative.permissions")) {
-                commands.add("permissions");
-            }
-            if (PermissionsHandler.hasPermission(sender, "fakecreative.purge")) {
-                commands.add("purge");
-            }
-            if (PermissionsHandler.hasPermission(sender, "fakecreative.dump")) {
-                commands.add("dump");
-            }
-            if (PermissionsHandler.hasPermission(sender, "fakecreative.reload")) {
-                commands.add("reload");
-            }
-            if (PermissionsHandler.hasPermission(sender, "fakecreative.updates")) {
-                commands.add("updates");
-            }
-            if (PermissionsHandler.hasPermission(sender, "fakecreative.upgrade")) {
-                commands.add("upgrade");
             }
         }
         StringUtil.copyPartialMatches(args[(args.length - 1)], commands, completions);

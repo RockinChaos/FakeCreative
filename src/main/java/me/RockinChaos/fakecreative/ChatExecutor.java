@@ -144,16 +144,36 @@ public class ChatExecutor implements CommandExecutor {
             }
         } else if (Execute.CREATIVE.accept(sender, args, 0)) {
             final Player argsPlayer = (args.length > 1 ? PlayerHandler.getPlayerString(args[1]) : null);
-            PlayerHandler.setCreative(sender, argsPlayer, false);
+            if (args.length > 1 && argsPlayer == null) {
+                final PlaceHolder placeHolders = new PlaceHolder().with(PlaceHolder.Holder.TARGET_PLAYER, args[1]);
+                FakeCreative.getCore().getLang().sendLangMessage("commands.default.noTarget", sender, placeHolders);
+            } else {
+                PlayerHandler.setCreative(sender, argsPlayer, false);
+            }
         } else if (Execute.SURVIVAL.accept(sender, args, 0)) {
             final Player argsPlayer = (args.length > 1 ? PlayerHandler.getPlayerString(args[1]) : null);
-            PlayerHandler.setMode(sender, argsPlayer, GameMode.SURVIVAL, false, false);
+            if (args.length > 1 && argsPlayer == null) {
+                final PlaceHolder placeHolders = new PlaceHolder().with(PlaceHolder.Holder.TARGET_PLAYER, args[1]);
+                FakeCreative.getCore().getLang().sendLangMessage("commands.default.noTarget", sender, placeHolders);
+            } else {
+                PlayerHandler.setMode(sender, argsPlayer, GameMode.SURVIVAL, false, false);
+            }
         } else if (Execute.ADVENTURE.accept(sender, args, 0)) {
             final Player argsPlayer = (args.length > 1 ? PlayerHandler.getPlayerString(args[1]) : null);
-            PlayerHandler.setMode(sender, argsPlayer, GameMode.ADVENTURE, false, false);
+            if (args.length > 1 && argsPlayer == null) {
+                final PlaceHolder placeHolders = new PlaceHolder().with(PlaceHolder.Holder.TARGET_PLAYER, args[1]);
+                FakeCreative.getCore().getLang().sendLangMessage("commands.default.noTarget", sender, placeHolders);
+            } else {
+                PlayerHandler.setMode(sender, argsPlayer, GameMode.ADVENTURE, false, false);
+            }
         } else if (Execute.SPECTATOR.accept(sender, args, 0)) {
             final Player argsPlayer = (args.length > 1 ? PlayerHandler.getPlayerString(args[1]) : null);
-            PlayerHandler.setMode(sender, argsPlayer, GameMode.SPECTATOR, false, false);
+            if (args.length > 1 && argsPlayer == null) {
+                final PlaceHolder placeHolders = new PlaceHolder().with(PlaceHolder.Holder.TARGET_PLAYER, args[1]);
+                FakeCreative.getCore().getLang().sendLangMessage("commands.default.noTarget", sender, placeHolders);
+            } else {
+                PlayerHandler.setMode(sender, argsPlayer, GameMode.SPECTATOR, false, false);
+            }
         } else if (Execute.UPDATE.accept(sender, args, 0)) {
             final PlaceHolder placeHolders = new PlaceHolder().with(Holder.PLAYER, sender.getName());
             FakeCreative.getCore().getLang().sendLangMessage("commands.updates.checkRequest", Bukkit.getServer().getConsoleSender(), placeHolders);
