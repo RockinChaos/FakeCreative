@@ -201,15 +201,13 @@ public class Blocks implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onInstantBreakHangingEntity(final HangingBreakByEntityEvent event) {
-        final Entity remover = event.getRemover();
+        if (!(event.getRemover() instanceof Player) || !Creative.isCreativeMode((Player) event.getRemover(), true)) return;
         final Entity entity = event.getEntity();
-        if (remover instanceof Player) {
-            final Player player = (Player) remover;
-            setBreakTime(player);
-            if (!Creative.get(player).getStats().blockDrops()) {
-                event.setCancelled(true);
-                entity.remove();
-            }
+        final Player player = (Player) event.getRemover();
+        setBreakTime(player);
+        if (!Creative.get(player).getStats().blockDrops()) {
+            event.setCancelled(true);
+            entity.remove();
         }
     }
 
