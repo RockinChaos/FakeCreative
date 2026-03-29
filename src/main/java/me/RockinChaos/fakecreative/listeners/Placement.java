@@ -33,6 +33,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.PistonExtensionMaterial;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -462,7 +463,12 @@ public class Placement implements Listener {
                     FakeCreative.getCore().getLang().sendLangMessage("general.protectionDenied", player, placeHolders);
                 } else if (entity instanceof ItemFrame && !playerStats.dropPlacements() && ((ItemFrame)entity).getItem().getType() != Material.AIR) {
                     if (!Creative.isCreativeMode(player, true) || Blocks.canBreak(player)) {
-                        entity.remove();
+                        final ItemFrame itemFrame = (ItemFrame) entity;
+                        if (itemFrame.getItem().getType() != Material.AIR) {
+                            itemFrame.setItem(new ItemStack(Material.AIR));
+                        } else {
+                            entity.remove();
+                        }
                     }
                     event.setCancelled(true);
                 }
@@ -471,8 +477,13 @@ public class Placement implements Listener {
             if (playerStats.protectPlacements()) {
                 event.setCancelled(true);
             } else if ((entity instanceof ItemFrame && !playerStats.dropPlacements())) {
+                final ItemFrame itemFrame = (ItemFrame) entity;
+                if (itemFrame.getItem().getType() != Material.AIR) {
+                    itemFrame.setItem(new ItemStack(Material.AIR));
+                } else {
+                    entity.remove();
+                }
                 event.setCancelled(true);
-                entity.remove();
             }
         }
     }

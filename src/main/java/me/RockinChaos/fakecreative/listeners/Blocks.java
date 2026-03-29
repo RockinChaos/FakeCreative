@@ -26,10 +26,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -125,7 +122,6 @@ public class Blocks implements Listener {
         }
     }
 
-
     /**
      * Allows the player to instantly break entities (armor stands, item frames, paintings, etc.) in creative mode.
      *
@@ -139,6 +135,21 @@ public class Blocks implements Listener {
         final ItemStack item = ItemHandler.getEntityItem(entity);
         if (item.getType() != Material.AIR && !item.getType().name().contains("EGG") && canBreak(player)) {
             event.setCancelled(true);
+            if (entity instanceof ItemFrame) {
+                final ItemFrame itemFrame = (ItemFrame) entity;
+                if (itemFrame.getItem().getType() != Material.AIR) {
+                    if (Creative.get(player).getStats().blockDrops()) {
+                        final Placement.OwnerData ownerData = Placement.getEntityOwner(entity);
+                        PlayerStats playerStats = null;
+                        if (ownerData != null && ownerData.state.equals(String.valueOf(entity.getEntityId()))) playerStats = Creative.getOfflineStats(ownerData.playerId);
+                        if (playerStats == null || playerStats.dropPlacements()) {
+                            entity.getWorld().dropItemNaturally(entity.getLocation().add(0, 0.2, 0), itemFrame.getItem());
+                        }
+                    }
+                    itemFrame.setItem(new ItemStack(Material.AIR));
+                    return;
+                }
+            }
             if (entity instanceof LivingEntity) {
                 List<ItemStack> drops = new ArrayList<>();
                 drops.add(item);
@@ -161,7 +172,7 @@ public class Blocks implements Listener {
                         final Placement.OwnerData ownerData = Placement.getEntityOwner(entity);
                         PlayerStats playerStats = null;
                         if (ownerData != null && ownerData.state.equals(String.valueOf(entity.getEntityId()))) playerStats = Creative.getOfflineStats(ownerData.playerId);
-                        if (playerStats == null || playerStats.dropPlacements()){
+                        if (playerStats == null || playerStats.dropPlacements()) {
                             for (ItemStack drop : deathEvent.getDrops()) {
                                 entity.getWorld().dropItemNaturally(entity.getLocation().add(0, 0.2, 0), drop);
                             }
