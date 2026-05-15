@@ -415,7 +415,7 @@ public class PlayerStats {
                 FakeCreative.getCore().getSQL().removeData(dataObject);
             }
             FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SET_SCALE, PlayerHandler.getPlayerID(player), heartScale));
-            if (ServerUtils.hasSpecificUpdate("1_9")) {
+            if (ServerUtils.hasUpdate("1_9")) {
                 Objects.requireNonNull(player.getAttribute((Attribute) CompatUtils.valueOf(Attribute.class, "GENERIC_MAX_HEALTH"))).setBaseValue(((heartScale) * 2));
             } else {
                 LegacyAPI.setMaxHealth(player, (heartScale) * 2);
@@ -607,7 +607,7 @@ public class PlayerStats {
                 FakeCreative.getCore().getSQL().removeData(dataObject);
             }
             FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SET_GOD, PlayerHandler.getPlayerID(player), god));
-            if (ServerUtils.hasSpecificUpdate("1_9")) {
+            if (ServerUtils.hasUpdate("1_9")) {
                 player.setInvulnerable(god);
             }
         }

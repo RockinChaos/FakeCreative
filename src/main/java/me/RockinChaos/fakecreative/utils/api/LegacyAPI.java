@@ -34,7 +34,7 @@ public class LegacyAPI {
      * Only called when the Server version is below 1.14.
      */
     public static void registerDepletion() {
-        if (ServerUtils.hasSpecificUpdate("1_14")) {
+        if (ServerUtils.hasUpdate("1_14")) {
             FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Depletion(), FakeCreative.getCore().getPlugin());
         } else {
             FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new me.RockinChaos.fakecreative.listeners.legacy.Legacy_Depletion(), FakeCreative.getCore().getPlugin());
@@ -46,7 +46,7 @@ public class LegacyAPI {
      * Only called when the Server version is below 1.9.
      */
     public static void registerInvulnerable() {
-        if (!ServerUtils.hasSpecificUpdate("1_9")) {
+        if (!ServerUtils.hasUpdate("1_9")) {
             FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new me.RockinChaos.fakecreative.listeners.legacy.Legacy_Invulnerable(), FakeCreative.getCore().getPlugin());
         }
     }

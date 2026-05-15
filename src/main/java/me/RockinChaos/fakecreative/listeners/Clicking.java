@@ -48,7 +48,7 @@ public class Clicking implements Listener {
      * Listeners are conditionally registered to avoid NoClassDefFoundError on older versions.
      */
     public Clicking() {
-        if (ServerUtils.hasSpecificUpdate("1_9") && StringUtils.isRegistered(Clicking_1_9.class.getSimpleName())) {
+        if (ServerUtils.hasUpdate("1_9") && StringUtils.isRegistered(Clicking_1_9.class.getSimpleName())) {
             FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Clicking_1_9(), FakeCreative.getCore().getPlugin());
         }
     }

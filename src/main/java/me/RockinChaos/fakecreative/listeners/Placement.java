@@ -48,16 +48,16 @@ public class Placement implements Listener {
      * Listeners are conditionally registered to avoid NoClassDefFoundError on older versions.
      */
     public Placement() {
-        if (ServerUtils.hasSpecificUpdate("1_20") && StringUtils.isRegistered(Placement_1_20.class.getSimpleName())) {
+        if (ServerUtils.hasUpdate("1_20") && StringUtils.isRegistered(Placement_1_20.class.getSimpleName())) {
             FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Placement_1_20(), FakeCreative.getCore().getPlugin());
         }
-        if (ServerUtils.hasSpecificUpdate("1_14") && StringUtils.isRegistered(Placement_1_14.class.getSimpleName())) {
+        if (ServerUtils.hasUpdate("1_14") && StringUtils.isRegistered(Placement_1_14.class.getSimpleName())) {
             FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Placement_1_14(), FakeCreative.getCore().getPlugin());
         }
-        if (ServerUtils.hasSpecificUpdate("1_13") && StringUtils.isRegistered(Placement_1_13.class.getSimpleName())) {
+        if (ServerUtils.hasUpdate("1_13") && StringUtils.isRegistered(Placement_1_13.class.getSimpleName())) {
             FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Placement_1_13(), FakeCreative.getCore().getPlugin());
         }
-        if (ServerUtils.hasPreciseUpdate("1_8_7") && StringUtils.isRegistered(Placement_1_8_7.class.getSimpleName())) {
+        if (ServerUtils.hasUpdate("1_8_7") && StringUtils.isRegistered(Placement_1_8_7.class.getSimpleName())) {
             FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Placement_1_8_7(), FakeCreative.getCore().getPlugin());
         }
     }
@@ -71,13 +71,13 @@ public class Placement implements Listener {
     private void onDebugBlockOwner(final PlayerInteractEvent event) {
         final Block block = event.getClickedBlock();
         final Player player = event.getPlayer();
-        final String hand = ServerUtils.hasSpecificUpdate("1_9") ? event.getHand() != null ? event.getHand().name() : "UNKNOWN" : "HAND";
+        final String hand = ServerUtils.hasUpdate("1_9") ? event.getHand() != null ? event.getHand().name() : "UNKNOWN" : "HAND";
         if (block != null && hand.equals("HAND") && FakeCreative.getCore().getData().debugEnabled() && player.isSneaking() && player.isOp()) {
             final OwnerData ownerData = getBlockOwner(block);
             if (ownerData != null && (ownerData.state.equals(block.getType().name()) || TransformBlocks.isTransformation(ownerData.state, block.getType().name()))) {
-                player.sendMessage(StringUtils.colorFormat("&a&l[FC_DEBUG]&a Got placed " + (ServerUtils.hasSpecificUpdate("1_14") && (block.getState()) instanceof TileState ? "Tile &l" : "Block &l") + block.getType() + "&a with owning player &l" + ownerData.playerId));
+                player.sendMessage(StringUtils.colorFormat("&a&l[FC_DEBUG]&a Got placed " + (ServerUtils.hasUpdate("1_14") && (block.getState()) instanceof TileState ? "Tile &l" : "Block &l") + block.getType() + "&a with owning player &l" + ownerData.playerId));
             } else {
-                player.sendMessage(StringUtils.colorFormat("&c&l[FC_DEBUG]&c Got placed " + (ServerUtils.hasSpecificUpdate("1_14") && (block.getState()) instanceof TileState ? "Tile &l" : "Block &l") + block.getType() + "&c with no owning player"));
+                player.sendMessage(StringUtils.colorFormat("&c&l[FC_DEBUG]&c Got placed " + (ServerUtils.hasUpdate("1_14") && (block.getState()) instanceof TileState ? "Tile &l" : "Block &l") + block.getType() + "&c with no owning player"));
             }
         }
     }
@@ -107,7 +107,7 @@ public class Placement implements Listener {
         final Player breaker = event.getPlayer();
         if (block.getType().name().equals("PISTON_HEAD") || block.getType().name().equals("PISTON_EXTENSION")) {
             Block baseBlock = null;
-            if (ServerUtils.hasSpecificUpdate("1_13")) {
+            if (ServerUtils.hasUpdate("1_13")) {
                 final BlockData blockData = block.getBlockData();
                 if (blockData instanceof PistonHead) {
                     final BlockFace facing = ((PistonHead) blockData).getFacing();
@@ -132,7 +132,7 @@ public class Placement implements Listener {
                     final PlayerStats playerStats = Creative.getOfflineStats(ownerData.playerId);
                     if (playerStats != null && !Objects.equals(ownerData.playerId, PlayerHandler.getPlayerID(breaker)) && playerStats.protectPlacements()) {
                         event.setCancelled(true);
-                        final PlaceHolder placeHolders = new PlaceHolder().with(PlaceHolder.Holder.ACTION, "BREAK").with(PlaceHolder.Holder.OBJECT, ServerUtils.hasSpecificUpdate("1_13") ? Material.PISTON.name() : "PISTON").with(PlaceHolder.Holder.OWNER, playerStats.getPlayerName());
+                        final PlaceHolder placeHolders = new PlaceHolder().with(PlaceHolder.Holder.ACTION, "BREAK").with(PlaceHolder.Holder.OBJECT, ServerUtils.hasUpdate("1_13") ? Material.PISTON.name() : "PISTON").with(PlaceHolder.Holder.OWNER, playerStats.getPlayerName());
                         FakeCreative.getCore().getLang().sendLangMessage("general.protectionDenied", breaker, placeHolders);
                         return;
                     }
@@ -285,7 +285,7 @@ public class Placement implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEndermanDeath(final EntityDeathEvent event) {
-        if (ServerUtils.hasSpecificUpdate("1_14") && event.getEntity() instanceof Enderman) {
+        if (ServerUtils.hasUpdate("1_14") && event.getEntity() instanceof Enderman) {
             final Enderman enderman = (Enderman) event.getEntity();
             final OwnerData ownerData = getEntityOwner(enderman);
             if (ownerData != null) {
@@ -809,7 +809,7 @@ public class Placement implements Listener {
      * @param blockState - The material name of the block
      */
     private void setBlockOwner(final Block block, final String playerId, final String blockState) {
-        if (ServerUtils.hasSpecificUpdate("1_17")) {
+        if (ServerUtils.hasUpdate("1_17")) {
             final BlockState state = block.getState();
             if (state instanceof TileState) {
                 final PersistentDataContainer container = ((TileState) state).getPersistentDataContainer();
@@ -837,7 +837,7 @@ public class Placement implements Listener {
      * @return OwnerData containing playerId and material, or null if not owned
      */
     private static OwnerData getBlockOwner(final Block block) {
-        if (ServerUtils.hasSpecificUpdate("1_17")) {
+        if (ServerUtils.hasUpdate("1_17")) {
             final BlockState state = block.getState();
             if (block.getType() != Material.MOVING_PISTON && state instanceof TileState) {
                 final PersistentDataContainer container = ((TileState) state).getPersistentDataContainer();
@@ -877,7 +877,7 @@ public class Placement implements Listener {
      * @param block - The block to remove ownership from
      */
     private static void removeBlockOwner(final Block block) {
-        if (ServerUtils.hasSpecificUpdate("1_17")) {
+        if (ServerUtils.hasUpdate("1_17")) {
             final BlockState state = block.getState();
             if (state instanceof TileState) {
                 final PersistentDataContainer container = ((TileState) state).getPersistentDataContainer();
@@ -901,7 +901,7 @@ public class Placement implements Listener {
      * @param entityState - The entity ID as a string
      */
     private static void setEntityOwner(final Entity entity, final String playerId, final String entityState) {
-        if (ServerUtils.hasSpecificUpdate("1_14")) {
+        if (ServerUtils.hasUpdate("1_14")) {
             final PersistentDataContainer container = entity.getPersistentDataContainer();
             container.set(Placement_1_14.ownerKey, PersistentDataType.STRING, playerId);
             container.set(Placement_1_14.stateKey, PersistentDataType.STRING, entityState);
@@ -919,7 +919,7 @@ public class Placement implements Listener {
      * @return OwnerData containing playerId and entity ID, or null if not owned
      */
     public static OwnerData getEntityOwner(final Entity entity) {
-        if (ServerUtils.hasSpecificUpdate("1_14")) {
+        if (ServerUtils.hasUpdate("1_14")) {
             final PersistentDataContainer container = entity.getPersistentDataContainer();
             final String id = container.get(Placement_1_14.ownerKey, PersistentDataType.STRING);
             final String state = container.get(Placement_1_14.stateKey, PersistentDataType.STRING);
@@ -946,7 +946,7 @@ public class Placement implements Listener {
      * @param entity - The entity to remove ownership from
      */
     private void removeEntityOwner(final Entity entity) {
-        if (ServerUtils.hasSpecificUpdate("1_14")) {
+        if (ServerUtils.hasUpdate("1_14")) {
             final PersistentDataContainer container = entity.getPersistentDataContainer();
             container.remove(Placement_1_14.ownerKey);
             container.remove(Placement_1_14.stateKey);
@@ -996,7 +996,7 @@ public class Placement implements Listener {
         final String x = String.valueOf(block.getX()).replace("-", "m");
         final String y = String.valueOf(block.getY()).replace("-", "m");
         final String z = String.valueOf(block.getZ()).replace("-", "m");
-        return (ServerUtils.hasSpecificUpdate("1_14") ? "fc_" : block.getWorld().getUID() + "_") + x + "_" + y + "_" + z;
+        return (ServerUtils.hasUpdate("1_14") ? "fc_" : block.getWorld().getUID() + "_") + x + "_" + y + "_" + z;
     }
 
     /**

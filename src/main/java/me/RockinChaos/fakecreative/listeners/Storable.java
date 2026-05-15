@@ -2,7 +2,6 @@ package me.RockinChaos.fakecreative.listeners;
 
 import me.RockinChaos.core.handlers.PlayerHandler;
 import me.RockinChaos.core.utils.CompatUtils;
-import me.RockinChaos.core.utils.StringUtils;
 import me.RockinChaos.fakecreative.modes.creative.Creative;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

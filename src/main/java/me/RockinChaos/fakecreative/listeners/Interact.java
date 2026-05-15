@@ -50,7 +50,7 @@ public class Interact implements Listener {
      * Listeners are conditionally registered to avoid NoClassDefFoundError on older versions.
      */
     public Interact() {
-        if (ServerUtils.hasPreciseUpdate("1_21_4") && StringUtils.isRegistered(Interact_1_21_4.class.getSimpleName())) {
+        if (ServerUtils.hasUpdate("1_21_4") && StringUtils.isRegistered(Interact_1_21_4.class.getSimpleName())) {
             FakeCreative.getCore().getPlugin().getServer().getPluginManager().registerEvents(new Interact_1_21_4(), FakeCreative.getCore().getPlugin());
         }
         if (StringUtils.isRegistered(InfiniteArrowListener.class.getSimpleName())) {
@@ -71,7 +71,7 @@ public class Interact implements Listener {
         if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) && item != null && item.getType() != Material.AIR && Creative.isCreativeMode(player, true)) {
             if (!Creative.isBlackListed(item)) {
                 SchedulerUtils.run(() -> {
-                    if (ServerUtils.hasSpecificUpdate("1_9") && event.getHand() != null) {
+                    if (ServerUtils.hasUpdate("1_9") && event.getHand() != null) {
                         if (event.getHand().equals(EquipmentSlot.HAND)) {
                             if (player.getInventory().getHeldItemSlot() == slot) {
                                 PlayerHandler.setMainHandItem(player, item);
@@ -107,7 +107,7 @@ public class Interact implements Listener {
         if (event.getRightClicked() instanceof ItemFrame && Creative.isCreativeMode(event.getPlayer(), true)) {
             try {
                 ItemStack item;
-                if (ServerUtils.hasSpecificUpdate("1_9")) {
+                if (ServerUtils.hasUpdate("1_9")) {
                     item = PlayerHandler.getPerfectHandItem(event.getPlayer(), event.getHand().toString());
                 } else {
                     item = PlayerHandler.getPerfectHandItem(event.getPlayer(), "");
@@ -115,7 +115,7 @@ public class Interact implements Listener {
                 final ItemStack itemStack = item.clone();
                 if (itemStack.getType() != Material.AIR) {
                     SchedulerUtils.run(() -> {
-                        if (ServerUtils.hasSpecificUpdate("1_9")) {
+                        if (ServerUtils.hasUpdate("1_9")) {
                             if (event.getHand().equals(EquipmentSlot.HAND)) {
                                 if (player.getInventory().getHeldItemSlot() == slot) {
                                     PlayerHandler.setMainHandItem(player, itemStack);
@@ -152,7 +152,7 @@ public class Interact implements Listener {
         final int slot = player.getInventory().getHeldItemSlot();
         if (Creative.isCreativeMode(player, true)) {
             SchedulerUtils.run(() -> {
-                if (ServerUtils.hasSpecificUpdate("1_9")) {
+                if (ServerUtils.hasUpdate("1_9")) {
                     if (event.getHand().equals(EquipmentSlot.HAND)) {
                         if (player.getInventory().getHeldItemSlot() == slot) {
                             PlayerHandler.setMainHandItem(player, item);
@@ -183,16 +183,16 @@ public class Interact implements Listener {
         final Player player = event.getPlayer();
         if (!Creative.isCreativeMode(player, true)) return;
         final int slot = player.getInventory().getHeldItemSlot();
-        final ItemStack originalItem = (!ServerUtils.hasSpecificUpdate("1_9") || event.getHand() == EquipmentSlot.HAND) ? PlayerHandler.getMainHandItem(player) : PlayerHandler.getOffHandItem(player);
+        final ItemStack originalItem = (!ServerUtils.hasUpdate("1_9") || event.getHand() == EquipmentSlot.HAND) ? PlayerHandler.getMainHandItem(player) : PlayerHandler.getOffHandItem(player);
         if (originalItem.getType() == Material.AIR) return;
         final ItemStack item = originalItem.clone();
         final int originalCount = item.getAmount();
         event.setItemStack(new ItemStack(Material.AIR));
         SchedulerUtils.run(() -> {
-            final ItemStack currentItem = (!ServerUtils.hasSpecificUpdate("1_9") || event.getHand() == EquipmentSlot.HAND) ? PlayerHandler.getMainHandItem(player) : PlayerHandler.getOffHandItem(player);
+            final ItemStack currentItem = (!ServerUtils.hasUpdate("1_9") || event.getHand() == EquipmentSlot.HAND) ? PlayerHandler.getMainHandItem(player) : PlayerHandler.getOffHandItem(player);
             final int currentCount = currentItem.getType() != Material.AIR ? currentItem.getAmount() : 0;
             if (currentCount != originalCount) {
-                if (ServerUtils.hasSpecificUpdate("1_9")) {
+                if (ServerUtils.hasUpdate("1_9")) {
                     if (event.getHand().equals(EquipmentSlot.HAND)) {
                         if (player.getInventory().getHeldItemSlot() == slot) {
                             PlayerHandler.setMainHandItem(player, item);
@@ -223,16 +223,16 @@ public class Interact implements Listener {
         final Player player = event.getPlayer();
         if (!Creative.isCreativeMode(player, true)) return;
         final int slot = player.getInventory().getHeldItemSlot();
-        final ItemStack originalItem = (!ServerUtils.hasSpecificUpdate("1_9") || event.getHand() == EquipmentSlot.HAND) ? PlayerHandler.getMainHandItem(player) : PlayerHandler.getOffHandItem(player);
+        final ItemStack originalItem = (!ServerUtils.hasUpdate("1_9") || event.getHand() == EquipmentSlot.HAND) ? PlayerHandler.getMainHandItem(player) : PlayerHandler.getOffHandItem(player);
         if (originalItem.getType() == Material.AIR) return;
         final ItemStack item = originalItem.clone();
         final int originalCount = item.getAmount();
         event.setItemStack(new ItemStack(Material.AIR));
         SchedulerUtils.run(() -> {
-            final ItemStack currentItem = (!ServerUtils.hasSpecificUpdate("1_9") || event.getHand() == EquipmentSlot.HAND) ? PlayerHandler.getMainHandItem(player) : PlayerHandler.getOffHandItem(player);
+            final ItemStack currentItem = (!ServerUtils.hasUpdate("1_9") || event.getHand() == EquipmentSlot.HAND) ? PlayerHandler.getMainHandItem(player) : PlayerHandler.getOffHandItem(player);
             final int currentCount = currentItem.getType() != Material.AIR ? currentItem.getAmount() : 0;
             if (currentCount != originalCount) {
-                if (ServerUtils.hasSpecificUpdate("1_9")) {
+                if (ServerUtils.hasUpdate("1_9")) {
                     if (event.getHand().equals(EquipmentSlot.HAND)) {
                         if (player.getInventory().getHeldItemSlot() == slot) {
                             PlayerHandler.setMainHandItem(player, item);
@@ -275,7 +275,7 @@ public class Interact implements Listener {
             final ItemStack currentItem = isMainHand ? PlayerHandler.getMainHandItem(player) : PlayerHandler.getOffHandItem(player);
             final int currentCount = currentItem.getType() != Material.AIR ? currentItem.getAmount() : 0;
             if (currentCount != originalCount) {
-                if (ServerUtils.hasSpecificUpdate("1_9")) {
+                if (ServerUtils.hasUpdate("1_9")) {
                     if (isMainHand) {
                         if (player.getInventory().getHeldItemSlot() == slot) {
                             PlayerHandler.setMainHandItem(player, item);
@@ -303,7 +303,7 @@ public class Interact implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onPickItem(final PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getItem() == null || ServerUtils.hasPreciseUpdate("1_21_4") || !Creative.isCreativeMode(event.getPlayer(), true) || !Creative.Tabs.PICK_ITEM.isTab(event.getItem())) return;
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getItem() == null || ServerUtils.hasUpdate("1_21_4") || !Creative.isCreativeMode(event.getPlayer(), true) || !Creative.Tabs.PICK_ITEM.isTab(event.getItem())) return;
         final Player player = event.getPlayer();
         final Block block = event.getClickedBlock();
         if (block == null || block.getType() == Material.AIR) return;
@@ -321,7 +321,7 @@ public class Interact implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private void onPickEntity(final PlayerInteractEntityEvent event) {
-        if (event.getRightClicked() instanceof Player || ServerUtils.hasPreciseUpdate("1_21_4") || !Creative.isCreativeMode(event.getPlayer(), true) || !Creative.Tabs.PICK_ITEM.isTab(PlayerHandler.getMainHandItem(event.getPlayer()))) return;
+        if (event.getRightClicked() instanceof Player || ServerUtils.hasUpdate("1_21_4") || !Creative.isCreativeMode(event.getPlayer(), true) || !Creative.Tabs.PICK_ITEM.isTab(PlayerHandler.getMainHandItem(event.getPlayer()))) return;
         final Player player = event.getPlayer();
         final Entity entity = event.getRightClicked();
         final ItemStack item = ItemHandler.getEntityItem(entity);
@@ -518,7 +518,7 @@ public class Interact implements Listener {
             final ItemStack mainHandItem = event.getAction() == Action.RIGHT_CLICK_AIR ? PlayerHandler.getMainHandItem(player) : PlayerHandler.getOffHandItem(player);
             final ItemStack offHandItem = event.getAction() == Action.RIGHT_CLICK_AIR ? PlayerHandler.getOffHandItem(player) : PlayerHandler.getMainHandItem(player);
             final boolean isBow = offHandItem.getType() == Material.BOW || mainHandItem.getType() == Material.BOW;
-            final boolean isCrossbow = !isBow && ServerUtils.hasSpecificUpdate("1_14") && (offHandItem.getType().name().equals("CROSSBOW") || mainHandItem.getType().name().equals("CROSSBOW"));
+            final boolean isCrossbow = !isBow && ServerUtils.hasUpdate("1_14") && (offHandItem.getType().name().equals("CROSSBOW") || mainHandItem.getType().name().equals("CROSSBOW"));
             if (!isBow && !isCrossbow) return;
             final String playerId = PlayerHandler.getPlayerID(player);
             final boolean isActive = active.containsKey(playerId);
@@ -563,7 +563,7 @@ public class Interact implements Listener {
             final Integer task = crossbowTasks.remove(playerId);
             if (task != null) SchedulerUtils.cancelTask(task);
             if (data != null) {
-                if (ServerUtils.hasSpecificUpdate("1_12") && event.getProjectile() instanceof Arrow) {
+                if (ServerUtils.hasUpdate("1_12") && event.getProjectile() instanceof Arrow) {
                     ((Arrow) event.getProjectile()).setPickupStatus(Arrow.PickupStatus.CREATIVE_ONLY);
                 }
                 this.restore(player, data);

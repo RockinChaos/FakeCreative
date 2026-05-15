@@ -154,7 +154,7 @@ public class Blocks implements Listener {
                 List<ItemStack> drops = new ArrayList<>();
                 drops.add(item);
                 EntityDeathEvent deathEvent = null;
-                if (ServerUtils.hasSpecificUpdate("1_20")) {
+                if (ServerUtils.hasUpdate("1_20")) {
                     deathEvent = new EntityDeathEvent((LivingEntity) entity, event.getDamageSource(), drops, 0);
                 } else {
                     try {

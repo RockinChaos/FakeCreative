@@ -107,7 +107,7 @@ public class Creative {
             final double health = argsPlayer.getHealth();
             double maxHealth = 20;
             try {
-                maxHealth = (ServerUtils.hasSpecificUpdate("1_9") ? Objects.requireNonNull(argsPlayer.getAttribute((Attribute)CompatUtils.valueOf(Attribute.class, "GENERIC_MAX_HEALTH"))).getBaseValue() : (double) ReflectionUtils.getMethod(argsPlayer.getClass(), "getMaxHealth").invoke(argsPlayer));
+                maxHealth = (ServerUtils.hasUpdate("1_9") ? Objects.requireNonNull(argsPlayer.getAttribute((Attribute)CompatUtils.valueOf(Attribute.class, "GENERIC_MAX_HEALTH"))).getBaseValue() : (double) ReflectionUtils.getMethod(argsPlayer.getClass(), "getMaxHealth").invoke(argsPlayer));
             } catch (Exception ignored) {}
             if (!refresh && !restore) {
                 creativePlayers.add(new PlayerObject(PlayerHandler.getPlayerID(argsPlayer), (Math.min(maxHealth * 2, health)), maxHealth, argsPlayer.getFoodLevel(), argsPlayer.getFireTicks()));
@@ -115,7 +115,7 @@ public class Creative {
             get(argsPlayer).setInventory64(Mode.getInventory64(argsPlayer));
             final PlayerObject playerObject = get(argsPlayer);
             Mode.setFlight(argsPlayer, true);
-            if (ServerUtils.hasSpecificUpdate("1_9")) {
+            if (ServerUtils.hasUpdate("1_9")) {
                 argsPlayer.setInvulnerable(playerObject.getStats().god());
             }
             if (!refresh) {
@@ -129,7 +129,7 @@ public class Creative {
             if (!refresh) {
                 final double heartScale = playerObject.getStats().heartScale();
                 final double clampedScale = Math.min(Math.max(heartScale, 1.0), 1024.0);
-                if (ServerUtils.hasSpecificUpdate("1_9")) {
+                if (ServerUtils.hasUpdate("1_9")) {
                     Objects.requireNonNull(argsPlayer.getAttribute((Attribute)CompatUtils.valueOf(Attribute.class, "GENERIC_MAX_HEALTH"))).setBaseValue(clampedScale * 2);
                 } else {
                     LegacyAPI.setMaxHealth(argsPlayer, clampedScale * 2);
@@ -289,11 +289,11 @@ public class Creative {
 
     @SuppressWarnings("unused")
     public enum Tabs {
-        PICK_ITEM(ServerUtils.hasPreciseUpdate("1_21_4") ? ItemHandler.getItem("BARRIER", 1, false, true, "&d&1&c&2&a") : ItemHandler.getItem("STICK", 1, true, true, "&d&1&c&2&a" + FakeCreative.getCore().getLang().getString("tabs.pickItem.name"), FakeCreative.getCore().getLang().getStringList("tabs.pickItem.itemLore").toArray(new String[0]))),
-        PICK(ServerUtils.hasPreciseUpdate("1_21_4") ? ItemHandler.getItem("BARRIER", 1, false, true, "&a&1&c&2&d") : ItemHandler.getItem("STICK", 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.pickItem.name"), FakeCreative.getCore().getLang().getStringList("tabs.pickItem.lore").toArray(new String[0]))),
+        PICK_ITEM(ServerUtils.hasUpdate("1_21_4") ? ItemHandler.getItem("BARRIER", 1, false, true, "&d&1&c&2&a") : ItemHandler.getItem("STICK", 1, true, true, "&d&1&c&2&a" + FakeCreative.getCore().getLang().getString("tabs.pickItem.name"), FakeCreative.getCore().getLang().getStringList("tabs.pickItem.itemLore").toArray(new String[0]))),
+        PICK(ServerUtils.hasUpdate("1_21_4") ? ItemHandler.getItem("BARRIER", 1, false, true, "&a&1&c&2&d") : ItemHandler.getItem("STICK", 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.pickItem.name"), FakeCreative.getCore().getLang().getStringList("tabs.pickItem.lore").toArray(new String[0]))),
         CREATIVE(ItemHandler.getItem("APPLE", 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.creative.name"), FakeCreative.getCore().getLang().getStringList("tabs.creative.lore").toArray(new String[0]))),
         HOTBARS(ItemHandler.getItem("PAPER", 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.hotbars.name"), FakeCreative.getCore().getLang().getStringList("tabs.hotbars.lore").toArray(new String[0]))),
-        PREFERENCES(ItemHandler.getItem((ServerUtils.hasSpecificUpdate("1_13") ? "PLAYER_HEAD" : "SKULL_ITEM:3"), 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.preferences.name"), FakeCreative.getCore().getLang().getStringList("tabs.preferences.lore").toArray(new String[0]))),
+        PREFERENCES(ItemHandler.getItem((ServerUtils.hasUpdate("1_13") ? "PLAYER_HEAD" : "SKULL_ITEM:3"), 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.preferences.name"), FakeCreative.getCore().getLang().getStringList("tabs.preferences.lore").toArray(new String[0]))),
         DESTROY(ItemHandler.getItem("LAVA_BUCKET", 1, false, true, "&a&1&c&2&d" + FakeCreative.getCore().getLang().getString("tabs.destroy.name"), FakeCreative.getCore().getLang().getStringList("tabs.destroy.lore").toArray(new String[0])));
 
         private final ItemStack itemStack;

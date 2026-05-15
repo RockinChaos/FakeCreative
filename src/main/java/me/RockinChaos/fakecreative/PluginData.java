@@ -171,7 +171,7 @@ public class PluginData {
             if (!silent) {
                 if (StringUtils.containsIgnoreCase(compileVersion, "spigot_version")) {
                     ServerUtils.logInfo("Running a developer version ... skipping NMS check.");
-                } else if (!compileVersion.equalsIgnoreCase(serverVersion) && ServerUtils.hasPreciseUpdate(compileVersion)) {
+                } else if (!compileVersion.equalsIgnoreCase(serverVersion) && ServerUtils.hasUpdate(compileVersion)) {
                     ServerUtils.logSevere("Detected a unsupported version of Minecraft, expected: " + compileVersion.replace("_", ".") + " or older!");
                     ServerUtils.logSevere("Attempting to run in NMS compatibility mode...");
                     ServerUtils.logSevere("Things may not work as expected, please check for plugin updates.");

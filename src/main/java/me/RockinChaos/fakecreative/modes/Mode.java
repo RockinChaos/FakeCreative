@@ -46,7 +46,7 @@ public class Mode {
             final PlayerObject playerObject = Creative.get(argsPlayer);
             final double safeHealth = Math.min(playerObject.getHealth(), Math.min(playerObject.getMaxHealth() * 2, 2048.0));
             setFlight(argsPlayer, false);
-            if (ServerUtils.hasSpecificUpdate("1_9")) {
+            if (ServerUtils.hasUpdate("1_9")) {
                 Objects.requireNonNull(argsPlayer.getAttribute((Attribute)CompatUtils.valueOf(Attribute.class, "GENERIC_MAX_HEALTH"))).setBaseValue(playerObject.getMaxHealth());
             } else {
                 LegacyAPI.setMaxHealth(argsPlayer, playerObject.getMaxHealth());
@@ -153,13 +153,13 @@ public class Mode {
         if (!noDelay) {
             SchedulerUtils.runLater((Creative.get(player).getStats().godDelay()) * 20L, () -> {
                 if (!Creative.isCreativeMode(player, true)) {
-                    if (ServerUtils.hasSpecificUpdate("1_9")) {
+                    if (ServerUtils.hasUpdate("1_9")) {
                         player.setInvulnerable(false);
                     }
                 }
             });
         } else {
-            if (ServerUtils.hasSpecificUpdate("1_9")) {
+            if (ServerUtils.hasUpdate("1_9")) {
                 player.setInvulnerable(false);
             }
         }

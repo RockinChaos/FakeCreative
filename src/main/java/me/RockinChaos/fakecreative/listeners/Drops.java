@@ -1,7 +1,5 @@
 package me.RockinChaos.fakecreative.listeners;
 
-import me.RockinChaos.core.handlers.PlayerHandler;
-import me.RockinChaos.core.utils.api.LegacyAPI;
 import me.RockinChaos.fakecreative.modes.creative.Creative;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
