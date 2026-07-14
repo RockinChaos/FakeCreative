@@ -38,12 +38,15 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.function.Consumer;
 
 public class Crafting implements Listener {
 
     private final HashMap<String, Long> closeDupe = new HashMap<>();
+    private final HashSet<String> pendingReturn = new HashSet<>();
 
     /**
      * Prevents players from auto crafting with custom crafting items in their crafting slots.
@@ -230,10 +233,14 @@ public class Crafting implements Listener {
                     if (!slotZero || Tabs.isItem(inventory[0])) {
                         this.returnCrafting(player, inventory, 1L, !slotZero);
                     } else {
-                        SchedulerUtils.runLater(1L, () -> {
-                            CompatUtils.getTopInventory(player).setItem(0, new ItemStack(Material.AIR));
-                            PlayerHandler.updateInventory(player, new ItemStack(Material.AIR), 1L);
-                        });
+                        if (Arrays.stream(inventory).skip(1).limit(4).anyMatch(item -> item != null && Tabs.isItem(item))) {
+                            this.returnCrafting(player, inventory, 1L, true);
+                        } else {
+                            SchedulerUtils.runLater(1L, () -> {
+                                CompatUtils.getTopInventory(player).setItem(0, new ItemStack(Material.AIR));
+                                PlayerHandler.updateInventory(player, new ItemStack(Material.AIR), 1L);
+                            });
+                        }
                     }
                 }
             }
@@ -265,10 +272,15 @@ public class Crafting implements Listener {
      * @param delay    - the delay to wait before returning the item.
      */
     private void returnCrafting(final Player player, final ItemStack[] contents, final long delay, final boolean slotZero) {
+        final String playerID = PlayerHandler.getPlayerID(player);
+        if (pendingReturn.contains(playerID)) return;
+        pendingReturn.add(playerID);
         SchedulerUtils.runLater(delay, () -> {
             if (!player.isOnline()) {
+                pendingReturn.remove(playerID);
                 return;
             } else if (!PlayerHandler.isCraftingInv(player)) {
+                pendingReturn.remove(playerID);
                 this.returnCrafting(player, contents, 10L, slotZero);
                 return;
             }
@@ -284,20 +296,23 @@ public class Crafting implements Listener {
                         });
                     }
                 }
+                pendingReturn.remove(playerID);
             } else if (contents != null) {
-                if (contents[0] != null && Tabs.isItem(contents[0])) {
-                    CompatUtils.getTopInventory(player).setItem(0, contents[0]);
-                    for (int i = 4; i >= 1; i--) {
-                        if (contents[i] != null && Tabs.isItem(contents[i])) {
-                            PlayerHandler.updateInventory(player, contents[i].clone(), 0L);
-                        }
+                for (int i = 4; i >= 1; i--) {
+                    if (contents[i] != null && Tabs.isItem(contents[i])) {
+                        CompatUtils.getTopInventory(player).setItem(i, contents[i]);
+                        PlayerHandler.updateInventory(player, contents[i].clone(), 0L);
                     }
-                    SchedulerUtils.runLater(1L, () -> {
-                        if (PlayerHandler.isCraftingInv(player)) {
-                            PlayerHandler.updateInventory(player, contents[0].clone(), 0L);
-                        }
-                    });
                 }
+                SchedulerUtils.runLater(1L, () -> {
+                    if (PlayerHandler.isCraftingInv(player) && contents[0] != null && Tabs.isItem(contents[0])) {
+                        CompatUtils.getTopInventory(player).setItem(0, contents[0]);
+                        PlayerHandler.updateInventory(player, contents[0].clone(), 0L);
+                    }
+                    pendingReturn.remove(playerID);
+                });
+            } else {
+                pendingReturn.remove(playerID);
             }
         });
     }
