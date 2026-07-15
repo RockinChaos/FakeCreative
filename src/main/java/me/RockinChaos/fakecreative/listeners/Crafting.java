@@ -32,6 +32,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -141,6 +142,30 @@ public class Crafting implements Listener {
                     Tabs.setTabs(player);
                 }
             });
+        }
+    }
+
+    /**
+     * Prevents the player from dropping crafting tab items on death.
+     *
+     * @param event - PlayerDeathEvent
+     */
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    private void onDeathDrops(PlayerDeathEvent event) {
+        final Player player = event.getEntity();
+        if (Creative.isCreativeMode(player, true)) {
+            event.getDrops().removeIf(Tabs::isItem);
+            for (int i = 0; i <= 4; i++) {
+                if (Tabs.isItem(CompatUtils.getTopInventory(player).getItem(i))) {
+                    CompatUtils.getTopInventory(player).setItem(i, new ItemStack(Material.AIR));
+                }
+            }
+            final ItemStack[] inventory = player.getInventory().getContents();
+            for (int i = 0; i < inventory.length; i++) {
+                if (Tabs.isItem(inventory[i])) {
+                    player.getInventory().setItem(i, new ItemStack(Material.AIR));
+                }
+            }
         }
     }
 
