@@ -34,7 +34,7 @@ public class Targeting implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onEntityTarget(final EntityTargetEvent event) {
-        if ((event.getTarget() instanceof Player) && !(event.getEntity() instanceof Player) && Creative.isCreativeMode((Player) event.getTarget(), true)) {
+        if ((event.getTarget() instanceof Player) && !(event.getEntity() instanceof Player) && Creative.isCreativeMode((Player) event.getTarget(), true) && !Creative.get((Player) event.getTarget()).getStats().mobTargeting()) {
             event.setCancelled(true);
         }
     }
@@ -46,7 +46,7 @@ public class Targeting implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     private void onEntityTargetLiving(final EntityTargetLivingEntityEvent event) {
-        if ((event.getTarget() instanceof Player) && !(event.getEntity() instanceof Player) && Creative.isCreativeMode((Player) event.getTarget(), true)) {
+        if ((event.getTarget() instanceof Player) && !(event.getEntity() instanceof Player) && Creative.isCreativeMode((Player) event.getTarget(), true) && !Creative.get((Player) event.getTarget()).getStats().mobTargeting()) {
             event.setCancelled(true);
         }
     }

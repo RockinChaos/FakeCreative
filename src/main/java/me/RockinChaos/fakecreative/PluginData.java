@@ -140,7 +140,7 @@ public class PluginData {
         FakeCreative.getCore().getData().refresh();
         FakeCreative.getCore().getData().setStarted(false);
         FakeCreative.getCore().getData().setPluginPrefix("&7[&6FakeCreative&7]");
-        FakeCreative.getCore().getData().setConfig(ImmutableMap.of("config.yml", 1, "lang.yml", 2));
+        FakeCreative.getCore().getData().setConfig(ImmutableMap.of("config.yml", 1, "lang.yml", 3));
         FakeCreative.getCore().getData().setLanguages(Arrays.asList("English", "German", "Spanish"));
         FakeCreative.getCore().getData().setPermissions(Arrays.asList("FakeCreative.use", "FakeCreative.dump", "FakeCreative.reload", "FakeCreative.updates", "FakeCreative.upgrade", "FakeCreative.permissions", "FakeCreative.purge", "FakeCreative.preferences",
                 "FakeCreative.mode.creative", "FakeCreative.mode.survival", "FakeCreative.mode.adventure", "FakeCreative.mode.spectator"));
@@ -211,7 +211,7 @@ public class PluginData {
             if (!selectTable.isEmpty()) {
                 for (final HashMap<String, String> sl1 : selectTable) {
                     DataObject dataObject = null;
-                    if (tableEnum.equals(Table.ALLOW_FLIGHT) || tableEnum.equals(Table.ALLOW_HUNGER) || tableEnum.equals(Table.ALLOW_BURN) || tableEnum.equals(Table.UNBREAKABLE_ITEMS) || tableEnum.equals(Table.DROPS_BLOCK)
+                    if (tableEnum.equals(Table.ALLOW_FLIGHT) || tableEnum.equals(Table.ALLOW_HUNGER) || tableEnum.equals(Table.ALLOW_BURN) || tableEnum.equals(Table.INSTANT_PORTAL) || tableEnum.equals(Table.MOB_TARGETING) || tableEnum.equals(Table.UNBREAKABLE_ITEMS) || tableEnum.equals(Table.DROPS_BLOCK)
                             || tableEnum.equals(Table.SWORD_BLOCK) || tableEnum.equals(Table.AUTO_RESTORE) || tableEnum.equals(Table.SET_GOD) || tableEnum.equals(Table.STORE_INVENTORY) || tableEnum.equals(Table.DESTROY_PICKUPS) || tableEnum.equals(Table.SELF_DROPS) || tableEnum.equals(Table.ITEM_STORE) || tableEnum.equals(Table.PROTECT_PLACEMENTS) || tableEnum.equals(Table.DROP_PLACEMENTS)) {
                         dataObject = new DataObject(tableEnum, sl1.get("Player_UUID"), Boolean.parseBoolean(sl1.get("Value")));
                     } else if (tableEnum.equals(Table.SPEED_FLIGHT) || tableEnum.equals(Table.SPEED_BREAK) || tableEnum.equals(Table.SET_SCALE)) {
@@ -260,6 +260,7 @@ public class PluginData {
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "set_scale (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "allow_hunger (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "allow_burn (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "mob_targeting (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "unbreakable_items (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "drops_block (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "sword_block (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");

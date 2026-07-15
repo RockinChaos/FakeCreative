@@ -44,6 +44,7 @@ public class PlayerStats {
     private double heartScale = FakeCreative.getCore().getConfig("config.yml").getDouble("Preferences.Heart-Scale");
     private boolean allowHunger = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Allow-Hunger");
     private boolean allowBurn = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Allow-Burn");
+    private boolean mobTargeting = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Mob-Targeting");
     private boolean unbreakableItems = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Unbreakable-Items");
     private boolean blockDrops = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Block-Drops");
     private boolean swordBlock = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Sword-Block");
@@ -67,6 +68,7 @@ public class PlayerStats {
             "fakecreative.preference.hearts",
             "fakecreative.preference.hunger",
             "fakecreative.preference.burn",
+            "fakecreative.preference.mobtargeting",
             "fakecreative.preference.unbreakable",
             "fakecreative.preference.blockdrops",
             "fakecreative.preference.swordblock",
@@ -179,6 +181,12 @@ public class PlayerStats {
         final DataObject allowBurn = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ALLOW_BURN, playerId, true));
         if (allowBurn != null) {
             this.allowBurn = allowBurn.getBoolean();
+        }
+
+        // fakecreative.preference.mobtargeting
+        final DataObject mobTargeting = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.MOB_TARGETING, playerId, true));
+        if (mobTargeting != null) {
+            this.mobTargeting = mobTargeting.getBoolean();
         }
 
         // fakecreative.preference.unbreakable
@@ -476,6 +484,35 @@ public class PlayerStats {
                 player.setFireTicks(0);
             } else {
                 player.setFireTicks(Creative.get(player).getFireTicks());
+            }
+        }
+    }
+
+    /**
+     * Checks if the Player can be targeted by mobs..
+     *
+     * @return If the Player can be targeted by mobs..
+     */
+    public boolean mobTargeting() {
+        return this.mobTargeting;
+    }
+
+    /**
+     * Sets the current state of Mob Targeting.
+     *
+     * @param player       - The Player being referenced.
+     * @param mobTargeting - If the Player can be targeted by mobs.
+     */
+    public void setMobTargeting(final Player player, final boolean mobTargeting) {
+        synchronized ("FK_SQL") {
+            this.mobTargeting = mobTargeting;
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.MOB_TARGETING, PlayerHandler.getPlayerID(player), mobTargeting));
+            if (dataObject != null) {
+                FakeCreative.getCore().getSQL().removeData(dataObject);
+            }
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.MOB_TARGETING, PlayerHandler.getPlayerID(player), mobTargeting));
+            if (!mobTargeting) {
+                Mode.dropTargets(player);
             }
         }
     }

@@ -139,7 +139,9 @@ public class Creative {
                 argsPlayer.setFireTicks(0);
             }
             argsPlayer.setFoodLevel(playerObject.getStats().foodLevel());
-            Mode.dropTargets(argsPlayer);
+            if (!playerObject.getStats().mobTargeting()) {
+                Mode.dropTargets(argsPlayer);
+            }
             Tabs.setTabs(argsPlayer);
             if (!restore) {
                 ServerUtils.logDebug(argsPlayer.getName() + " was set to fake creative.");

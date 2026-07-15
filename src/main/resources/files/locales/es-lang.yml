@@ -2,7 +2,7 @@
 # Si no desea que se envíe un mensaje, elimínelo completamente de abajo o póngalo en blanco.
 
 # Si se modifica, el archivo se romperá y se regenerará.
-es-Version: 2
+es-Version: 3
 
 # Este es el prefijo que se enviará al principio de cada mensaje enviado en el archivo de idioma.
 Prefix: '&7[&6FakeCreative&7]'
@@ -277,6 +277,13 @@ menus:
         name: 'Permitir daño en fuego'
         lore:
           - '&7*Establece si la Lava o Fuego provoca daño.'
+          - '&7'
+          - '&a&lActivado: &b&l%value%'
+      mobTargeting:
+        name: 'Objetivo de Mobs'
+        lore:
+          - '&7*Si los mobs pueden apuntarte.'
+          - '&7Los mobs que te apunten intentarán atacarte.'
           - '&7'
           - '&a&lActivado: &b&l%value%'
       unbreakableItems:

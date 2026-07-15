@@ -2,7 +2,7 @@
 # If you don't want a message to be sent, fully remove it from below or make it blank.
 
 # Modifying this will cause the file to break and regenerate.
-en-Version: 2
+en-Version: 3
 
 # This is the prefix that will be sent at the beginning of every single message sent in the language file.
 Prefix: '&7[&6FakeCreative&7]'
@@ -278,6 +278,13 @@ menus:
         name: 'Allow Burn'
         lore:
           - '&7*If lava or fire should do damage.'
+          - '&7'
+          - '&a&lEnabled: &b&l%value%'
+      mobTargeting:
+        name: 'Mob Targeting'
+        lore:
+          - '&7*If mobs should be allow to target you.'
+          - '&7Mobs that target you will attack.'
           - '&7'
           - '&a&lEnabled: &b&l%value%'
       unbreakableItems:

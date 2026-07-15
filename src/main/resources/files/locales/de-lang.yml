@@ -2,7 +2,7 @@
 # Wenn du nicht möchtest dass eine Nachricht gesendet wird, entferne sie vollständig oder lasse sie leer.
 
 # Änderungen an dieser Zeile setzen die Datei zurück.
-de-Version: 2
+de-Version: 3
 
 # Der Prefix, der am Anfang jeder Nachricht gesendet wird.
 Prefix: '&7[&6FakeCreative&7]'
@@ -278,6 +278,13 @@ menus:
         name: 'Brennen erlauben'
         lore:
           - '&7*Ob Lava oder Feuer Schaden verursachen sollen'
+          - '&7'
+          - '&a&lAktiviert: &b&l%value%'
+      mobTargeting:
+        name: 'Mob-Verfolgung'
+        lore:
+          - '&7*Ob Mobs dich anvisieren dürfen.'
+          - '&7Mobs die dich anvisieren werden angreifen.'
           - '&7'
           - '&a&lAktiviert: &b&l%value%'
       unbreakableItems:

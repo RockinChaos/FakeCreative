@@ -334,7 +334,7 @@ public class DataObject {
         } else if (object1.getTable().equals(Table.OWNERSHIP_DATA)) {
             return (object1.getLocation().equalsIgnoreCase(object2.getLocation()));
         } else if (object1.getTable().equals(Table.ALLOW_FLIGHT) || object1.getTable().equals(Table.SPEED_FLIGHT) || object1.getTable().equals(Table.SPEED_BREAK) || object1.getTable().equals(Table.SET_FOOD) ||
-                object1.getTable().equals(Table.SET_HEALTH) || object1.getTable().equals(Table.SET_SCALE) || object1.getTable().equals(Table.ALLOW_HUNGER) || object1.getTable().equals(Table.ALLOW_BURN) ||
+                object1.getTable().equals(Table.SET_HEALTH) || object1.getTable().equals(Table.SET_SCALE) || object1.getTable().equals(Table.ALLOW_HUNGER) || object1.getTable().equals(Table.ALLOW_BURN) || object1.getTable().equals(Table.INSTANT_PORTAL) || object1.getTable().equals(Table.MOB_TARGETING) ||
                 object1.getTable().equals(Table.UNBREAKABLE_ITEMS) || object1.getTable().equals(Table.DROPS_BLOCK) || object1.getTable().equals(Table.SWORD_BLOCK) || object1.getTable().equals(Table.AUTO_RESTORE) ||
                 object1.getTable().equals(Table.SET_GOD) || object1.getTable().equals(Table.DELAY_GOD) || object1.getTable().equals(Table.STORE_INVENTORY) || object1.getTable().equals(Table.DESTROY_PICKUPS) || object1.getTable().equals(Table.SELF_DROPS) || object1.getTable().equals(Table.ITEM_STORE) || object1.getTable().equals(Table.PROTECT_PLACEMENTS) || object1.getTable().equals(Table.DROP_PLACEMENTS) || object1.getTable().equals(Table.PLAYERSTATS)) {
             return object1.getPlayerId().equalsIgnoreCase(object2.getPlayerId());
@@ -420,6 +420,7 @@ public class DataObject {
         SET_SCALE("set_scale", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
         ALLOW_HUNGER("allow_hunger", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
         ALLOW_BURN("allow_burn", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        MOB_TARGETING("mob_targeting", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
         UNBREAKABLE_ITEMS("unbreakable_items", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
         DROPS_BLOCK("drops_block", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
         SWORD_BLOCK("sword_block", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),

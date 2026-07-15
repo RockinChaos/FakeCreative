@@ -539,7 +539,7 @@ public class Menu {
         final boolean allPerferencesAllowed = Creative.get(player).getStats().isLocalePreferences(player);
         final List<String> noPermission = FakeCreative.getCore().getLang().getStringList("tabs.preferences.noPermission");
         SchedulerUtils.runAsync(() -> {
-            pagedPane.addButton(new Button(fillerPaneBItem), 3);
+            pagedPane.addButton(new Button(fillerPaneBItem));
             final List<String> flightLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.allowFlight.lore");
             if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.flight")) flightLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem("FEATHER", 1, Creative.get(player).getStats().allowFlight(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.allowFlight.name"),
@@ -587,7 +587,18 @@ public class Menu {
                             ).toArray(String[]::new)))
                     .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, FakeCreative.getCore().getLang().getString("menus.general.items.typing.name"), FakeCreative.getCore().getLang().getStringList("menus.general.items.typing.lore").toArray(new String[0])))
                     .title(FakeCreative.getCore().getLang().getString("menus.preferences.items.flightSpeed.name") + ":"), 0));
-            pagedPane.addButton(new Button(fillerPaneBItem), 3);
+            pagedPane.addButton(new Button(fillerPaneBItem));
+            final List<String> mobTargetingLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.mobTargeting.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.mobTargeting")) mobTargetingLore.addAll(noPermission);
+            pagedPane.addButton(new Button(ItemHandler.getItem(ServerUtils.hasUpdate("1_13") ? "ZOMBIE_HEAD" : "397:2", 1, Creative.get(player).getStats().mobTargeting(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.mobTargeting.name"),
+                    mobTargetingLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().mobTargeting()))).toArray(String[]::new)),
+                    event -> {
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.mobTargeting")) {
+                            Creative.get(player).getStats().setMobTargeting(player, !Creative.get(player).getStats().mobTargeting());
+                            userMenu(player);
+                        }
+                    }));
+            pagedPane.addButton(new Button(fillerPaneBItem));
             final List<String> breakSpeedLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.breakSpeed.lore");
             if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.breakspeed")) breakSpeedLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem("DIAMOND_PICKAXE", 1, false, true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.breakSpeed.name"),
