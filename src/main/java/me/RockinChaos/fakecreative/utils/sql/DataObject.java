@@ -420,6 +420,7 @@ public class DataObject {
         SET_SCALE("set_scale", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
         ALLOW_HUNGER("allow_hunger", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
         ALLOW_BURN("allow_burn", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
+        INSTANT_PORTAL("instant_portal", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
         MOB_TARGETING("mob_targeting", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
         UNBREAKABLE_ITEMS("unbreakable_items", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),
         DROPS_BLOCK("drops_block", "`Player_UUID`, `Value`, `Time_Stamp`", "Player_UUID"),

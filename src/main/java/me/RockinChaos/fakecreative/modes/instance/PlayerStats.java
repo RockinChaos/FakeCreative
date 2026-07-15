@@ -44,6 +44,7 @@ public class PlayerStats {
     private double heartScale = FakeCreative.getCore().getConfig("config.yml").getDouble("Preferences.Heart-Scale");
     private boolean allowHunger = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Allow-Hunger");
     private boolean allowBurn = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Allow-Burn");
+    private boolean instantPortal = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Instant-Portal");
     private boolean mobTargeting = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Mob-Targeting");
     private boolean unbreakableItems = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Unbreakable-Items");
     private boolean blockDrops = FakeCreative.getCore().getConfig("config.yml").getBoolean("Preferences.Block-Drops");
@@ -68,6 +69,7 @@ public class PlayerStats {
             "fakecreative.preference.hearts",
             "fakecreative.preference.hunger",
             "fakecreative.preference.burn",
+            "fakecreative.preference.instantportal",
             "fakecreative.preference.mobtargeting",
             "fakecreative.preference.unbreakable",
             "fakecreative.preference.blockdrops",
@@ -181,6 +183,12 @@ public class PlayerStats {
         final DataObject allowBurn = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.ALLOW_BURN, playerId, true));
         if (allowBurn != null) {
             this.allowBurn = allowBurn.getBoolean();
+        }
+
+        // fakecreative.preference.instantportal
+        final DataObject instantPortal = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.INSTANT_PORTAL, playerId, true));
+        if (instantPortal != null) {
+            this.instantPortal = instantPortal.getBoolean();
         }
 
         // fakecreative.preference.mobtargeting
@@ -485,6 +493,32 @@ public class PlayerStats {
             } else {
                 player.setFireTicks(Creative.get(player).getFireTicks());
             }
+        }
+    }
+
+    /**
+     * Checks if the Player should teleport instant when touching a portal block.
+     *
+     * @return If the Player should teleport instant when touching a portal block.
+     */
+    public boolean instantPortal() {
+        return this.instantPortal;
+    }
+
+    /**
+     * Sets the current state of Instant Portal.
+     *
+     * @param player        - The Player being referenced.
+     * @param instantPortal - If the Player should teleport instant when touching a portal block..
+     */
+    public void setInstantPortal(final Player player, final boolean instantPortal) {
+        synchronized ("FK_SQL") {
+            this.instantPortal = instantPortal;
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.INSTANT_PORTAL, PlayerHandler.getPlayerID(player), instantPortal));
+            if (dataObject != null) {
+                FakeCreative.getCore().getSQL().removeData(dataObject);
+            }
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.INSTANT_PORTAL, PlayerHandler.getPlayerID(player), instantPortal));
         }
     }
 

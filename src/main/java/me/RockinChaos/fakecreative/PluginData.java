@@ -260,6 +260,7 @@ public class PluginData {
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "set_scale (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "allow_hunger (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "allow_burn (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
+            Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "instant_portal (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "mob_targeting (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "unbreakable_items (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");
             Database.getDatabase().executeStatement("CREATE TABLE IF NOT EXISTS " + prefix + "drops_block (`Player_UUID` varchar(64), `Value` varchar(16), `Time_Stamp` varchar(64));");

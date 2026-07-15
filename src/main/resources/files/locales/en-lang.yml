@@ -280,6 +280,13 @@ menus:
           - '&7*If lava or fire should do damage.'
           - '&7'
           - '&a&lEnabled: &b&l%value%'
+      instantPortal:
+        name: 'Instant Portal'
+        lore:
+          - '&7*If you should teleport immediately'
+          - '&7when entering a portal.'
+          - '&7'
+          - '&a&lEnabled: &b&l%value%'
       mobTargeting:
         name: 'Mob Targeting'
         lore:

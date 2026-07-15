@@ -280,6 +280,13 @@ menus:
           - '&7*Ob Lava oder Feuer Schaden verursachen sollen'
           - '&7'
           - '&a&lAktiviert: &b&l%value%'
+      instantPortal:
+        name: 'Sofortportal'
+        lore:
+          - '&7*Ob du sofort teleportiert werden sollst,'
+          - '&7wenn du ein Portal betrittst.'
+          - '&7'
+          - '&a&lAktiviert: &b&l%value%'
       mobTargeting:
         name: 'Mob-Verfolgung'
         lore:

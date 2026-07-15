@@ -588,6 +588,17 @@ public class Menu {
                     .itemOutput(ItemHandler.getItem("FEATHER", 1, false, true, FakeCreative.getCore().getLang().getString("menus.general.items.typing.name"), FakeCreative.getCore().getLang().getStringList("menus.general.items.typing.lore").toArray(new String[0])))
                     .title(FakeCreative.getCore().getLang().getString("menus.preferences.items.flightSpeed.name") + ":"), 0));
             pagedPane.addButton(new Button(fillerPaneBItem));
+            final List<String> instantPortalLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.instantPortal.lore");
+            if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.instantPortal")) instantPortalLore.addAll(noPermission);
+            pagedPane.addButton(new Button(ItemHandler.getItem("FLINT_AND_STEEL", 1, Creative.get(player).getStats().instantPortal(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.instantPortal.name"),
+                    instantPortalLore.stream().map(lore -> lore.replace("%value%", String.valueOf(Creative.get(player).getStats().instantPortal()))).toArray(String[]::new)),
+                    event -> {
+                        if (allPerferencesAllowed || Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.instantPortal")) {
+                            Creative.get(player).getStats().setInstantPortal(player, !Creative.get(player).getStats().instantPortal());
+                            userMenu(player);
+                        }
+                    }));
+            pagedPane.addButton(new Button(fillerPaneBItem));
             final List<String> mobTargetingLore = FakeCreative.getCore().getLang().getStringList("menus.preferences.items.mobTargeting.lore");
             if (!allPerferencesAllowed && !Creative.get(player).getStats().isPreferenceOverride(player, "fakecreative.preference.mobTargeting")) mobTargetingLore.addAll(noPermission);
             pagedPane.addButton(new Button(ItemHandler.getItem(ServerUtils.hasUpdate("1_13") ? "ZOMBIE_HEAD" : "397:2", 1, Creative.get(player).getStats().mobTargeting(), true, "&f" + FakeCreative.getCore().getLang().getString("menus.preferences.items.mobTargeting.name"),

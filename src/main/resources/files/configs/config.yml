@@ -55,6 +55,7 @@ Preferences:
   Heart-Scale: 1.0
   Allow-Hunger: false
   Allow-Burn: false
+  Instant-Portal: true
   Mob-Targeting: false
   Unbreakable-Items: true
   Block-Drops: false

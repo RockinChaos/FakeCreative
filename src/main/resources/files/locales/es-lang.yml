@@ -279,6 +279,13 @@ menus:
           - '&7*Establece si la Lava o Fuego provoca daño.'
           - '&7'
           - '&a&lActivado: &b&l%value%'
+      instantPortal:
+        name: 'Portal Instantáneo'
+        lore:
+          - '&7*Si debes ser teletransportado inmediatamente'
+          - '&7al entrar en un portal.'
+          - '&7'
+          - '&a&lActivado: &b&l%value%'
       mobTargeting:
         name: 'Objetivo de Mobs'
         lore:
