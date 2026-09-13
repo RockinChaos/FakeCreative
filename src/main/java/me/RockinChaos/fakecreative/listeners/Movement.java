@@ -38,11 +38,10 @@ public class Movement implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     private void onMovement(final PlayerMoveEvent event) {
-        SchedulerUtils.runAsync(() -> {
-            if (event.getPlayer().getFireTicks() > 0 && Creative.isCreativeMode(event.getPlayer(), true) && !Creative.get(event.getPlayer()).getStats().allowBurn()) {
-                event.getPlayer().setFireTicks(0);
-            }
-        });
+        final Player player = event.getPlayer();
+        if (player.getFireTicks() > 0 && Creative.isCreativeMode(player, true) && !Creative.get(player).getStats().allowBurn()) {
+            player.setFireTicks(0);
+        }
     }
 
     /**

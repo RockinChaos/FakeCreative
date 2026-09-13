@@ -17,7 +17,6 @@
  */
 package me.RockinChaos.fakecreative.listeners;
 
-import me.RockinChaos.core.utils.SchedulerUtils;
 import me.RockinChaos.fakecreative.modes.creative.Creative;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -39,20 +38,16 @@ public class Pickups implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onItemPickup(PlayerMoveEvent event) {
         final Player player = event.getPlayer();
-        SchedulerUtils.runAsync(() -> {
-            if (Creative.isCreativeMode(player, true) && Creative.get(player).getStats().destroyPickups() && player.getInventory().firstEmpty() == -1) {
-                SchedulerUtils.run(() -> {
-                    for (Entity item : player.getNearbyEntities(0.5, 2, 0.5)) {
-                        if (item instanceof Item) {
-                            final Item itemDrop = (Item) item;
-                            final ItemStack itemStack = itemDrop.getItemStack();
-                            itemStack.setAmount(0);
-                            itemStack.setType(Material.AIR);
-                            itemDrop.remove();
-                        }
-                    }
-                });
+        if (Creative.isCreativeMode(player, true) && Creative.get(player).getStats().destroyPickups() && player.getInventory().firstEmpty() == -1) {
+            for (Entity item : player.getNearbyEntities(0.5, 2, 0.5)) {
+                if (item instanceof Item) {
+                    final Item itemDrop = (Item) item;
+                    final ItemStack itemStack = itemDrop.getItemStack();
+                    itemStack.setAmount(0);
+                    itemStack.setType(Material.AIR);
+                    itemDrop.remove();
+                }
             }
-        });
+        }
     }
 }
