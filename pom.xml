@@ -11,10 +11,10 @@
     <description>A creative mode emulation.</description>
     <url>https://www.spigotmc.org/resources/fakecreative.95959/</url>
 
-    <version>2.0.1-RELEASE</version>
+    <version>2.0.2-SNAPSHOT</version>
 
     <properties>
-        <chaoscore.version>1.1.6-RELEASE</chaoscore.version>
+        <chaoscore.version>1.1.7-SNAPSHOT</chaoscore.version>
         <minecraft.version>26.2</minecraft.version>
 
         <spigot.version>${minecraft.version}-R0.1-SNAPSHOT</spigot.version>
