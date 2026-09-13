@@ -315,13 +315,14 @@ public class PlayerStats {
      */
     public void setFlySpeed(final Player player, final double flySpeed) {
         synchronized ("FK_SQL") {
-            this.flySpeed = (flySpeed >= 0 ? flySpeed : 1);
-            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SPEED_FLIGHT, PlayerHandler.getPlayerID(player), flySpeed));
+            final double normalizedFlySpeed = (flySpeed >= 0 && flySpeed <= 10 ? flySpeed : 1);
+            this.flySpeed = normalizedFlySpeed;
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SPEED_FLIGHT, PlayerHandler.getPlayerID(player), normalizedFlySpeed));
             if (dataObject != null) {
                 FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SPEED_FLIGHT, PlayerHandler.getPlayerID(player), flySpeed));
-            player.setFlySpeed(Float.parseFloat((Double.toString((flySpeed) / 10))));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SPEED_FLIGHT, PlayerHandler.getPlayerID(player), normalizedFlySpeed));
+            player.setFlySpeed((float) (normalizedFlySpeed / 10));
         }
     }
 
@@ -342,12 +343,13 @@ public class PlayerStats {
      */
     public void setBreakSpeed(final Player player, final double breakSpeed) {
         synchronized ("FK_SQL") {
-            this.breakSpeed = (breakSpeed >= 0 ? breakSpeed : 3);
-            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SPEED_BREAK, PlayerHandler.getPlayerID(player), breakSpeed));
+            final double normalizedBreakSpeed = (breakSpeed >= 0 ? breakSpeed : 3);
+            this.breakSpeed = normalizedBreakSpeed;
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SPEED_BREAK, PlayerHandler.getPlayerID(player), normalizedBreakSpeed));
             if (dataObject != null) {
                 FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SPEED_BREAK, PlayerHandler.getPlayerID(player), breakSpeed));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SPEED_BREAK, PlayerHandler.getPlayerID(player), normalizedBreakSpeed));
         }
     }
 
@@ -368,13 +370,14 @@ public class PlayerStats {
      */
     public void setFoodLevel(final Player player, final int foodLevel) {
         synchronized ("FK_SQL") {
-            this.foodLevel = (foodLevel >= 0 ? foodLevel : 20);
-            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_FOOD, PlayerHandler.getPlayerID(player), foodLevel));
+            final int normalizedFoodLevel = (foodLevel >= 0 && foodLevel <= 20 ? foodLevel : 20);
+            this.foodLevel = normalizedFoodLevel;
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_FOOD, PlayerHandler.getPlayerID(player), normalizedFoodLevel));
             if (dataObject != null) {
                 FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SET_FOOD, PlayerHandler.getPlayerID(player), foodLevel));
-            player.setFoodLevel(foodLevel);
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SET_FOOD, PlayerHandler.getPlayerID(player), normalizedFoodLevel));
+            player.setFoodLevel(normalizedFoodLevel);
         }
     }
 
@@ -396,14 +399,15 @@ public class PlayerStats {
      */
     public void setHealth(final Player player, final int health, final boolean scaleUpdate) {
         synchronized ("FK_SQL") {
-            this.health = (health >= 0 ? health : 20);
-            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_HEALTH, PlayerHandler.getPlayerID(player), health));
+            final int normalizedHealth = (health >= 0 ? health : 20);
+            this.health = normalizedHealth;
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_HEALTH, PlayerHandler.getPlayerID(player), normalizedHealth));
             if (dataObject != null) {
                 FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SET_HEALTH, PlayerHandler.getPlayerID(player), health));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SET_HEALTH, PlayerHandler.getPlayerID(player), normalizedHealth));
             if (!scaleUpdate) {
-                player.setHealth(health);
+                player.setHealth(normalizedHealth);
             }
         }
     }
@@ -425,16 +429,17 @@ public class PlayerStats {
      */
     public void setScale(final Player player, final double heartScale) {
         synchronized ("FK_SQL") {
-            this.heartScale = (heartScale >= 0 ? heartScale : 10);
-            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_SCALE, PlayerHandler.getPlayerID(player), heartScale));
+            final double normalizedHeartScale = (heartScale >= 0 ? heartScale : 10);
+            this.heartScale = normalizedHeartScale;
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.SET_SCALE, PlayerHandler.getPlayerID(player), normalizedHeartScale));
             if (dataObject != null) {
                 FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SET_SCALE, PlayerHandler.getPlayerID(player), heartScale));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.SET_SCALE, PlayerHandler.getPlayerID(player), normalizedHeartScale));
             if (ServerUtils.hasUpdate("1_9")) {
-                Objects.requireNonNull(player.getAttribute((Attribute) CompatUtils.valueOf(Attribute.class, "GENERIC_MAX_HEALTH"))).setBaseValue(((heartScale) * 2));
+                Objects.requireNonNull(player.getAttribute((Attribute) CompatUtils.valueOf(Attribute.class, "GENERIC_MAX_HEALTH"))).setBaseValue(normalizedHeartScale * 2);
             } else {
-                LegacyAPI.setMaxHealth(player, (heartScale) * 2);
+                LegacyAPI.setMaxHealth(player, normalizedHeartScale * 2);
             }
         }
     }
@@ -701,12 +706,13 @@ public class PlayerStats {
      */
     public void setGodDelay(final Player player, final int godDelay) {
         synchronized ("FK_SQL") {
-            this.godDelay = (godDelay >= 0 ? godDelay : 3);
-            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.DELAY_GOD, PlayerHandler.getPlayerID(player), godDelay));
+            final int normalizedGodDelay = (godDelay >= 0 ? godDelay : 3);
+            this.godDelay = normalizedGodDelay;
+            final DataObject dataObject = (DataObject) FakeCreative.getCore().getSQL().getData(new DataObject(Table.DELAY_GOD, PlayerHandler.getPlayerID(player), normalizedGodDelay));
             if (dataObject != null) {
                 FakeCreative.getCore().getSQL().removeData(dataObject);
             }
-            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.DELAY_GOD, PlayerHandler.getPlayerID(player), godDelay));
+            FakeCreative.getCore().getSQL().saveData(new DataObject(Table.DELAY_GOD, PlayerHandler.getPlayerID(player), normalizedGodDelay));
         }
     }
 
